@@ -15,4 +15,4 @@ import { InventarioRepositoryAdapter } from './adapters/output/persistence/inven
     ],
     exports: ['InventarioRepositoryPort']
 })
-export class inventarioModule {}
+export class InventarioModule {}

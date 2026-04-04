@@ -15,4 +15,4 @@ import { SitioRepositoryAdapter } from './adapters/output/persistence/sitio.repo
     ],
     exports: ['SitioRepositoryPort']
 })
-export class sitiosModule {}
+export class SitiosModule {}

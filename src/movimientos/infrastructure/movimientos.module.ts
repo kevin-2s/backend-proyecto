@@ -15,4 +15,4 @@ import { MovimientoRepositoryAdapter } from './adapters/output/persistence/movim
     ],
     exports: ['MovimientoRepositoryPort']
 })
-export class movimientosModule {}
+export class MovimientosModule {}

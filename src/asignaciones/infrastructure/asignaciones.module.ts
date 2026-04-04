@@ -15,4 +15,4 @@ import { AsignaRepositoryAdapter } from './adapters/output/persistence/asigna.re
     ],
     exports: ['AsignaRepositoryPort']
 })
-export class asignacionesModule {}
+export class AsignacionesModule {}

@@ -15,4 +15,4 @@ import { FichaRepositoryAdapter } from './adapters/output/persistence/ficha.repo
     ],
     exports: ['FichaRepositoryPort']
 })
-export class fichasModule {}
+export class FichasModule {}

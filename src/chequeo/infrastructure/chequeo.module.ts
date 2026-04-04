@@ -15,4 +15,4 @@ import { ChequeoRepositoryAdapter } from './adapters/output/persistence/chequeo.
     ],
     exports: ['ChequeoRepositoryPort']
 })
-export class chequeoModule {}
+export class ChequeoModule {}

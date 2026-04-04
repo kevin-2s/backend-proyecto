@@ -15,4 +15,4 @@ import { SolicitudRepositoryAdapter } from './adapters/output/persistence/solici
     ],
     exports: ['SolicitudRepositoryPort']
 })
-export class solicitudesModule {}
+export class SolicitudesModule {}
