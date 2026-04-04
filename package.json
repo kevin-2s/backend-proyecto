@@ -1,0 +1,31 @@
+{
+  "name": "sgm-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@nestjs/bullmq": "^11.0.4",
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/config": "^4.0.3",
+    "@nestjs/core": "^11.1.18",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/swagger": "^11.2.6",
+    "@types/pdfkit": "^0.17.5",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.73.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.4",
+    "ioredis": "^5.10.1",
+    "joi": "^18.1.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pdfkit": "^0.18.0"
+  }
+}
