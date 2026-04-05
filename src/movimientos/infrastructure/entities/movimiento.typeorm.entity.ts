@@ -1,31 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, OneToOne } from 'typeorm';
+import { TipoMovimiento } from '../../../shared/domain/enums';
+import { ProductoEntity } from '../../../productos/infrastructure/entities/producto.typeorm.entity';
+import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
+import { SitioEntity } from '../../../sitios/infrastructure/entities/sitio.typeorm.entity';
+import { DevolucionEntity } from '../../../devoluciones/infrastructure/entities/devolucion.typeorm.entity';
 
 @Entity('movimientos')
 export class MovimientoEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    tipoMovimiento!: string;
+  @Column({ name: 'tipo', type: 'enum', enum: TipoMovimiento })
+  tipo!: TipoMovimiento;
 
-    @Column({ type: 'varchar' })
-    productoId!: string;
+  @Column({ name: 'cantidad', type: 'int' })
+  cantidad!: number;
 
-    @Column({ type: 'int' })
-    cantidad!: number;
+  @CreateDateColumn({ name: 'fecha', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
+  fecha!: Date;
 
-    @Column({ type: 'varchar' })
-    sitioOrigenId!: string;
+  @Column({ name: 'observaciones', type: 'text', nullable: true })
+  observaciones!: string;
 
-    @Column({ type: 'varchar' })
-    sitioDestinoId!: string;
+  @ManyToOne(() => ProductoEntity, (producto) => producto.movimientos)
+  @JoinColumn({ name: 'producto_id' })
+  producto!: ProductoEntity;
 
-    @Column({ type: 'varchar' })
-    usuarioId!: string;
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.movimientos)
+  @JoinColumn({ name: 'usuario_id' })
+  usuario!: UsuarioEntity;
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @ManyToOne(() => SitioEntity, (sitio) => sitio.movimientos)
+  @JoinColumn({ name: 'sitio_id' })
+  sitio!: SitioEntity;
 
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToOne(() => DevolucionEntity, (devolucion) => devolucion.movimiento, { nullable: true })
+  devolucion!: DevolucionEntity;
 }

@@ -1,25 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
+import { ProductoEntity } from '../../../productos/infrastructure/entities/producto.typeorm.entity';
+import { FichaEntity } from '../../../fichas/infrastructure/entities/ficha.typeorm.entity';
 
 @Entity('necesidades')
 export class NecesidadEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    productoId!: string;
+  @Column({ name: 'cantidad_n', type: 'int' })
+  cantidadN!: number;
 
-    @Column({ type: 'int' })
-    cantidadNecesaria!: number;
+  @Column({ name: 'fecha_limite', type: 'timestamp with time zone', nullable: true })
+  fechaLimite!: Date;
 
-    @Column({ type: 'varchar' })
-    justificacion!: string;
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.necesidades)
+  @JoinColumn({ name: 'usuario_id' })
+  usuario!: UsuarioEntity;
 
-    @Column({ type: 'varchar' })
-    estado!: string;
+  @ManyToOne(() => ProductoEntity, (producto) => producto.necesidades)
+  @JoinColumn({ name: 'producto_id' })
+  producto!: ProductoEntity;
 
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @ManyToOne(() => FichaEntity, (ficha) => ficha.necesidades)
+  @JoinColumn({ name: 'ficha_id' })
+  ficha!: FichaEntity;
 }

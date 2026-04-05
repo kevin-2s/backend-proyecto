@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SolicitudEntity } from './entities/solicitud.typeorm.entity';
+import { DetalleEntity } from './entities/detalle.typeorm.entity';
 import { SolicitudController } from './adapters/input/http/solicitudes.controller';
 import { SolicitudService } from '../application/services/solicitudes.service';
 import { SolicitudRepositoryAdapter } from './adapters/output/persistence/solicitud.repository.adapter';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([SolicitudEntity])],
+    imports: [TypeOrmModule.forFeature([SolicitudEntity, DetalleEntity])],
     controllers: [SolicitudController],
     providers: [
         { provide: 'SolicitudRepositoryPort', useClass: SolicitudRepositoryAdapter },

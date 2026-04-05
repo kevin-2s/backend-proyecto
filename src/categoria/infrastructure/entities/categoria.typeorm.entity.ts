@@ -1,19 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ProductoEntity } from '../../../productos/infrastructure/entities/producto.typeorm.entity';
 
-@Entity('categoria')
+@Entity('categorias')
 export class CategoriaEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    nombre!: string;
+  @Column({ name: 'nombre_cat', type: 'varchar' })
+  nombreCat!: string;
 
-    @Column({ type: 'varchar' })
-    descripcion!: string;
-
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToMany(() => ProductoEntity, (producto) => producto.categoria)
+  productos!: ProductoEntity[];
 }

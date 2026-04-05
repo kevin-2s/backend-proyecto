@@ -1,22 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { ProductoEntity } from '../../../productos/infrastructure/entities/producto.typeorm.entity';
+import { SitioEntity } from '../../../sitios/infrastructure/entities/sitio.typeorm.entity';
 
-@Entity('inventario')
+@Entity('inventarios')
 export class InventarioEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    productoId!: string;
+  @Column({ name: 'cantidad_actual', type: 'int', default: 0 })
+  cantidadActual!: number;
 
-    @Column({ type: 'varchar' })
-    sitioId!: string;
+  @Column({ name: 'stock_minimo', type: 'int', default: 0 })
+  stockMinimo!: number;
 
-    @Column({ type: 'int' })
-    cantidad!: number;
+  @ManyToOne(() => ProductoEntity, (producto) => producto.inventarios)
+  @JoinColumn({ name: 'producto_id' })
+  producto!: ProductoEntity;
 
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @ManyToOne(() => SitioEntity, (sitio) => sitio.inventarios)
+  @JoinColumn({ name: 'sitio_id' })
+  sitio!: SitioEntity;
 }

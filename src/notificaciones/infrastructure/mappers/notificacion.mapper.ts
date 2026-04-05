@@ -3,22 +3,15 @@ import { NotificacionEntity } from '../entities/notificacion.typeorm.entity';
 
 export class NotificacionMapper {
     static toDomain(entity: NotificacionEntity): Notificacion {
-        return new Notificacion(
-            entity.id,
-            entity.usuarioId,
-            entity.mensaje,
-            entity.leida,
-            entity.createdAt,
-            entity.updatedAt
-        );
+        return new Notificacion(String(entity.id), '', '', false, entity.fechaEnvio || new Date(), entity.fechaEnvio || new Date());
     }
-
     static toEntity(domain: Notificacion): NotificacionEntity {
         const entity = new NotificacionEntity();
-        if (domain.id) entity.id = domain.id;
-        entity.usuarioId = domain.usuarioId;
-        entity.mensaje = domain.mensaje;
-        entity.leida = domain.leida;
+        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
+        entity.fechaEnvio = domain.createdAt || new Date();
+        entity.mensaje = 'Notificacion';
+        entity.leida = false;
+        entity.tipoEvento = 'INFO';
         return entity;
     }
 }

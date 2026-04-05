@@ -1,25 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { AsignaEntity } from '../../../asignaciones/infrastructure/entities/asigna.typeorm.entity';
+import { DevolucionEntity } from '../../../devoluciones/infrastructure/entities/devolucion.typeorm.entity';
 
 @Entity('actas')
 export class ActaEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    movimientoId!: string;
+  @CreateDateColumn({ name: 'fecha_gen', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
+  fechaGen!: Date;
 
-    @Column({ type: 'varchar' })
-    tipoActa!: string;
+  @Column({ name: 'url_pdf', type: 'varchar', nullable: true })
+  urlPdf!: string;
 
-    @Column({ type: 'varchar' })
-    urlPdf!: string;
+  @OneToOne(() => AsignaEntity, (asigna) => asigna.acta, { nullable: true })
+  @JoinColumn({ name: 'asigna_id' })
+  asigna!: AsignaEntity;
 
-    @Column({ type: 'varchar' })
-    generadoPor!: string;
-
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToOne(() => DevolucionEntity, (devolucion) => devolucion.acta, { nullable: true })
+  @JoinColumn({ name: 'devolucion_id' })
+  devolucion!: DevolucionEntity;
 }

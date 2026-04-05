@@ -1,22 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { AsignaEntity } from '../../../asignaciones/infrastructure/entities/asigna.typeorm.entity';
+import { NecesidadEntity } from '../../../necesidades/infrastructure/entities/necesidad.typeorm.entity';
 
 @Entity('fichas')
 export class FichaEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    codigo!: string;
+  @Column({ name: 'numero_ficha', type: 'varchar', unique: true })
+  numeroFicha!: string;
 
-    @Column({ type: 'varchar' })
-    programa!: string;
+  @Column({ name: 'programa', type: 'varchar' })
+  programa!: string;
 
-    @Column({ type: 'varchar' })
-    estado!: string;
+  @OneToMany(() => AsignaEntity, (asigna) => asigna.ficha)
+  asignaciones!: AsignaEntity[];
 
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToMany(() => NecesidadEntity, (necesidad) => necesidad.ficha)
+  necesidades!: NecesidadEntity[];
 }

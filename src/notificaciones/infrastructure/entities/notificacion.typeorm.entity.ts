@@ -1,22 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
 
 @Entity('notificaciones')
 export class NotificacionEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    usuarioId!: string;
+  @Column({ name: 'mensaje', type: 'text' })
+  mensaje!: string;
 
-    @Column({ type: 'varchar' })
-    mensaje!: string;
+  @Column({ name: 'leida', type: 'boolean', default: false })
+  leida!: boolean;
 
-    @Column({ type: 'boolean' })
-    leida!: boolean;
+  @CreateDateColumn({ name: 'fecha_envio', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
+  fechaEnvio!: Date;
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @Column({ name: 'tipo_evento', type: 'varchar' })
+  tipoEvento!: string;
 
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.notificaciones)
+  @JoinColumn({ name: 'usuario_id' })
+  usuario!: UsuarioEntity;
 }
