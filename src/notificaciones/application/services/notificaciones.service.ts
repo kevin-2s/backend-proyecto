@@ -18,7 +18,7 @@ export class NotificacionService implements FindNotificacionUseCase, CreateNotif
     }
 
     async create(command: CreateNotificacionCommand): Promise<Notificacion> {
-        const newEntity = new Notificacion('', command.usuarioId, command.mensaje, command.leida, new Date(), new Date());
+        const newEntity = new Notificacion(0, command.mensaje, command.leida || false, new Date(), command.tipoEvento, command.usuarioId);
         return this.repository.save(newEntity);
     }
 }

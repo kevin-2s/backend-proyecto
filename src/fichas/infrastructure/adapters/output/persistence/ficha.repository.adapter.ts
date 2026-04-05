@@ -19,7 +19,7 @@ export class FichaRepositoryAdapter implements FichaRepositoryPort {
     }
 
     async findById(id: string): Promise<Ficha | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? FichaMapper.toDomain(entity) : null;
     }
 

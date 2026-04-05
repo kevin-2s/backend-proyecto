@@ -1,0 +1,16 @@
+src/categoria/infrastructure/adapters/input/http/categoria.controller.ts(19,54): error TS2345: Argument of type 'CreateCategoriaDto' is not assignable to parameter of type 'CreateCategoriaCommand'.
+  Type 'CreateCategoriaDto' is missing the following properties from type 'CreateCategoriaCommand': nombre, descripcion
+src/fichas/infrastructure/adapters/input/http/fichas.controller.ts(19,54): error TS2345: Argument of type 'CreateFichaDto' is not assignable to parameter of type 'CreateFichaCommand'.
+  Type 'CreateFichaDto' is missing the following properties from type 'CreateFichaCommand': codigo, estado
+src/inventario/infrastructure/adapters/input/http/inventario.controller.ts(19,54): error TS2345: Argument of type 'CreateInventarioDto' is not assignable to parameter of type 'CreateInventarioCommand'.
+  Property 'cantidad' is missing in type 'CreateInventarioDto' but required in type 'CreateInventarioCommand'.
+src/movimientos/infrastructure/adapters/input/http/dtos/create-movimiento.dto.ts(3,32): error TS2307: Cannot find module '../../../../shared/domain/enums' or its corresponding type declarations.
+src/movimientos/infrastructure/adapters/input/http/movimientos.controller.ts(19,54): error TS2345: Argument of type 'CreateMovimientoDto' is not assignable to parameter of type 'CreateMovimientoCommand'.
+  Type 'CreateMovimientoDto' is missing the following properties from type 'CreateMovimientoCommand': tipoMovimiento, sitioOrigenId, sitioDestinoId
+src/roles/infrastructure/adapters/input/http/roles.controller.ts(24,58): error TS2345: Argument of type 'CreateRoleDto' is not assignable to parameter of type 'CreateRoleCommand'.
+  Type 'CreateRoleDto' is missing the following properties from type 'CreateRoleCommand': name, description
+src/sitios/infrastructure/adapters/input/http/dtos/create-sitio.dto.ts(3,27): error TS2307: Cannot find module '../../../../shared/domain/enums' or its corresponding type declarations.
+src/sitios/infrastructure/adapters/input/http/sitios.controller.ts(19,54): error TS2345: Argument of type 'CreateSitioDto' is not assignable to parameter of type 'CreateSitioCommand'.
+  Type 'CreateSitioDto' is missing the following properties from type 'CreateSitioCommand': nombre, tipoSitio, capacidad
+src/users/infrastructure/adapters/input/http/users.controller.ts(19,54): error TS2345: Argument of type 'CreateUsuarioDto' is not assignable to parameter of type 'CreateUsuarioCommand'.
+  Type 'CreateUsuarioDto' is missing the following properties from type 'CreateUsuarioCommand': email, passwordHash, nombres, apellidos

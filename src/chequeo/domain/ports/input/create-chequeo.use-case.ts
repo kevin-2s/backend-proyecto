@@ -1,8 +1,12 @@
 import { Chequeo } from '../../entities/chequeo.entity';
 
 export interface CreateChequeoCommand {
-    sitioId: string;
-    responsableId: string;
+    fechaChequeo: string;
+    confirmado: boolean;
+    asignaId?: number;
+    devolucionId?: number;
+    usuarioId: number;
+    items?: any[];
 }
 
 export interface CreateChequeoUseCase {

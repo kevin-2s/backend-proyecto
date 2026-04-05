@@ -19,7 +19,7 @@ export class ReporteRepositoryAdapter implements ReporteRepositoryPort {
     }
 
     async findById(id: string): Promise<Reporte | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id } });
         return entity ? ReporteMapper.toDomain(entity) : null;
     }
 

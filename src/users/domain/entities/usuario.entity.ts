@@ -1,12 +1,10 @@
 export class Usuario {
-    constructor(
-        public readonly id: string,
-        public readonly email: string,
-        public readonly passwordHash: string,
-        public readonly nombres: string,
-        public readonly apellidos: string,
-        public readonly rolId: string,
-        public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+  constructor(
+    public readonly id: number,
+    public readonly nombreCompleto: string,
+    public readonly correo: string,
+    public readonly contrasena: string,
+    public readonly estado: boolean,
+    public readonly rolId: number,
+  ) {}
 }

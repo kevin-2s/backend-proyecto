@@ -18,7 +18,7 @@ export class MovimientoService implements FindMovimientoUseCase, CreateMovimient
     }
 
     async create(command: CreateMovimientoCommand): Promise<Movimiento> {
-        const newEntity = new Movimiento('', command.tipoMovimiento, command.productoId, command.cantidad, command.sitioOrigenId, command.sitioDestinoId, command.usuarioId, new Date(), new Date());
+        const newEntity = new Movimiento(0, String(command.tipo), command.cantidad, new Date(), command.observaciones || '', command.productoId, command.usuarioId, command.sitioId);
         return this.repository.save(newEntity);
     }
 }

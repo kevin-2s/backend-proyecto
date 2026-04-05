@@ -1,8 +1,7 @@
 import { Role } from '../../entities/role.entity';
 
 export interface CreateRoleCommand {
-    name: string;
-    description: string;
+    nombreRol: string;
 }
 
 export interface CreateRoleUseCase {

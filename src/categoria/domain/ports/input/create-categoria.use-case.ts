@@ -1,8 +1,7 @@
 import { Categoria } from '../../entities/categoria.entity';
 
 export interface CreateCategoriaCommand {
-    nombre: string;
-    descripcion: string;
+    nombreCat: string;
 }
 
 export interface CreateCategoriaUseCase {

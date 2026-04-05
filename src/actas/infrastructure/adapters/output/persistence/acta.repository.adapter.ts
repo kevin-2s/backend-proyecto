@@ -19,7 +19,7 @@ export class ActaRepositoryAdapter implements ActaRepositoryPort {
     }
 
     async findById(id: string): Promise<Acta | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? ActaMapper.toDomain(entity) : null;
     }
 

@@ -1,15 +1,30 @@
 import { AuthRepositoryPort } from '../../../../domain/ports/output/auth.repository.port';
 import { AuthUser } from '../../../../domain/entities/auth-user.entity';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UsuarioEntity } from '../../../../../users/infrastructure/entities/usuario.typeorm.entity';
 
 @Injectable()
 export class AuthUserRepositoryAdapter implements AuthRepositoryPort {
-    async findUserByEmail(email: string): Promise<AuthUser | null> {
-        // En un futuro próximo se inyectará UserRepository o TypeORM para consultar el usuario real.
-        // Mock de prueba para compilar la base.
-        if (email === 'admin@sena.edu.co') {
-            return new AuthUser('1', email, '$2b$10$w...HashedPasswordReal...', ['Administrador']);
-        }
-        return null;
-    }
+  constructor(
+    @InjectRepository(UsuarioEntity)
+    private readonly usuarioRepository: Repository<UsuarioEntity>,
+  ) {}
+
+  async findUserByEmail(correo: string): Promise<AuthUser | null> {
+    const usuario = await this.usuarioRepository.findOne({
+      where: { correo },
+      relations: ['rol'],
+    });
+
+    if (!usuario) return null;
+
+    return new AuthUser(
+      String(usuario.id),
+      usuario.correo,
+      usuario.contrasena,
+      [usuario.rol.nombreRol],
+    );
+  }
 }

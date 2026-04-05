@@ -1,8 +1,8 @@
 import { Solicitud } from '../../entities/solicitud.entity';
 
 export interface CreateSolicitudCommand {
-    usuarioId: string;
-    estado: string;
+    justificacion: string;
+    usuarioId: number;
 }
 
 export interface CreateSolicitudUseCase {

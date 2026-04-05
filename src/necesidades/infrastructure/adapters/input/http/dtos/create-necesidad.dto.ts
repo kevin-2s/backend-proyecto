@@ -1,24 +1,10 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, IsDateString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateNecesidadDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    productoId!: string;
-
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    cantidadNecesaria!: number;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    justificacion!: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    estado!: string;
+  @ApiProperty() @IsNumber() @IsNotEmpty() cantidadN: number;
+  @ApiPropertyOptional() @IsDateString() @IsOptional() fechaLimite?: string;
+  @ApiProperty() @IsNumber() @IsNotEmpty() usuarioId: number;
+  @ApiProperty() @IsNumber() @IsNotEmpty() productoId: number;
+  @ApiProperty() @IsNumber() @IsNotEmpty() fichaId: number;
 }

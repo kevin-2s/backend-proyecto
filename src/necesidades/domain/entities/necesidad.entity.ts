@@ -1,11 +1,10 @@
 export class Necesidad {
-    constructor(
-        public readonly id: string,
-        public readonly productoId: string,
-        public readonly cantidadNecesaria: number,
-        public readonly justificacion: string,
-        public readonly estado: string,
-        public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+  constructor(
+    public readonly id: number,
+    public readonly cantidadN: number,
+    public readonly fechaLimite: Date,
+    public readonly usuarioId: number,
+    public readonly productoId: number,
+    public readonly fichaId: number,
+  ) {}
 }

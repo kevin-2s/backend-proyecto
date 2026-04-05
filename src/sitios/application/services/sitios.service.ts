@@ -18,7 +18,7 @@ export class SitioService implements FindSitioUseCase, CreateSitioUseCase {
     }
 
     async create(command: CreateSitioCommand): Promise<Sitio> {
-        const newEntity = new Sitio('', command.nombre, command.tipoSitio, command.capacidad, new Date(), new Date());
+        const newEntity = new Sitio(0, command.nombreSitio, String(command.tipo), command.responsableId);
         return this.repository.save(newEntity);
     }
 }

@@ -1,9 +1,8 @@
 import { Ficha } from '../../entities/ficha.entity';
 
 export interface CreateFichaCommand {
-    codigo: string;
+    numeroFicha: string;
     programa: string;
-    estado: string;
 }
 
 export interface CreateFichaUseCase {

@@ -18,7 +18,7 @@ export class UsuarioService implements FindUsuarioUseCase, CreateUsuarioUseCase 
     }
 
     async create(command: CreateUsuarioCommand): Promise<Usuario> {
-        const newEntity = new Usuario('', command.email, command.passwordHash, command.nombres, command.apellidos, command.rolId, new Date(), new Date());
+        const newEntity = new Usuario(0, command.nombreCompleto, command.correo, command.contrasena, command.estado ?? true, command.rolId);
         return this.repository.save(newEntity);
     }
 }

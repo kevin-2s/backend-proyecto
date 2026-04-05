@@ -5,10 +5,10 @@ export class CreateSolicitudDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    usuarioId!: string;
+    justificacion!: string;
 
     @ApiProperty()
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    estado!: string;
+    usuarioId!: number;
 }

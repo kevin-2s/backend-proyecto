@@ -5,23 +5,21 @@ import { RoleEntity } from '../../../roles/infrastructure/entities/role.typeorm.
 export class UsuarioMapper {
     static toDomain(entity: UsuarioEntity): Usuario {
         return new Usuario(
-            String(entity.id),
+            Number(entity.id),
+            entity.nombreCompleto,
             entity.correo,
             entity.contrasena,
-            entity.nombreCompleto?.split(' ')[0] || '',
-            entity.nombreCompleto?.split(' ')[1] || '',
-            entity.rol ? String(entity.rol.id) : '',
-            new Date(),
-            new Date()
+            entity.estado,
+            entity.rol ? Number(entity.rol.id) : 0
         );
     }
-    static toEntity(domain: Usuario): UsuarioEntity {
+    static toEntity(domain: any): UsuarioEntity {
         const entity = new UsuarioEntity();
         if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-        entity.correo = domain.email || '';
-        entity.contrasena = domain.passwordHash || '';
-        entity.nombreCompleto = `${domain.nombres || ''} ${domain.apellidos || ''}`.trim() || 'Unknown';
-        entity.estado = true;
+        entity.correo = domain.correo || '';
+        entity.contrasena = domain.contrasena || '';
+        entity.nombreCompleto = domain.nombreCompleto || 'Unknown';
+        entity.estado = domain.estado !== undefined ? domain.estado : true;
         if (domain.rolId && !isNaN(Number(domain.rolId))) {
             entity.rol = new RoleEntity();
             entity.rol.id = Number(domain.rolId);

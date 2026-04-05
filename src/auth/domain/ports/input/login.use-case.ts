@@ -1,5 +1,5 @@
 import { AuthToken } from '../../entities/auth-token.entity';
 
 export interface LoginUseCase {
-    execute(email: string, password: string): Promise<AuthToken>;
+    execute(correo: string, contrasena: string): Promise<AuthToken>;
 }

@@ -19,7 +19,14 @@ async function bootstrap() {
         .setTitle('SGM Backend API')
         .setDescription('API del Sistema de Gestión de Materiales')
         .setVersion('1.0')
-        .addBearerAuth()
+        .addBearerAuth({
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT',
+            description: 'Ingresa tu token JWT',
+            in: 'header',
+        }, 'JWT-auth')
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);

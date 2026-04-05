@@ -18,7 +18,7 @@ export class CategoriaService implements FindCategoriaUseCase, CreateCategoriaUs
     }
 
     async create(command: CreateCategoriaCommand): Promise<Categoria> {
-        const newEntity = new Categoria('', command.nombre, command.descripcion, new Date(), new Date());
+        const newEntity = new Categoria(0, command.nombreCat);
         return this.repository.save(newEntity);
     }
 }

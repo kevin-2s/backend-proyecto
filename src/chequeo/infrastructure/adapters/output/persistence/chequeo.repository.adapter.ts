@@ -19,7 +19,7 @@ export class ChequeoRepositoryAdapter implements ChequeoRepositoryPort {
     }
 
     async findById(id: string): Promise<Chequeo | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? ChequeoMapper.toDomain(entity) : null;
     }
 

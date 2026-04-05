@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { CreateProductoDto } from './dtos/create-producto.dto';
+import { CrearProductoDto } from './dtos/crear-producto.dto';
 import { FindProductoUseCase } from '../../../../domain/ports/input/find-producto.use-case';
 import { CreateProductoUseCase } from '../../../../domain/ports/input/create-producto.use-case';
 
@@ -15,7 +15,7 @@ export class ProductoController {
 
     @Post()
     @ApiOperation({ summary: 'Crear producto' })
-    async create(@Body() dto: CreateProductoDto) {
+    async create(@Body() dto: CrearProductoDto) {
         const data = await this.createUseCase.create(dto);
         return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
     }

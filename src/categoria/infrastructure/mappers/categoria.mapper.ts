@@ -3,12 +3,15 @@ import { CategoriaEntity } from '../entities/categoria.typeorm.entity';
 
 export class CategoriaMapper {
     static toDomain(entity: CategoriaEntity): Categoria {
-        return new Categoria(String(entity.id), entity.nombreCat, '', new Date(), new Date());
+        return new Categoria(
+            Number(entity.id),
+            entity.nombreCat
+        );
     }
-    static toEntity(domain: Categoria): CategoriaEntity {
+    static toEntity(domain: any): CategoriaEntity {
         const entity = new CategoriaEntity();
         if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-        entity.nombreCat = domain.nombre || '';
+        entity.nombreCat = domain.nombreCat || '';
         return entity;
     }
 }

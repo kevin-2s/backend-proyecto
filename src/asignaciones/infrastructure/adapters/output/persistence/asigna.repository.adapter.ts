@@ -19,7 +19,7 @@ export class AsignaRepositoryAdapter implements AsignaRepositoryPort {
     }
 
     async findById(id: string): Promise<Asigna | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? AsignaMapper.toDomain(entity) : null;
     }
 

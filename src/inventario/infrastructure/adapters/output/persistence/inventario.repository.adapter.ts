@@ -19,7 +19,7 @@ export class InventarioRepositoryAdapter implements InventarioRepositoryPort {
     }
 
     async findById(id: string): Promise<Inventario | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? InventarioMapper.toDomain(entity) : null;
     }
 

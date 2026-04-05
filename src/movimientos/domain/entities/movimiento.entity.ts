@@ -1,13 +1,12 @@
 export class Movimiento {
-    constructor(
-        public readonly id: string,
-        public readonly tipoMovimiento: string,
-        public readonly productoId: string,
-        public readonly cantidad: number,
-        public readonly sitioOrigenId: string,
-        public readonly sitioDestinoId: string,
-        public readonly usuarioId: string,
-        public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+  constructor(
+    public readonly id: number,
+    public readonly tipo: string,
+    public readonly cantidad: number,
+    public readonly fecha: Date,
+    public readonly observaciones: string,
+    public readonly productoId: number,
+    public readonly usuarioId: number,
+    public readonly sitioId: number,
+  ) {}
 }
