@@ -18,7 +18,7 @@ export class DevolucionService implements FindDevolucionUseCase, CreateDevolucio
     }
 
     async create(command: CreateDevolucionCommand): Promise<Devolucion> {
-        const newEntity = new Devolucion('', command.asignacionId, command.cantidadDevuelta, command.estadoFisico, new Date(), new Date());
+        const newEntity = new Devolucion(0, command.estadoFisico, new Date(command.fechaReal), command.observaciones || '', command.asignaId, command.productoId, command.movimientoId);
         return this.repository.save(newEntity);
     }
 }

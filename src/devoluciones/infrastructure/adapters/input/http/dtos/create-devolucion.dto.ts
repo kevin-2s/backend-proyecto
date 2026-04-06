@@ -1,19 +1,13 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsDateString, IsEnum } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+enum EstadoFisico { BUENO = 'BUENO', REGULAR = 'REGULAR', DAÑADO = 'DAÑADO', PERDIDO = 'PERDIDO' }
 
 export class CreateDevolucionDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    asignacionId!: string;
-
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    cantidadDevuelta!: number;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    estadoFisico!: string;
+  @ApiProperty() @IsEnum(EstadoFisico) @IsNotEmpty() estadoFisico: EstadoFisico;
+  @ApiProperty() @IsDateString() @IsNotEmpty() fechaReal: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() observaciones?: string;
+  @ApiProperty() @IsNumber() @IsNotEmpty() asignaId: number;
+  @ApiProperty() @IsNumber() @IsNotEmpty() productoId: number;
+  @ApiProperty() @IsNumber() @IsNotEmpty() movimientoId: number;
 }

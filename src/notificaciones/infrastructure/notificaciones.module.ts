@@ -15,4 +15,4 @@ import { NotificacionRepositoryAdapter } from './adapters/output/persistence/not
     ],
     exports: ['NotificacionRepositoryPort']
 })
-export class notificacionesModule {}
+export class NotificacionesModule {}

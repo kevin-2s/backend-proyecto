@@ -15,4 +15,4 @@ import { ActaRepositoryAdapter } from './adapters/output/persistence/acta.reposi
     ],
     exports: ['ActaRepositoryPort']
 })
-export class actasModule {}
+export class ActasModule {}

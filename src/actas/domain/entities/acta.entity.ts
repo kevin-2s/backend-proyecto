@@ -1,11 +1,9 @@
 export class Acta {
-    constructor(
-        public readonly id: string,
-        public readonly movimientoId: string,
-        public readonly tipoActa: string,
-        public readonly urlPdf: string,
-        public readonly generadoPor: string,
-        public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+  constructor(
+    public readonly id: number,
+    public readonly fechaGen: Date,
+    public readonly urlPdf: string,
+    public readonly asignaId: number,
+    public readonly devolucionId: number,
+  ) {}
 }

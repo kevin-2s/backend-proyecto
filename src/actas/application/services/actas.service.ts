@@ -18,7 +18,7 @@ export class ActaService implements FindActaUseCase, CreateActaUseCase {
     }
 
     async create(command: CreateActaCommand): Promise<Acta> {
-        const newEntity = new Acta('', command.movimientoId, command.tipoActa, command.urlPdf, command.generadoPor, new Date(), new Date());
+        const newEntity = new Acta(0, new Date(), command.urlPdf || '', command.asignaId || 0, command.devolucionId || 0);
         // TODO: Generación de Acta PDF via PDFKit
         return this.repository.save(newEntity);
     }

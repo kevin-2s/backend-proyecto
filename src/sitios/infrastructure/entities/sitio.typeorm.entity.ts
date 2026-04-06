@@ -1,22 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { TipoSitio } from '../../../shared/domain/enums';
+import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
+import { InventarioEntity } from '../../../inventario/infrastructure/entities/inventario.typeorm.entity';
+import { MovimientoEntity } from '../../../movimientos/infrastructure/entities/movimiento.typeorm.entity';
 
 @Entity('sitios')
 export class SitioEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ type: 'varchar' })
-    nombre!: string;
+  @Column({ name: 'nombre_sitio', type: 'varchar' })
+  nombreSitio!: string;
 
-    @Column({ type: 'varchar' })
-    tipoSitio!: string;
+  @Column({ name: 'tipo', type: 'enum', enum: TipoSitio })
+  tipo!: TipoSitio;
 
-    @Column({ type: 'int' })
-    capacidad!: number;
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.sitiosResponsable)
+  @JoinColumn({ name: 'responsable_id' })
+  responsable!: UsuarioEntity;
 
-    @CreateDateColumn()
-    createdAt!: Date;
+  @OneToMany(() => InventarioEntity, (inventario) => inventario.sitio)
+  inventarios!: InventarioEntity[];
 
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToMany(() => MovimientoEntity, (movimiento) => movimiento.sitio)
+  movimientos!: MovimientoEntity[];
 }

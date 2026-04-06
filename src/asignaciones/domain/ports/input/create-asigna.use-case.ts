@@ -1,9 +1,14 @@
 import { Asigna } from '../../entities/asigna.entity';
 
 export interface CreateAsignaCommand {
-    solicitudId: string;
-    inventarioId: string;
-    cantidad: number;
+    estadoFisico: string;
+    estadoEntrega: string;
+    fechaEnt: string;
+    fechaDevolucionEst?: string;
+    observaciones?: string;
+    productoId: number;
+    usuarioId: number;
+    fichaId?: number;
 }
 
 export interface CreateAsignaUseCase {

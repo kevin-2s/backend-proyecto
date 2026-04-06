@@ -14,12 +14,16 @@ export class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
     ) {}
 
     async findAll(page: number, limit: number): Promise<PaginatedResult<Usuario>> {
-        const [entities, total] = await this.repository.findAndCount({ skip: (page - 1) * limit, take: limit });
+        const [entities, total] = await this.repository.findAndCount({ 
+            skip: (page - 1) * limit, 
+            take: limit,
+            relations: ['rol'] 
+        });
         return { data: entities.map(UsuarioMapper.toDomain), total, page, limit };
     }
 
     async findById(id: string): Promise<Usuario | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) }, relations: ['rol'] });
         return entity ? UsuarioMapper.toDomain(entity) : null;
     }
 

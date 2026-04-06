@@ -10,13 +10,13 @@ export class AuthService implements LoginUseCase {
         private readonly tokenProvider: TokenProviderPort
     ) {}
 
-    async execute(email: string, password: string): Promise<AuthToken> {
-        const user = await this.authRepository.findUserByEmail(email);
+    async execute(correo: string, contrasena: string): Promise<AuthToken> {
+        const user = await this.authRepository.findUserByEmail(correo);
         if (!user) {
             throw new InvalidCredentialsException();
         }
 
-        const isPasswordValid = await this.passwordHash.compare(password, user.passwordHash);
+        const isPasswordValid = await this.passwordHash.compare(contrasena, user.passwordHash);
         if (!isPasswordValid) {
             throw new InvalidCredentialsException();
         }

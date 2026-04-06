@@ -1,24 +1,8 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateActaDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    movimientoId!: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    tipoActa!: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    urlPdf!: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    generadoPor!: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() urlPdf?: string;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() asignaId?: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() devolucionId?: number;
 }

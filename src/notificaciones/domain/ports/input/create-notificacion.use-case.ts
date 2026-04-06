@@ -1,9 +1,10 @@
 import { Notificacion } from '../../entities/notificacion.entity';
 
 export interface CreateNotificacionCommand {
-    usuarioId: string;
     mensaje: string;
-    leida: boolean;
+    leida?: boolean;
+    tipoEvento: string;
+    usuarioId: number;
 }
 
 export interface CreateNotificacionUseCase {

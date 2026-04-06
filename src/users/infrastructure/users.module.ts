@@ -15,4 +15,4 @@ import { UsuarioRepositoryAdapter } from './adapters/output/persistence/usuario.
     ],
     exports: ['UsuarioRepositoryPort']
 })
-export class usersModule {}
+export class UsersModule {}

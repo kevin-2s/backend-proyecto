@@ -18,7 +18,7 @@ export class FichaService implements FindFichaUseCase, CreateFichaUseCase {
     }
 
     async create(command: CreateFichaCommand): Promise<Ficha> {
-        const newEntity = new Ficha('', command.codigo, command.programa, command.estado, new Date(), new Date());
+        const newEntity = new Ficha(0, command.numeroFicha, command.programa);
         return this.repository.save(newEntity);
     }
 }

@@ -18,7 +18,7 @@ export class NecesidadService implements FindNecesidadUseCase, CreateNecesidadUs
     }
 
     async create(command: CreateNecesidadCommand): Promise<Necesidad> {
-        const newEntity = new Necesidad('', command.productoId, command.cantidadNecesaria, command.justificacion, command.estado, new Date(), new Date());
+        const newEntity = new Necesidad(0, command.cantidadN, command.fechaLimite ? new Date(command.fechaLimite) : new Date(), command.usuarioId, command.productoId, command.fichaId);
         return this.repository.save(newEntity);
     }
 }

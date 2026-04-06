@@ -16,7 +16,7 @@ export class AuthController {
     @ApiResponse({ status: 200, description: 'Inicio de sesión exitoso, devuelve los tokens JWT' })
     @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
     async login(@Body() loginDto: LoginDto) {
-        const result = await this.loginUseCase.execute(loginDto.email, loginDto.password);
+        const result = await this.loginUseCase.execute(loginDto.correo, loginDto.contrasena);
         return {
             statusCode: HttpStatus.OK,
             message: 'Login exitoso',

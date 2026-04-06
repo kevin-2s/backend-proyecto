@@ -18,7 +18,7 @@ export class ProductoService implements FindProductoUseCase, CreateProductoUseCa
     }
 
     async create(command: CreateProductoCommand): Promise<Producto> {
-        const newEntity = new Producto('', command.nombre, command.descripcion, command.categoriaId, command.stockMinimo, new Date(), new Date());
+        const newEntity = new Producto(0, command.nombre, command.descripcion, command.codigoUNSPSC, command.SKU, command.imagenUrl, command.categoriaId);
         return this.repository.save(newEntity);
     }
 }

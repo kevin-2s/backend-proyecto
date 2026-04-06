@@ -4,23 +4,26 @@ import { ProductoEntity } from '../entities/producto.typeorm.entity';
 export class ProductoMapper {
     static toDomain(entity: ProductoEntity): Producto {
         return new Producto(
-            entity.id,
+            Number(entity.id),
             entity.nombre,
             entity.descripcion,
-            entity.categoriaId,
-            entity.stockMinimo,
-            entity.createdAt,
-            entity.updatedAt
+            entity.codigoUNSPSC,
+            entity.SKU,
+            entity.imagenUrl,
+            entity.categoria ? Number(entity.categoria.id) : 0
         );
     }
-
     static toEntity(domain: Producto): ProductoEntity {
         const entity = new ProductoEntity();
-        if (domain.id) entity.id = domain.id;
-        entity.nombre = domain.nombre;
-        entity.descripcion = domain.descripcion;
-        entity.categoriaId = domain.categoriaId;
-        entity.stockMinimo = domain.stockMinimo;
+        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
+        entity.nombre = domain.nombre || '';
+        entity.descripcion = domain.descripcion || '';
+        entity.codigoUNSPSC = domain.codigoUNSPSC || '';
+        entity.SKU = domain.SKU || '';
+        entity.imagenUrl = domain.imagenUrl || '';
+        if (domain.categoriaId) {
+            entity.categoria = { id: domain.categoriaId } as any;
+        }
         return entity;
     }
 }

@@ -1,11 +1,11 @@
 import { Usuario } from '../../entities/usuario.entity';
 
 export interface CreateUsuarioCommand {
-    email: string;
-    passwordHash: string;
-    nombres: string;
-    apellidos: string;
-    rolId: string;
+    nombreCompleto: string;
+    correo: string;
+    contrasena: string;
+    estado?: boolean;
+    rolId: number;
 }
 
 export interface CreateUsuarioUseCase {

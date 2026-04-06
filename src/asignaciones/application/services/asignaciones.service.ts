@@ -18,7 +18,7 @@ export class AsignaService implements FindAsignaUseCase, CreateAsignaUseCase {
     }
 
     async create(command: CreateAsignaCommand): Promise<Asigna> {
-        const newEntity = new Asigna('', command.solicitudId, command.inventarioId, command.cantidad, new Date(), new Date());
+        const newEntity = new Asigna(0, command.estadoFisico, command.estadoEntrega, new Date(command.fechaEnt), command.fechaDevolucionEst ? new Date(command.fechaDevolucionEst) : new Date(), command.observaciones || '', command.productoId, command.usuarioId, command.fichaId || 0);
         return this.repository.save(newEntity);
     }
 }

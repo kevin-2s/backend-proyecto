@@ -15,4 +15,4 @@ import { ProductoRepositoryAdapter } from './adapters/output/persistence/product
     ],
     exports: ['ProductoRepositoryPort']
 })
-export class productosModule {}
+export class ProductosModule {}

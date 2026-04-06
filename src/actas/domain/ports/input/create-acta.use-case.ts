@@ -1,10 +1,9 @@
 import { Acta } from '../../entities/acta.entity';
 
 export interface CreateActaCommand {
-    movimientoId: string;
-    tipoActa: string;
-    urlPdf: string;
-    generadoPor: string;
+    urlPdf?: string;
+    asignaId?: number;
+    devolucionId?: number;
 }
 
 export interface CreateActaUseCase {

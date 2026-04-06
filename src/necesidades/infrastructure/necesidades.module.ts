@@ -15,4 +15,4 @@ import { NecesidadRepositoryAdapter } from './adapters/output/persistence/necesi
     ],
     exports: ['NecesidadRepositoryPort']
 })
-export class necesidadesModule {}
+export class NecesidadesModule {}

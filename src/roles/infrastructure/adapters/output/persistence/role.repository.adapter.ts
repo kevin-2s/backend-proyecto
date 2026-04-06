@@ -28,7 +28,7 @@ export class RoleRepositoryAdapter implements RoleRepositoryPort {
     }
 
     async findById(id: string): Promise<Role | null> {
-        const entity = await this.roleRepository.findOne({ where: { id } });
+        const entity = await this.roleRepository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? RoleMapper.toDomain(entity) : null;
     }
 

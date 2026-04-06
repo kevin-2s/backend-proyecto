@@ -1,19 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
 
 @Entity('roles')
 export class RoleEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
 
-    @Column({ unique: true })
-    name!: string;
+  @Column({ name: 'nombre_rol', type: 'varchar' })
+  nombreRol!: string;
 
-    @Column()
-    description!: string;
-
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
+  @OneToMany(() => UsuarioEntity, (usuario) => usuario.rol)
+  usuarios!: UsuarioEntity[];
 }

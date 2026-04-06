@@ -1,9 +1,9 @@
 import { Sitio } from '../../entities/sitio.entity';
 
 export interface CreateSitioCommand {
-    nombre: string;
-    tipoSitio: string;
-    capacidad: number;
+    nombreSitio: string;
+    tipo: import('../../../../shared/domain/enums').TipoSitio;
+    responsableId: number;
 }
 
 export interface CreateSitioUseCase {

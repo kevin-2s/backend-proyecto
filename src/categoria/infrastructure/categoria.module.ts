@@ -15,4 +15,4 @@ import { CategoriaRepositoryAdapter } from './adapters/output/persistence/catego
     ],
     exports: ['CategoriaRepositoryPort']
 })
-export class categoriaModule {}
+export class CategoriaModule {}

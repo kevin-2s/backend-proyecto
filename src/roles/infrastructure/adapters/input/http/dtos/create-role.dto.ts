@@ -6,11 +6,5 @@ export class CreateRoleDto {
     @IsString()
     @IsNotEmpty()
     @MaxLength(50)
-    name!: string;
-
-    @ApiProperty({ example: 'Acceso total', description: 'Descripción de permisos del rol' })
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(255)
-    description!: string;
+    nombreRol!: string;
 }

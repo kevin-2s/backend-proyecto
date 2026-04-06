@@ -19,7 +19,7 @@ export class MovimientoRepositoryAdapter implements MovimientoRepositoryPort {
     }
 
     async findById(id: string): Promise<Movimiento | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? MovimientoMapper.toDomain(entity) : null;
     }
 

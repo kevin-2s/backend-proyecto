@@ -1,19 +1,24 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInventarioDto {
     @ApiProperty()
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    productoId!: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    sitioId!: string;
+    cantidadActual!: number;
 
     @ApiProperty()
     @IsNumber()
     @IsNotEmpty()
-    cantidad!: number;
+    stockMinimo!: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    productoId!: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    sitioId!: number;
 }

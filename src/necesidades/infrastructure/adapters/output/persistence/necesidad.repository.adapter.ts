@@ -19,7 +19,7 @@ export class NecesidadRepositoryAdapter implements NecesidadRepositoryPort {
     }
 
     async findById(id: string): Promise<Necesidad | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? NecesidadMapper.toDomain(entity) : null;
     }
 

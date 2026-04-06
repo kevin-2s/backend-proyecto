@@ -20,7 +20,7 @@ export class RolesService implements FindRolesUseCase, CreateRoleUseCase {
     }
 
     async create(command: CreateRoleCommand): Promise<Role> {
-        const newRole = new Role('', command.name, command.description, new Date(), new Date());
+        const newRole = new Role(0, command.nombreRol);
         return this.roleRepository.save(newRole);
     }
 }

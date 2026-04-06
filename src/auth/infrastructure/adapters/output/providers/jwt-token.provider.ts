@@ -1,4 +1,4 @@
-import { TokenProviderPort } from '../../../domain/ports/output/auth.repository.port';
+import { TokenProviderPort } from '../../../../domain/ports/output/auth.repository.port';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 

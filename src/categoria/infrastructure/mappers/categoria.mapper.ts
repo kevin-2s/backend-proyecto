@@ -4,19 +4,14 @@ import { CategoriaEntity } from '../entities/categoria.typeorm.entity';
 export class CategoriaMapper {
     static toDomain(entity: CategoriaEntity): Categoria {
         return new Categoria(
-            entity.id,
-            entity.nombre,
-            entity.descripcion,
-            entity.createdAt,
-            entity.updatedAt
+            Number(entity.id),
+            entity.nombreCat
         );
     }
-
-    static toEntity(domain: Categoria): CategoriaEntity {
+    static toEntity(domain: any): CategoriaEntity {
         const entity = new CategoriaEntity();
-        if (domain.id) entity.id = domain.id;
-        entity.nombre = domain.nombre;
-        entity.descripcion = domain.descripcion;
+        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
+        entity.nombreCat = domain.nombreCat || '';
         return entity;
     }
 }

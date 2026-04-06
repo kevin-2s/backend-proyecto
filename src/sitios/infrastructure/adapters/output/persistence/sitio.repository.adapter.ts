@@ -19,7 +19,7 @@ export class SitioRepositoryAdapter implements SitioRepositoryPort {
     }
 
     async findById(id: string): Promise<Sitio | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? SitioMapper.toDomain(entity) : null;
     }
 

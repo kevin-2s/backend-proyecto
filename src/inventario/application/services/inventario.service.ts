@@ -18,7 +18,7 @@ export class InventarioService implements FindInventarioUseCase, CreateInventari
     }
 
     async create(command: CreateInventarioCommand): Promise<Inventario> {
-        const newEntity = new Inventario('', command.productoId, command.sitioId, command.cantidad, new Date(), new Date());
+        const newEntity = new Inventario(0, command.cantidadActual, command.stockMinimo || 0, command.productoId, command.sitioId);
         // TODO: Integración con BullMQ para alerta de bajo stock
         return this.repository.save(newEntity);
     }

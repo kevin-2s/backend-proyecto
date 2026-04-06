@@ -1,10 +1,13 @@
 export class Asigna {
-    constructor(
-        public readonly id: string,
-        public readonly solicitudId: string,
-        public readonly inventarioId: string,
-        public readonly cantidad: number,
-        public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+  constructor(
+    public readonly id: number,
+    public readonly estadoFisico: string,
+    public readonly estadoEntrega: string,
+    public readonly fechaEnt: Date,
+    public readonly fechaDevolucionEst: Date,
+    public readonly observaciones: string,
+    public readonly productoId: number,
+    public readonly usuarioId: number,
+    public readonly fichaId: number,
+  ) {}
 }

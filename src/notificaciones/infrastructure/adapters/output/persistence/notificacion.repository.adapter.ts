@@ -19,7 +19,7 @@ export class NotificacionRepositoryAdapter implements NotificacionRepositoryPort
     }
 
     async findById(id: string): Promise<Notificacion | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? NotificacionMapper.toDomain(entity) : null;
     }
 

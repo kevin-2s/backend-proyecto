@@ -1,9 +1,12 @@
 import { Devolucion } from '../../entities/devolucion.entity';
 
 export interface CreateDevolucionCommand {
-    asignacionId: string;
-    cantidadDevuelta: number;
     estadoFisico: string;
+    fechaReal: string;
+    observaciones?: string;
+    asignaId: number;
+    productoId: number;
+    movimientoId: number;
 }
 
 export interface CreateDevolucionUseCase {

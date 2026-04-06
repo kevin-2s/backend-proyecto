@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChequeoEntity } from './entities/chequeo.typeorm.entity';
+import { ItemChequeoEntity } from './entities/item-chequeo.typeorm.entity';
 import { ChequeoController } from './adapters/input/http/chequeo.controller';
 import { ChequeoService } from '../application/services/chequeo.service';
 import { ChequeoRepositoryAdapter } from './adapters/output/persistence/chequeo.repository.adapter';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ChequeoEntity])],
+    imports: [TypeOrmModule.forFeature([ChequeoEntity, ItemChequeoEntity])],
     controllers: [ChequeoController],
     providers: [
         { provide: 'ChequeoRepositoryPort', useClass: ChequeoRepositoryAdapter },
@@ -15,4 +16,4 @@ import { ChequeoRepositoryAdapter } from './adapters/output/persistence/chequeo.
     ],
     exports: ['ChequeoRepositoryPort']
 })
-export class chequeoModule {}
+export class ChequeoModule {}

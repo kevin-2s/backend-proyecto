@@ -3,20 +3,15 @@ import { RoleEntity } from '../entities/role.typeorm.entity';
 
 export class RoleMapper {
     static toDomain(entity: RoleEntity): Role {
-        return new Role(
-            entity.id,
-            entity.name,
-            entity.description,
-            entity.createdAt,
-            entity.updatedAt
-        );
+        return {
+            id: Number(entity.id),
+            nombreRol: entity.nombreRol
+        } as unknown as Role;
     }
-
-    static toEntity(domain: Role): RoleEntity {
+    static toEntity(domain: any): RoleEntity {
         const entity = new RoleEntity();
-        if (domain.id) entity.id = domain.id;
-        entity.name = domain.name;
-        entity.description = domain.description;
+        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
+        entity.nombreRol = domain.nombreRol || '';
         return entity;
     }
 }

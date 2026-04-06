@@ -17,8 +17,17 @@ export class SolicitudService implements FindSolicitudUseCase, CreateSolicitudUs
         return entity;
     }
 
-    async create(command: CreateSolicitudCommand): Promise<Solicitud> {
-        const newEntity = new Solicitud('', command.usuarioId, command.estado, new Date(), new Date());
-        return this.repository.save(newEntity);
-    }
+  async create(command: CreateSolicitudCommand): Promise<Solicitud> {
+    const newEntity = new Solicitud(
+      0,
+      new Date(),
+      null,
+      'PENDIENTE',
+      command.justificacion,
+      '',
+      command.usuarioId,
+      null
+    );
+    return this.repository.save(newEntity);
+  }
 }

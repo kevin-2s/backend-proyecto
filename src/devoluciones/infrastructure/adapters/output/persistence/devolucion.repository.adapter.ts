@@ -19,7 +19,7 @@ export class DevolucionRepositoryAdapter implements DevolucionRepositoryPort {
     }
 
     async findById(id: string): Promise<Devolucion | null> {
-        const entity = await this.repository.findOne({ where: { id: id as any } });
+        const entity = await this.repository.findOne({ where: { id: parseInt(id, 10) } });
         return entity ? DevolucionMapper.toDomain(entity) : null;
     }
 

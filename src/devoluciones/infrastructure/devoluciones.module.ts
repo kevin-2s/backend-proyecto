@@ -15,4 +15,4 @@ import { DevolucionRepositoryAdapter } from './adapters/output/persistence/devol
     ],
     exports: ['DevolucionRepositoryPort']
 })
-export class devolucionesModule {}
+export class DevolucionesModule {}

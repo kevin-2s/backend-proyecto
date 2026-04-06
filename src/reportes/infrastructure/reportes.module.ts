@@ -15,4 +15,4 @@ import { ReporteRepositoryAdapter } from './adapters/output/persistence/reporte.
     ],
     exports: ['ReporteRepositoryPort']
 })
-export class reportesModule {}
+export class ReportesModule {}

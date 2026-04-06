@@ -3,9 +3,9 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
 import { CreateRoleDto } from './dtos/create-role.dto';
 import { FindRolesUseCase } from '../../../../domain/ports/input/find-roles.use-case';
 import { CreateRoleUseCase } from '../../../../domain/ports/input/create-role.use-case';
-import { JwtAuthGuard } from '../../../../auth/infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../../auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../../auth/infrastructure/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../../../auth/infrastructure/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
+import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @ApiTags('roles')
 @ApiBearerAuth()

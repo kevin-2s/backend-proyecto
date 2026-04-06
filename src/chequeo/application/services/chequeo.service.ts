@@ -18,7 +18,7 @@ export class ChequeoService implements FindChequeoUseCase, CreateChequeoUseCase 
     }
 
     async create(command: CreateChequeoCommand): Promise<Chequeo> {
-        const newEntity = new Chequeo('', command.sitioId, command.responsableId, new Date(), new Date());
+        const newEntity = new Chequeo(0, new Date(command.fechaChequeo), command.confirmado, command.asignaId || 0, command.devolucionId || 0, command.usuarioId);
         return this.repository.save(newEntity);
     }
 }
