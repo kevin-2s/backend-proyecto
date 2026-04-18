@@ -1,26 +1,24 @@
-import { Sitio } from '../../domain/entities/sitio.entity';
-import { SitioEntity } from '../entities/sitio.typeorm.entity';
-import { TipoSitio } from '../../../shared/domain/enums';
-import { UsuarioEntity } from '../../../users/infrastructure/entities/usuario.typeorm.entity';
+import { Sitio } from '../../domain/entities/sitio.domain.entity';
+import { SitioOrmEntity } from '../entities/sitio.orm-entity';
+import { UsuarioMapper } from '../../../usuarios/infrastructure/mappers/usuario.mapper';
 
 export class SitioMapper {
-    static toDomain(entity: SitioEntity): Sitio {
-        return new Sitio(
-            Number(entity.id),
-            entity.nombreSitio,
-            String(entity.tipo),
-            entity.responsable ? Number(entity.responsable.id) : 0
-        );
-    }
-    static toEntity(domain: any): SitioEntity {
-        const entity = new SitioEntity();
-        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-        entity.nombreSitio = domain.nombreSitio || '';
-        entity.tipo = domain.tipo as TipoSitio || TipoSitio.BODEGA;
-        if (domain.responsableId && !isNaN(Number(domain.responsableId))) {
-            entity.responsable = new UsuarioEntity();
-            entity.responsable.id = Number(domain.responsableId);
-        }
-        return entity;
-    }
+  static toDomain(ormEntity: SitioOrmEntity): Sitio {
+    return new Sitio(
+      ormEntity.id_sitio,
+      ormEntity.nombre,
+      ormEntity.tipo,
+      ormEntity.id_responsable,
+      ormEntity.responsable ? UsuarioMapper.toDomain(ormEntity.responsable) : undefined,
+    );
+  }
+
+  static toOrm(domainEntity: Partial<Sitio>): SitioOrmEntity {
+    const ormEntity = new SitioOrmEntity();
+    if (domainEntity.id_sitio !== undefined) ormEntity.id_sitio = domainEntity.id_sitio;
+    if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;
+    if (domainEntity.tipo !== undefined) ormEntity.tipo = domainEntity.tipo;
+    if (domainEntity.id_responsable !== undefined) ormEntity.id_responsable = domainEntity.id_responsable ?? null as any;
+    return ormEntity;
+  }
 }

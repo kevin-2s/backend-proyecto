@@ -1,34 +1,26 @@
-import { Inventario } from '../../domain/entities/inventario.entity';
-import { InventarioEntity } from '../entities/inventario.typeorm.entity';
-import { ProductoEntity } from '../../../productos/infrastructure/entities/producto.typeorm.entity';
-import { SitioEntity } from '../../../sitios/infrastructure/entities/sitio.typeorm.entity';
+import { Inventario } from '../../domain/entities/inventario.domain.entity';
+import { InventarioOrmEntity } from '../entities/inventario.orm-entity';
+import { ItemMapper } from '../../../items/infrastructure/mappers/item.mapper';
+import { SitioMapper } from '../../../sitios/infrastructure/mappers/sitio.mapper';
 
 export class InventarioMapper {
-    static toDomain(entity: InventarioEntity): Inventario {
-        return new Inventario(
-            Number(entity.id),
-            entity.cantidadActual,
-            entity.stockMinimo,
-            entity.producto ? Number(entity.producto.id) : 0,
-            entity.sitio ? Number(entity.sitio.id) : 0
-        );
-    }
-    static toEntity(domain: any): InventarioEntity {
-        const entity = new InventarioEntity();
-        if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-        entity.cantidadActual = domain.cantidadActual || 0;
-        entity.stockMinimo = domain.stockMinimo || 0;
+  static toDomain(ormEntity: InventarioOrmEntity): Inventario {
+    return new Inventario(
+      ormEntity.id_inventario,
+      ormEntity.estado,
+      ormEntity.id_item,
+      ormEntity.id_sitio,
+      ormEntity.item ? ItemMapper.toDomain(ormEntity.item) : undefined,
+      ormEntity.sitio ? SitioMapper.toDomain(ormEntity.sitio) : undefined,
+    );
+  }
 
-        if (domain.productoId && !isNaN(Number(domain.productoId))) {
-            entity.producto = new ProductoEntity();
-            entity.producto.id = Number(domain.productoId);
-        }
-        
-        if (domain.sitioId && !isNaN(Number(domain.sitioId))) {
-            entity.sitio = new SitioEntity();
-            entity.sitio.id = Number(domain.sitioId);
-        }
-
-        return entity;
-    }
+  static toOrm(domainEntity: Partial<Inventario>): InventarioOrmEntity {
+    const ormEntity = new InventarioOrmEntity();
+    if (domainEntity.id_inventario !== undefined) ormEntity.id_inventario = domainEntity.id_inventario;
+    if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;
+    if (domainEntity.id_item !== undefined) ormEntity.id_item = domainEntity.id_item;
+    if (domainEntity.id_sitio !== undefined) ormEntity.id_sitio = domainEntity.id_sitio;
+    return ormEntity;
+  }
 }

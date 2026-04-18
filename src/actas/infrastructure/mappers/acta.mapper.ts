@@ -1,24 +1,28 @@
-import { Acta } from '../../domain/entities/acta.entity';
-import { ActaEntity } from '../entities/acta.typeorm.entity';
+import { Acta } from '../../domain/entities/acta.domain.entity';
+import { ActaOrmEntity } from '../entities/acta.orm-entity';
+import { SolicitudMapper } from '../../../solicitudes/infrastructure/mappers/solicitud.mapper';
+import { DevolucionMapper } from '../../../devoluciones/infrastructure/mappers/devolucion.mapper';
 
 export class ActaMapper {
-  static toDomain(entity: ActaEntity): Acta {
+  static toDomain(ormEntity: ActaOrmEntity): Acta {
     return new Acta(
-      Number(entity.id),
-      entity.fechaGen || new Date(),
-      entity.urlPdf || '',
-      entity.asigna ? Number(entity.asigna.id) : (entity as any).asignaId || null,
-      entity.devolucion ? Number(entity.devolucion.id) : (entity as any).devolucionId || null,
+      ormEntity.id_acta,
+      ormEntity.tipo,
+      ormEntity.archivo_url,
+      ormEntity.id_solicitud,
+      ormEntity.id_devolucion,
+      ormEntity.solicitud ? SolicitudMapper.toDomain(ormEntity.solicitud) : undefined,
+      ormEntity.devolucion ? DevolucionMapper.toDomain(ormEntity.devolucion) : undefined,
     );
   }
 
-  static toEntity(domain: Acta): ActaEntity {
-    const entity = new ActaEntity();
-    if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-    entity.fechaGen = domain.fechaGen || new Date();
-    entity.urlPdf = domain.urlPdf || '';
-    (entity as any).asignaId = domain.asignaId || null;
-    (entity as any).devolucionId = domain.devolucionId || null;
-    return entity;
+  static toOrm(domainEntity: Partial<Acta>): ActaOrmEntity {
+    const ormEntity = new ActaOrmEntity();
+    if (domainEntity.id_acta !== undefined) ormEntity.id_acta = domainEntity.id_acta;
+    if (domainEntity.tipo !== undefined) ormEntity.tipo = domainEntity.tipo;
+    if (domainEntity.archivo_url !== undefined) ormEntity.archivo_url = domainEntity.archivo_url;
+    if (domainEntity.id_solicitud !== undefined) ormEntity.id_solicitud = domainEntity.id_solicitud ?? null as any;
+    if (domainEntity.id_devolucion !== undefined) ormEntity.id_devolucion = domainEntity.id_devolucion ?? null as any;
+    return ormEntity;
   }
 }

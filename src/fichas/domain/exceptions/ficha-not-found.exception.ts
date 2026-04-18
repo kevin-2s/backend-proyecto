@@ -1,6 +1,6 @@
 export class FichaNotFoundException extends Error {
-    constructor(id: string) {
-        super("Ficha con identificador " + id + " no encontrado");
-        this.name = "FichaNotFoundException";
-    }
+  constructor(id: number) {
+    super(`La ficha con id ${id} no fue encontrada`);
+    this.name = 'FichaNotFoundException';
+  }
 }

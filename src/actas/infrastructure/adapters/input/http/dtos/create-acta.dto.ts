@@ -1,8 +1,20 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsString, IsNotEmpty, IsOptional, IsInt } from 'class-validator';
+import { TipoActa } from '../../../../../domain/entities/acta.domain.entity';
 
 export class CreateActaDto {
-  @ApiPropertyOptional() @IsString() @IsOptional() urlPdf?: string;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() asignaId?: number;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() devolucionId?: number;
+  @IsEnum(TipoActa)
+  @IsNotEmpty()
+  tipo: TipoActa;
+
+  @IsString()
+  @IsNotEmpty()
+  archivo_url: string;
+
+  @IsInt()
+  @IsOptional()
+  id_solicitud?: number;
+
+  @IsInt()
+  @IsOptional()
+  id_devolucion?: number;
 }

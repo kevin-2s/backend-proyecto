@@ -1,14 +1,15 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsOptional, IsInt } from 'class-validator';
 
 export class CreateFichaDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    numeroFicha!: string;
+  @IsString()
+  @IsNotEmpty()
+  numero_ficha: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    programa!: string;
+  @IsString()
+  @IsNotEmpty()
+  programa: string;
+
+  @IsInt()
+  @IsOptional()
+  id_responsable?: number;
 }

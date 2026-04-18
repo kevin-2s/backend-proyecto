@@ -1,24 +1,29 @@
-import { Movimiento } from '../../domain/entities/movimiento.entity';
-import { FindMovimientoUseCase } from '../../domain/ports/input/find-movimiento.use-case';
-import { CreateMovimientoUseCase, CreateMovimientoCommand } from '../../domain/ports/input/create-movimiento.use-case';
-import { MovimientoRepositoryPort, PaginatedResult } from '../../domain/ports/output/movimiento.repository.port';
+import { Injectable, Inject } from '@nestjs/common';
+import { IMovimientosUseCases } from '../../domain/ports/input/movimientos-use-cases.interface';
+import { IMovimientosRepository, MOVIMIENTOS_REPOSITORY } from '../../domain/ports/output/movimientos-repository.interface';
+import { Movimiento } from '../../domain/entities/movimiento.domain.entity';
 import { MovimientoNotFoundException } from '../../domain/exceptions/movimiento-not-found.exception';
 
-export class MovimientoService implements FindMovimientoUseCase, CreateMovimientoUseCase {
-    constructor(private readonly repository: MovimientoRepositoryPort) {}
+@Injectable()
+export class MovimientosService implements IMovimientosUseCases {
+  constructor(
+    @Inject(MOVIMIENTOS_REPOSITORY)
+    private readonly movimientosRepository: IMovimientosRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Movimiento>> {
-        return this.repository.findAll(page, limit);
-    }
+  async obtenerMovimientos(): Promise<Movimiento[]> {
+    return this.movimientosRepository.findAll();
+  }
 
-    async findById(id: string): Promise<Movimiento> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new MovimientoNotFoundException(id);
-        return entity;
+  async obtenerMovimientoPorId(id: number): Promise<Movimiento> {
+    const movimiento = await this.movimientosRepository.findById(id);
+    if (!movimiento) {
+      throw new MovimientoNotFoundException(id);
     }
+    return movimiento;
+  }
 
-    async create(command: CreateMovimientoCommand): Promise<Movimiento> {
-        const newEntity = new Movimiento(0, String(command.tipo), command.cantidad, new Date(), command.observaciones || '', command.productoId, command.usuarioId, command.sitioId);
-        return this.repository.save(newEntity);
-    }
+  async crearMovimiento(data: { fecha: Date; observacion: string | null; id_item: number; id_tipo_movimiento: number; id_usuario: number }): Promise<Movimiento> {
+    return this.movimientosRepository.create(data);
+  }
 }

@@ -1,38 +1,65 @@
-import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { NOTIFICACIONES_USE_CASES, INotificacionesUseCases } from '../../../../domain/ports/input/notificaciones-use-cases.interface';
 import { CreateNotificacionDto } from './dtos/create-notificacion.dto';
-import { FindNotificacionUseCase } from '../../../../domain/ports/input/find-notificacion.use-case';
-import { CreateNotificacionUseCase } from '../../../../domain/ports/input/create-notificacion.use-case';
 
-@ApiTags('notificaciones')
-@ApiBearerAuth()
 @Controller('notificaciones')
-export class NotificacionController {
-    constructor(
-        @Inject('FindNotificacionUseCase') private readonly findUseCase: FindNotificacionUseCase,
-        @Inject('CreateNotificacionUseCase') private readonly createUseCase: CreateNotificacionUseCase
-    ) {}
+export class NotificacionesController {
+  constructor(
+    @Inject(NOTIFICACIONES_USE_CASES)
+    private readonly notificacionesUseCases: INotificacionesUseCases,
+  ) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Crear notificacion' })
-    async create(@Body() dto: CreateNotificacionDto) {
-        const data = await this.createUseCase.create(dto);
-        return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
+  @Get()
+  async getNotificaciones(@Query('id_usuario', ParseIntPipe) id_usuario: number) {
+    try {
+      const notificaciones = await this.notificacionesUseCases.obtenerNotificacionesUsuario(id_usuario);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notificaciones obtenidas exitosamente',
+        data: notificaciones,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener las notificaciones',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar notificaciones paginado' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-        const paginatedData = await this.findUseCase.findAll(parseInt(page, 10), parseInt(limit, 10));
-        return { statusCode: HttpStatus.OK, message: 'Listado', data: paginatedData.data, total: paginatedData.total, page: paginatedData.page, limit: paginatedData.limit };
+  @Post()
+  async createNotificacion(@Body() createDto: CreateNotificacionDto) {
+    try {
+      const notificacion = await this.notificacionesUseCases.crearNotificacion(createDto);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Notificación creada exitosamente',
+        data: notificacion,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al crear la notificación',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener por ID' })
-    async findById(@Param('id') id: string) {
-        const data = await this.findUseCase.findById(id);
-        return { statusCode: HttpStatus.OK, message: 'Encontrado', data };
+  @Patch(':id/marcar-leida')
+  async marcarLeida(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const notificacion = await this.notificacionesUseCases.marcarNotificacionComoLeida(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notificación marcada como leída',
+        data: notificacion,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al marcar la notificación',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
 }

@@ -1,35 +1,23 @@
-import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { TipoMovimiento } from '../../../../../../shared/domain/enums';
+import { IsDateString, IsString, IsOptional, IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateMovimientoDto {
-    @ApiProperty({ enum: TipoMovimiento })
-    @IsEnum(TipoMovimiento)
-    @IsNotEmpty()
-    tipo!: TipoMovimiento;
+  @IsDateString()
+  @IsNotEmpty()
+  fecha: Date;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    cantidad!: number;
+  @IsString()
+  @IsOptional()
+  observacion?: string;
 
-    @ApiPropertyOptional()
-    @IsString()
-    @IsOptional()
-    observaciones?: string;
+  @IsInt()
+  @IsNotEmpty()
+  id_item: number;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    productoId!: number;
+  @IsInt()
+  @IsNotEmpty()
+  id_tipo_movimiento: number;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    usuarioId!: number;
-
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    sitioId!: number;
+  @IsInt()
+  @IsNotEmpty()
+  id_usuario: number;
 }

@@ -1,26 +1,29 @@
-import { Role } from '../../domain/entities/role.entity';
-import { FindRolesUseCase } from '../../domain/ports/input/find-roles.use-case';
-import { CreateRoleUseCase, CreateRoleCommand } from '../../domain/ports/input/create-role.use-case';
-import { RoleRepositoryPort, PaginatedResult } from '../../domain/ports/output/role.repository.port';
-import { RoleNotFoundException } from '../../domain/exceptions/role-not-found.exception';
+import { Injectable, Inject } from '@nestjs/common';
+import { IRolesUseCases } from '../../domain/ports/input/roles-use-cases.interface';
+import { IRolesRepository, ROLES_REPOSITORY } from '../../domain/ports/output/roles-repository.interface';
+import { Rol } from '../../domain/entities/rol.domain.entity';
+import { RolNotFoundException } from '../../domain/exceptions/rol-not-found.exception';
 
-export class RolesService implements FindRolesUseCase, CreateRoleUseCase {
-    constructor(private readonly roleRepository: RoleRepositoryPort) {}
+@Injectable()
+export class RolesService implements IRolesUseCases {
+  constructor(
+    @Inject(ROLES_REPOSITORY)
+    private readonly rolesRepository: IRolesRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Role>> {
-        return this.roleRepository.findAll(page, limit);
+  async obtenerRoles(): Promise<Rol[]> {
+    return this.rolesRepository.findAll();
+  }
+
+  async obtenerRolPorId(id: number): Promise<Rol> {
+    const rol = await this.rolesRepository.findById(id);
+    if (!rol) {
+      throw new RolNotFoundException(id);
     }
+    return rol;
+  }
 
-    async findById(id: string): Promise<Role> {
-        const role = await this.roleRepository.findById(id);
-        if (!role) {
-            throw new RoleNotFoundException(id);
-        }
-        return role;
-    }
-
-    async create(command: CreateRoleCommand): Promise<Role> {
-        const newRole = new Role(0, command.nombreRol);
-        return this.roleRepository.save(newRole);
-    }
+  async crearRol(nombre: string): Promise<Rol> {
+    return this.rolesRepository.create({ nombre });
+  }
 }

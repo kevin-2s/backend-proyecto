@@ -1,9 +1,15 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsInt } from 'class-validator';
 
 export class CreateNotificacionDto {
-  @ApiProperty() @IsString() @IsNotEmpty() mensaje: string;
-  @ApiPropertyOptional() @IsBoolean() @IsOptional() leida?: boolean;
-  @ApiProperty() @IsString() @IsNotEmpty() tipoEvento: string;
-  @ApiProperty() @IsNumber() @IsNotEmpty() usuarioId: number;
+  @IsString()
+  @IsNotEmpty()
+  tipo: string;
+
+  @IsString()
+  @IsNotEmpty()
+  mensaje: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  id_usuario: number;
 }

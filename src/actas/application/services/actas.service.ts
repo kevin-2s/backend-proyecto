@@ -1,25 +1,34 @@
-import { Acta } from '../../domain/entities/acta.entity';
-import { FindActaUseCase } from '../../domain/ports/input/find-acta.use-case';
-import { CreateActaUseCase, CreateActaCommand } from '../../domain/ports/input/create-acta.use-case';
-import { ActaRepositoryPort, PaginatedResult } from '../../domain/ports/output/acta.repository.port';
+import { Injectable, Inject } from '@nestjs/common';
+import { IActasUseCases } from '../../domain/ports/input/actas-use-cases.interface';
+import { IActasRepository, ACTAS_REPOSITORY } from '../../domain/ports/output/actas-repository.interface';
+import { Acta, TipoActa } from '../../domain/entities/acta.domain.entity';
 import { ActaNotFoundException } from '../../domain/exceptions/acta-not-found.exception';
 
-export class ActaService implements FindActaUseCase, CreateActaUseCase {
-    constructor(private readonly repository: ActaRepositoryPort) {}
+@Injectable()
+export class ActasService implements IActasUseCases {
+  constructor(
+    @Inject(ACTAS_REPOSITORY)
+    private readonly actasRepository: IActasRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Acta>> {
-        return this.repository.findAll(page, limit);
-    }
+  async obtenerActas(): Promise<Acta[]> {
+    return this.actasRepository.findAll();
+  }
 
-    async findById(id: string): Promise<Acta> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new ActaNotFoundException(id);
-        return entity;
+  async obtenerActaPorId(id: number): Promise<Acta> {
+    const acta = await this.actasRepository.findById(id);
+    if (!acta) {
+      throw new ActaNotFoundException(id);
     }
+    return acta;
+  }
 
-    async create(command: CreateActaCommand): Promise<Acta> {
-        const newEntity = new Acta(0, new Date(), command.urlPdf || '', command.asignaId || 0, command.devolucionId || 0);
-        // TODO: Generación de Acta PDF via PDFKit
-        return this.repository.save(newEntity);
-    }
+  async crearActa(data: {
+    tipo: TipoActa;
+    archivo_url: string;
+    id_solicitud?: number | null;
+    id_devolucion?: number | null;
+  }): Promise<Acta> {
+    return this.actasRepository.create(data);
+  }
 }

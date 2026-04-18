@@ -1,6 +1,6 @@
 export class SitioNotFoundException extends Error {
-    constructor(id: string) {
-        super("Sitio con identificador " + id + " no encontrado");
-        this.name = "SitioNotFoundException";
-    }
+  constructor(id: number) {
+    super(`El sitio con id ${id} no fue encontrado`);
+    this.name = 'SitioNotFoundException';
+  }
 }

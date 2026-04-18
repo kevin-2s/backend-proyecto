@@ -1,38 +1,73 @@
-import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { INVENTARIO_USE_CASES, IInventarioUseCases } from '../../../../domain/ports/input/inventario-use-cases.interface';
 import { CreateInventarioDto } from './dtos/create-inventario.dto';
-import { FindInventarioUseCase } from '../../../../domain/ports/input/find-inventario.use-case';
-import { CreateInventarioUseCase } from '../../../../domain/ports/input/create-inventario.use-case';
+import { InventarioNotFoundException } from '../../../../domain/exceptions/inventario-not-found.exception';
 
-@ApiTags('inventario')
-@ApiBearerAuth()
 @Controller('inventario')
 export class InventarioController {
-    constructor(
-        @Inject('FindInventarioUseCase') private readonly findUseCase: FindInventarioUseCase,
-        @Inject('CreateInventarioUseCase') private readonly createUseCase: CreateInventarioUseCase
-    ) {}
+  constructor(
+    @Inject(INVENTARIO_USE_CASES)
+    private readonly inventarioUseCases: IInventarioUseCases,
+  ) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Crear inventario' })
-    async create(@Body() dto: CreateInventarioDto) {
-        const data = await this.createUseCase.create(dto);
-        return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
+  @Get()
+  async getInventarios() {
+    try {
+      const inventarios = await this.inventarioUseCases.obtenerInventarios();
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Inventario obtenido exitosamente',
+        data: inventarios,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener el inventario',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar inventario paginado' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-        const paginatedData = await this.findUseCase.findAll(parseInt(page, 10), parseInt(limit, 10));
-        return { statusCode: HttpStatus.OK, message: 'Listado', data: paginatedData.data, total: paginatedData.total, page: paginatedData.page, limit: paginatedData.limit };
+  @Get(':id')
+  async getInventario(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const inventario = await this.inventarioUseCases.obtenerInventarioPorId(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Inventario obtenido exitosamente',
+        data: inventario,
+      };
+    } catch (error) {
+      if (error instanceof InventarioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener el inventario',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener por ID' })
-    async findById(@Param('id') id: string) {
-        const data = await this.findUseCase.findById(id);
-        return { statusCode: HttpStatus.OK, message: 'Encontrado', data };
+  @Post()
+  async createInventario(@Body() createInventarioDto: CreateInventarioDto) {
+    try {
+      const inventario = await this.inventarioUseCases.crearInventario(createInventarioDto);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Inventario creado exitosamente',
+        data: inventario,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al crear el inventario',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
 }

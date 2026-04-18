@@ -1,20 +1,16 @@
-import { IsNotEmpty, IsString, IsNumber, IsEnum } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { TipoSitio } from '../../../../../../shared/domain/enums';
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { TipoSitio } from '../../../../../domain/entities/sitio.domain.entity';
 
 export class CreateSitioDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    nombreSitio!: string;
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
 
-    @ApiProperty({ enum: TipoSitio })
-    @IsEnum(TipoSitio)
-    @IsNotEmpty()
-    tipo!: TipoSitio;
+  @IsEnum(TipoSitio)
+  @IsNotEmpty()
+  tipo: TipoSitio;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    responsableId!: number;
+  @IsInt()
+  @IsOptional()
+  id_responsable?: number;
 }

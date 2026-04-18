@@ -1,29 +1,26 @@
-import { Devolucion } from '../../domain/entities/devolucion.entity';
-import { DevolucionEntity } from '../entities/devolucion.typeorm.entity';
-import { EstadoFisico } from '../../../shared/domain/enums';
+import { Devolucion } from '../../domain/entities/devolucion.domain.entity';
+import { DevolucionOrmEntity } from '../entities/devolucion.orm-entity';
+import { SolicitudMapper } from '../../../solicitudes/infrastructure/mappers/solicitud.mapper';
+import { UsuarioMapper } from '../../../usuarios/infrastructure/mappers/usuario.mapper';
 
 export class DevolucionMapper {
-  static toDomain(entity: DevolucionEntity): Devolucion {
+  static toDomain(ormEntity: DevolucionOrmEntity): Devolucion {
     return new Devolucion(
-      Number(entity.id),
-      String(entity.estadoFisico || 'BUENO'),
-      entity.fechaReal || new Date(),
-      entity.observaciones || '',
-      entity.asigna ? Number(entity.asigna.id) : (entity as any).asignaId || 0,
-      entity.producto ? Number(entity.producto.id) : (entity as any).productoId || 0,
-      entity.movimiento ? Number(entity.movimiento.id) : (entity as any).movimientoId || 0,
+      ormEntity.id_devolucion,
+      ormEntity.fecha,
+      ormEntity.id_solicitud,
+      ormEntity.id_usuario_recibe,
+      ormEntity.solicitud ? SolicitudMapper.toDomain(ormEntity.solicitud) : undefined,
+      ormEntity.usuario_recibe ? UsuarioMapper.toDomain(ormEntity.usuario_recibe) : undefined,
     );
   }
 
-  static toEntity(domain: Devolucion): DevolucionEntity {
-    const entity = new DevolucionEntity();
-    if (domain.id && !isNaN(Number(domain.id))) entity.id = Number(domain.id);
-    entity.estadoFisico = domain.estadoFisico as EstadoFisico;
-    entity.fechaReal = domain.fechaReal || new Date();
-    entity.observaciones = domain.observaciones || '';
-    (entity as any).asignaId = domain.asignaId;
-    (entity as any).productoId = domain.productoId;
-    (entity as any).movimientoId = domain.movimientoId;
-    return entity;
+  static toOrm(domainEntity: Partial<Devolucion>): DevolucionOrmEntity {
+    const ormEntity = new DevolucionOrmEntity();
+    if (domainEntity.id_devolucion !== undefined) ormEntity.id_devolucion = domainEntity.id_devolucion;
+    if (domainEntity.fecha !== undefined) ormEntity.fecha = domainEntity.fecha;
+    if (domainEntity.id_solicitud !== undefined) ormEntity.id_solicitud = domainEntity.id_solicitud;
+    if (domainEntity.id_usuario_recibe !== undefined) ormEntity.id_usuario_recibe = domainEntity.id_usuario_recibe;
+    return ormEntity;
   }
 }

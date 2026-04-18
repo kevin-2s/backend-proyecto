@@ -1,14 +1,20 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { TipoSolicitud } from '../../../../../domain/entities/solicitud.domain.entity';
 
 export class CreateSolicitudDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    justificacion!: string;
+  @IsEnum(TipoSolicitud)
+  @IsNotEmpty()
+  tipo: TipoSolicitud;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    usuarioId!: number;
+  @IsString()
+  @IsOptional()
+  observacion?: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  id_usuario: number;
+
+  @IsInt()
+  @IsOptional()
+  id_ficha?: number;
 }
