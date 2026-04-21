@@ -19,7 +19,7 @@ export class ItemsChequeoRepositoryAdapter implements IItemsChequeoRepository {
   }
 
   async create(itemData: Omit<ItemChequeo, 'id_item_chequeo' | 'chequeo' | 'item'>): Promise<ItemChequeo> {
-    const ormEntity = ItemChequeoMapper.toOrm(itemData);
+    const ormEntity = ItemChequeoMapper.toEntity(itemData);
     const saved = await this.repository.save(ormEntity);
     return ItemChequeoMapper.toDomain(saved);
   }

@@ -1,20 +1,12 @@
-import { Solicitud } from '../../../solicitudes/domain/entities/solicitud.domain.entity';
-import { Devolucion } from '../../../devoluciones/domain/entities/devolucion.domain.entity';
-
-export enum TipoActa {
-  ASIGNACION = 'ASIGNACION',
-  DEVOLUCION = 'DEVOLUCION',
-  BAJA = 'BAJA',
-}
+import { Solicitud } from "../../../solicitudes/domain/entities/solicitud.domain.entity";
 
 export class Acta {
   constructor(
     public readonly id_acta: number,
-    public tipo: TipoActa,
-    public archivo_url: string,
-    public id_solicitud?: number | null,
-    public id_devolucion?: number | null,
+    public fecha: Date,
+    public url_pdf: string | null,
+    public id_solicitud?: number,
+    public id_usuario?: number,
     public solicitud?: Solicitud,
-    public devolucion?: Devolucion,
   ) {}
 }

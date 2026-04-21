@@ -1,8 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { IActasUseCases } from '../../domain/ports/input/actas-use-cases.interface';
-import { IActasRepository, ACTAS_REPOSITORY } from '../../domain/ports/output/actas-repository.interface';
-import { Acta, TipoActa } from '../../domain/entities/acta.domain.entity';
-import { ActaNotFoundException } from '../../domain/exceptions/acta-not-found.exception';
+import { Injectable, Inject } from "@nestjs/common";
+import { IActasUseCases } from "../../domain/ports/input/actas-use-cases.interface";
+import {
+  IActasRepository,
+  ACTAS_REPOSITORY,
+} from "../../domain/ports/output/actas-repository.interface";
+import { Acta } from "../../domain/entities/acta.domain.entity";
+import { ActaNotFoundException } from "../../domain/exceptions/acta-not-found.exception";
 
 @Injectable()
 export class ActasService implements IActasUseCases {
@@ -24,11 +27,13 @@ export class ActasService implements IActasUseCases {
   }
 
   async crearActa(data: {
-    tipo: TipoActa;
-    archivo_url: string;
-    id_solicitud?: number | null;
-    id_devolucion?: number | null;
+    url_pdf: string;
+    id_solicitud: number;
+    id_usuario: number;
   }): Promise<Acta> {
-    return this.actasRepository.create(data);
+    return this.actasRepository.create({
+      ...data,
+      fecha: new Date(),
+    });
   }
 }

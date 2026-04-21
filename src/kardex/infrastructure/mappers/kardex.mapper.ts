@@ -20,7 +20,7 @@ export class KardexMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Kardex>): KardexOrmEntity {
+  static toEntity(domainEntity: Partial<Kardex>): KardexOrmEntity {
     const ormEntity = new KardexOrmEntity();
     if (domainEntity.id_kardex !== undefined) ormEntity.id_kardex = domainEntity.id_kardex;
     if (domainEntity.tipo !== undefined) ormEntity.tipo = domainEntity.tipo;

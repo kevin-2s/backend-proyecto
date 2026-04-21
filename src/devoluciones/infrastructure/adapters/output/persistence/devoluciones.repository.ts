@@ -25,7 +25,7 @@ export class DevolucionesRepositoryAdapter implements IDevolucionesRepository {
   }
 
   async create(devolucionData: Omit<Devolucion, 'id_devolucion' | 'solicitud' | 'usuario_recibe'>): Promise<Devolucion> {
-    const ormEntity = DevolucionMapper.toOrm(devolucionData);
+    const ormEntity = DevolucionMapper.toEntity(devolucionData);
     const saved = await this.repository.save(ormEntity);
     return DevolucionMapper.toDomain(saved);
   }

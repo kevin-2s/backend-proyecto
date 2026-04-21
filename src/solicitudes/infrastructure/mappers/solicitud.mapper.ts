@@ -20,7 +20,7 @@ export class SolicitudMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Solicitud>): SolicitudOrmEntity {
+  static toEntity(domainEntity: Partial<Solicitud>): SolicitudOrmEntity {
     const ormEntity = new SolicitudOrmEntity();
     if (domainEntity.id_solicitud !== undefined) ormEntity.id_solicitud = domainEntity.id_solicitud;
     if (domainEntity.fecha !== undefined) ormEntity.fecha = domainEntity.fecha;

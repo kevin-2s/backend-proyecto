@@ -19,13 +19,13 @@ export class MovimientosRepositoryAdapter implements IMovimientosRepository {
   }
 
   async findById(id: number): Promise<Movimiento | null> {
-    const movimientoOrm = await this.repository.findOne({ where: { id_movimiento: id }, relations: ['item', 'tipoMovimiento', 'usuario'] });
-    if (!movimientoOrm) return null;
-    return MovimientoMapper.toDomain(movimientoOrm);
+    const movimientoEntity = await this.repository.findOne({ where: { id_movimiento: id }, relations: ['item', 'tipoMovimiento', 'usuario'] });
+    if (!movimientoEntity) return null;
+    return MovimientoMapper.toDomain(movimientoEntity);
   }
 
   async create(movimientoData: Omit<Movimiento, 'id_movimiento' | 'item' | 'tipoMovimiento' | 'usuario'>): Promise<Movimiento> {
-    const ormEntity = MovimientoMapper.toOrm(movimientoData);
+    const ormEntity = MovimientoMapper.toEntity(movimientoData);
     const saved = await this.repository.save(ormEntity);
     return MovimientoMapper.toDomain(saved);
   }

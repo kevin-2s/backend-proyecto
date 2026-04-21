@@ -25,7 +25,7 @@ export class FichasRepositoryAdapter implements IFichasRepository {
   }
 
   async create(fichaData: Omit<Ficha, 'id_ficha' | 'responsable'>): Promise<Ficha> {
-    const ormEntity = FichaMapper.toOrm(fichaData);
+    const ormEntity = FichaMapper.toEntity(fichaData);
     const saved = await this.repository.save(ormEntity);
     return FichaMapper.toDomain(saved);
   }

@@ -8,19 +8,18 @@ export class UsuarioMapper {
       ormEntity.id_usuario,
       ormEntity.nombre,
       ormEntity.correo,
-      ormEntity.password,
+      undefined, // NUNCA incluir password en la respuesta
       ormEntity.estado,
       ormEntity.id_rol,
       ormEntity.rol ? RolMapper.toDomain(ormEntity.rol) : undefined,
     );
   }
 
-  static toDomainWithoutPassword(ormEntity: UsuarioOrmEntity): Omit<Usuario, 'password'> {
-    const { password, ...usuarioSinPassword } = UsuarioMapper.toDomain(ormEntity);
-    return usuarioSinPassword;
+  static toDomainWithoutPassword(ormEntity: UsuarioOrmEntity): Usuario {
+    return UsuarioMapper.toDomain(ormEntity);
   }
 
-  static toOrm(domainEntity: Partial<Usuario>): UsuarioOrmEntity {
+  static toEntity(domainEntity: Partial<Usuario> & { getPassword?: () => string | undefined; password?: string }): UsuarioOrmEntity {
     const ormEntity = new UsuarioOrmEntity();
     if (domainEntity.id_usuario !== undefined) {
       ormEntity.id_usuario = domainEntity.id_usuario;
@@ -31,9 +30,14 @@ export class UsuarioMapper {
     if (domainEntity.correo !== undefined) {
       ormEntity.correo = domainEntity.correo;
     }
-    if (domainEntity.password !== undefined) {
+    
+    // Soporta leer desde domain nativo o de un DTO mapeado
+    if (domainEntity.getPassword && domainEntity.getPassword() !== undefined) {
+      ormEntity.password = domainEntity.getPassword() as string;
+    } else if (domainEntity.password !== undefined) {
       ormEntity.password = domainEntity.password;
     }
+
     if (domainEntity.estado !== undefined) {
       ormEntity.estado = domainEntity.estado;
     }

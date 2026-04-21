@@ -13,7 +13,7 @@ export class FichaMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Ficha>): FichaOrmEntity {
+  static toEntity(domainEntity: Partial<Ficha>): FichaOrmEntity {
     const ormEntity = new FichaOrmEntity();
     if (domainEntity.id_ficha !== undefined) ormEntity.id_ficha = domainEntity.id_ficha;
     if (domainEntity.numero_ficha !== undefined) ormEntity.numero_ficha = domainEntity.numero_ficha;

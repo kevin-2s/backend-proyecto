@@ -1,30 +1,38 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { SolicitudOrmEntity } from '../../../solicitudes/infrastructure/entities/solicitud.orm-entity';
-import { DevolucionOrmEntity } from '../../../devoluciones/infrastructure/entities/devolucion.orm-entity';
-import { TipoActa } from '../../domain/entities/acta.domain.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
+  Unique,
+} from "typeorm";
+import { SolicitudOrmEntity } from "../../../solicitudes/infrastructure/entities/solicitud.orm-entity";
+import { UsuarioOrmEntity } from "../../../usuarios/infrastructure/entities/usuario.orm-entity";
 
-@Entity('acta')
+@Entity("acta")
+@Unique(["id_solicitud"])
 export class ActaOrmEntity {
   @PrimaryGeneratedColumn()
   id_acta: number;
 
-  @Column({ type: 'enum', enum: TipoActa })
-  tipo: TipoActa;
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  fecha: Date;
 
-  @Column({ type: 'varchar' })
-  archivo_url: string;
+  @Column({ type: "varchar", nullable: true })
+  url_pdf: string | null;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   id_solicitud: number;
 
-  @Column({ nullable: true })
-  id_devolucion: number;
+  @Column()
+  id_usuario: number;
 
-  @ManyToOne(() => SolicitudOrmEntity, { nullable: true })
-  @JoinColumn({ name: 'id_solicitud' })
+  @OneToOne(() => SolicitudOrmEntity)
+  @JoinColumn({ name: "id_solicitud" })
   solicitud: SolicitudOrmEntity;
 
-  @ManyToOne(() => DevolucionOrmEntity, { nullable: true })
-  @JoinColumn({ name: 'id_devolucion' })
-  devolucion: DevolucionOrmEntity;
+  @ManyToOne(() => UsuarioOrmEntity)
+  @JoinColumn({ name: "id_usuario" })
+  usuario: UsuarioOrmEntity;
 }

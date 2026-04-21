@@ -1,8 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { IChequeosUseCases } from '../../domain/ports/input/chequeos-use-cases.interface';
-import { IChequeosRepository, CHEQUEOS_REPOSITORY } from '../../domain/ports/output/chequeos-repository.interface';
-import { Chequeo } from '../../domain/entities/chequeo.domain.entity';
-import { ChequeoNotFoundException } from '../../domain/exceptions/chequeo-not-found.exception';
+import { Injectable, Inject } from "@nestjs/common";
+import { IChequeosUseCases } from "../../domain/ports/input/chequeos-use-cases.interface";
+import {
+  IChequeosRepository,
+  CHEQUEOS_REPOSITORY,
+} from "../../domain/ports/output/chequeos-repository.interface";
+import { Chequeo } from "../../domain/entities/chequeo.domain.entity";
+import { ChequeoNotFoundException } from "../../domain/exceptions/chequeo-not-found.exception";
 
 @Injectable()
 export class ChequeosService implements IChequeosUseCases {
@@ -23,11 +26,14 @@ export class ChequeosService implements IChequeosUseCases {
     return chequeo;
   }
 
-  async crearChequeo(data: { observacion: string; id_usuario: number }): Promise<Chequeo> {
+  async crearChequeo(data: {
+    id_usuario: number;
+    id_solicitud: number;
+  }): Promise<Chequeo> {
     return this.chequeosRepository.create({
-      observacion: data.observacion,
       fecha: new Date(),
       id_usuario: data.id_usuario,
+      id_solicitud: data.id_solicitud,
     });
   }
 }

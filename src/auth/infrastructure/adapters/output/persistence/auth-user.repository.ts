@@ -3,13 +3,13 @@ import { AuthUser } from '../../../../domain/entities/auth-user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsuarioEntity } from '../../../../../users/infrastructure/entities/usuario.typeorm.entity';
+import { UsuarioOrmEntity } from '../../../../../usuarios/infrastructure/entities/usuario.orm-entity';
 
 @Injectable()
 export class AuthUserRepositoryAdapter implements AuthRepositoryPort {
   constructor(
-    @InjectRepository(UsuarioEntity)
-    private readonly usuarioRepository: Repository<UsuarioEntity>,
+    @InjectRepository(UsuarioOrmEntity)
+    private readonly usuarioRepository: Repository<UsuarioOrmEntity>,
   ) {}
 
   async findUserByEmail(correo: string): Promise<AuthUser | null> {
@@ -21,10 +21,10 @@ export class AuthUserRepositoryAdapter implements AuthRepositoryPort {
     if (!usuario) return null;
 
     return new AuthUser(
-      String(usuario.id),
+      String(usuario.id_usuario),
       usuario.correo,
-      usuario.contrasena,
-      [usuario.rol.nombreRol],
+      usuario.password,
+      [usuario.rol.nombre],
     );
   }
 }

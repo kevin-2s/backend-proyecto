@@ -19,7 +19,7 @@ export class TiposMovimientoRepositoryAdapter implements ITiposMovimientoReposit
   }
 
   async create(tipoData: Omit<TipoMovimiento, 'id_tipo_movimiento'>): Promise<TipoMovimiento> {
-    const ormEntity = TipoMovimientoMapper.toOrm(tipoData);
+    const ormEntity = TipoMovimientoMapper.toEntity(tipoData);
     const saved = await this.repository.save(ormEntity);
     return TipoMovimientoMapper.toDomain(saved);
   }

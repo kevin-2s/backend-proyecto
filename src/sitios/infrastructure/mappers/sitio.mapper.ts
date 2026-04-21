@@ -13,7 +13,7 @@ export class SitioMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Sitio>): SitioOrmEntity {
+  static toEntity(domainEntity: Partial<Sitio>): SitioOrmEntity {
     const ormEntity = new SitioOrmEntity();
     if (domainEntity.id_sitio !== undefined) ormEntity.id_sitio = domainEntity.id_sitio;
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;

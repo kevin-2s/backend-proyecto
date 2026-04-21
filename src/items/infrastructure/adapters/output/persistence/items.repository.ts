@@ -25,7 +25,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
   }
 
   async create(itemData: Omit<Item, 'id_item' | 'producto'>): Promise<Item> {
-    const ormEntity = ItemMapper.toOrm(itemData);
+    const ormEntity = ItemMapper.toEntity(itemData);
     const saved = await this.repository.save(ormEntity);
     return ItemMapper.toDomain(saved);
   }

@@ -1,26 +1,47 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { SolicitudOrmEntity } from '../../../solicitudes/infrastructure/entities/solicitud.orm-entity';
-import { UsuarioOrmEntity } from '../../../usuarios/infrastructure/entities/usuario.orm-entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Unique,
+} from "typeorm";
+import { SolicitudOrmEntity } from "../../../solicitudes/infrastructure/entities/solicitud.orm-entity";
+import { ItemOrmEntity } from "../../../items/infrastructure/entities/item.orm-entity";
 
-@Entity('devolucion')
+export enum EstadoDevolucion {
+  BUENO = "BUENO",
+  REGULAR = "REGULAR",
+  DAÑADO = "DAÑADO",
+  PERDIDO = "PERDIDO",
+}
+
+@Entity("devolucion")
+@Unique(["id_solicitud"])
 export class DevolucionOrmEntity {
   @PrimaryGeneratedColumn()
   id_devolucion: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   fecha: Date;
 
-  @Column()
+  @Column({ type: "enum", enum: EstadoDevolucion })
+  estado: EstadoDevolucion;
+
+  @Column({ type: "text", nullable: true })
+  observacion: string | null;
+
+  @Column({ unique: true })
   id_solicitud: number;
 
   @Column()
-  id_usuario_recibe: number;
+  id_item: number;
 
   @ManyToOne(() => SolicitudOrmEntity)
-  @JoinColumn({ name: 'id_solicitud' })
+  @JoinColumn({ name: "id_solicitud" })
   solicitud: SolicitudOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity)
-  @JoinColumn({ name: 'id_usuario_recibe' })
-  usuario_recibe: UsuarioOrmEntity;
+  @ManyToOne(() => ItemOrmEntity)
+  @JoinColumn({ name: "id_item" })
+  item: ItemOrmEntity;
 }

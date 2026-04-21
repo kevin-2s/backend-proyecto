@@ -1,5 +1,5 @@
 import { Inventario } from '../../entities/inventario.domain.entity';
-import { EstadoItem } from '../../../items/domain/entities/item.domain.entity';
+import { EstadoItem } from '../../../../items/domain/entities/item.domain.entity';
 
 export const INVENTARIO_USE_CASES = Symbol('INVENTARIO_USE_CASES');
 

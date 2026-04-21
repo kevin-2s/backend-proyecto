@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
 import { SOLICITUDES_USE_CASES, ISolicitudesUseCases } from '../../../../domain/ports/input/solicitudes-use-cases.interface';
 import { CreateSolicitudDto } from './dtos/create-solicitud.dto';
+import { AprobarSolicitudDto } from './dtos/aprobar-solicitud.dto';
 import { EstadoSolicitud } from '../../../../domain/entities/solicitud.domain.entity';
 import { SolicitudNotFoundException } from '../../../../domain/exceptions/solicitud-not-found.exception';
 
@@ -73,9 +74,9 @@ export class SolicitudesController {
   }
 
   @Patch(':id/aprobar')
-  async aprobarSolicitud(@Param('id', ParseIntPipe) id: number, @Body('id_usuario_aprueba') id_usuario_aprueba: number) {
+  async aprobarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
     try {
-      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.APROBADA, id_usuario_aprueba);
+      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.APROBADA, aprobarDto.id_usuario_aprueba);
       return { statusCode: HttpStatus.OK, message: 'Solicitud aprobada', data: solicitud };
     } catch (error) {
       throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al aprobar', data: null }, HttpStatus.BAD_REQUEST);
@@ -83,9 +84,9 @@ export class SolicitudesController {
   }
 
   @Patch(':id/rechazar')
-  async rechazarSolicitud(@Param('id', ParseIntPipe) id: number, @Body('id_usuario_aprueba') id_usuario_aprueba: number) {
+  async rechazarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
     try {
-      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.RECHAZADA, id_usuario_aprueba);
+      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.RECHAZADA, aprobarDto.id_usuario_aprueba);
       return { statusCode: HttpStatus.OK, message: 'Solicitud rechazada', data: solicitud };
     } catch (error) {
       throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al rechazar', data: null }, HttpStatus.BAD_REQUEST);

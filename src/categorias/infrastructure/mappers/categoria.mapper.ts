@@ -6,7 +6,7 @@ export class CategoriaMapper {
     return new Categoria(ormEntity.id_categoria, ormEntity.nombre);
   }
 
-  static toOrm(domainEntity: Partial<Categoria>): CategoriaOrmEntity {
+  static toEntity(domainEntity: Partial<Categoria>): CategoriaOrmEntity {
     const ormEntity = new CategoriaOrmEntity();
     if (domainEntity.id_categoria !== undefined) {
       ormEntity.id_categoria = domainEntity.id_categoria;

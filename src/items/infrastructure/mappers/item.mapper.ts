@@ -13,7 +13,7 @@ export class ItemMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Item>): ItemOrmEntity {
+  static toEntity(domainEntity: Partial<Item>): ItemOrmEntity {
     const ormEntity = new ItemOrmEntity();
     if (domainEntity.id_item !== undefined) ormEntity.id_item = domainEntity.id_item;
     if (domainEntity.codigo_sku !== undefined) ormEntity.codigo_sku = domainEntity.codigo_sku;

@@ -6,7 +6,7 @@ export class TipoMovimientoMapper {
     return new TipoMovimiento(ormEntity.id_tipo_movimiento, ormEntity.nombre);
   }
 
-  static toOrm(domainEntity: Partial<TipoMovimiento>): TipoMovimientoOrmEntity {
+  static toEntity(domainEntity: Partial<TipoMovimiento>): TipoMovimientoOrmEntity {
     const ormEntity = new TipoMovimientoOrmEntity();
     if (domainEntity.id_tipo_movimiento !== undefined) ormEntity.id_tipo_movimiento = domainEntity.id_tipo_movimiento;
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;

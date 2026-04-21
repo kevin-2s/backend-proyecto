@@ -1,8 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { IDevolucionesUseCases } from '../../domain/ports/input/devoluciones-use-cases.interface';
-import { IDevolucionesRepository, DEVOLUCIONES_REPOSITORY } from '../../domain/ports/output/devoluciones-repository.interface';
-import { Devolucion } from '../../domain/entities/devolucion.domain.entity';
-import { DevolucionNotFoundException } from '../../domain/exceptions/devolucion-not-found.exception';
+import { Injectable, Inject } from "@nestjs/common";
+import { IDevolucionesUseCases } from "../../domain/ports/input/devoluciones-use-cases.interface";
+import {
+  IDevolucionesRepository,
+  DEVOLUCIONES_REPOSITORY,
+} from "../../domain/ports/output/devoluciones-repository.interface";
+import {
+  Devolucion,
+  EstadoDevolucion,
+} from "../../domain/entities/devolucion.domain.entity";
+import { DevolucionNotFoundException } from "../../domain/exceptions/devolucion-not-found.exception";
 
 @Injectable()
 export class DevolucionesService implements IDevolucionesUseCases {
@@ -23,11 +29,18 @@ export class DevolucionesService implements IDevolucionesUseCases {
     return devolucion;
   }
 
-  async crearDevolucion(data: { id_solicitud: number; id_usuario_recibe: number }): Promise<Devolucion> {
+  async crearDevolucion(data: {
+    id_solicitud: number;
+    id_item: number;
+    estado: EstadoDevolucion;
+    observacion?: string;
+  }): Promise<Devolucion> {
     return this.devolucionesRepository.create({
       fecha: new Date(),
+      estado: data.estado,
+      observacion: data.observacion || null,
       id_solicitud: data.id_solicitud,
-      id_usuario_recibe: data.id_usuario_recibe,
+      id_item: data.id_item,
     });
   }
 }

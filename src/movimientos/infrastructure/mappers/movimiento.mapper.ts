@@ -19,7 +19,7 @@ export class MovimientoMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Movimiento>): MovimientoOrmEntity {
+  static toEntity(domainEntity: Partial<Movimiento>): MovimientoOrmEntity {
     const ormEntity = new MovimientoOrmEntity();
     if (domainEntity.id_movimiento !== undefined) ormEntity.id_movimiento = domainEntity.id_movimiento;
     if (domainEntity.fecha !== undefined) ormEntity.fecha = domainEntity.fecha;

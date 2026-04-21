@@ -25,7 +25,7 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
   }
 
   async create(categoriaData: Omit<Categoria, 'id_categoria'>): Promise<Categoria> {
-    const ormEntity = CategoriaMapper.toOrm(categoriaData);
+    const ormEntity = CategoriaMapper.toEntity(categoriaData);
     const saved = await this.repository.save(ormEntity);
     return CategoriaMapper.toDomain(saved);
   }

@@ -25,7 +25,7 @@ export class ChequeosRepositoryAdapter implements IChequeosRepository {
   }
 
   async create(chequeoData: Omit<Chequeo, 'id_chequeo' | 'usuario'>): Promise<Chequeo> {
-    const ormEntity = ChequeoMapper.toOrm(chequeoData);
+    const ormEntity = ChequeoMapper.toEntity(chequeoData);
     const saved = await this.repository.save(ormEntity);
     return ChequeoMapper.toDomain(saved);
   }

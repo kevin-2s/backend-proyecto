@@ -1,20 +1,15 @@
-import { IsEnum, IsString, IsNotEmpty, IsOptional, IsInt } from 'class-validator';
-import { TipoActa } from '../../../../../domain/entities/acta.domain.entity';
+import { IsString, IsNotEmpty, IsInt } from "class-validator";
 
 export class CreateActaDto {
-  @IsEnum(TipoActa)
-  @IsNotEmpty()
-  tipo: TipoActa;
-
   @IsString()
   @IsNotEmpty()
-  archivo_url: string;
+  url_pdf: string;
 
   @IsInt()
-  @IsOptional()
-  id_solicitud?: number;
+  @IsNotEmpty()
+  id_solicitud: number;
 
   @IsInt()
-  @IsOptional()
-  id_devolucion?: number;
+  @IsNotEmpty()
+  id_usuario: number;
 }

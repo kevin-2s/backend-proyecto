@@ -28,7 +28,7 @@ export class KardexRepositoryAdapter implements IKardexRepository {
   }
 
   async create(kardexData: Omit<Kardex, 'id_kardex' | 'item' | 'usuario'>): Promise<Kardex> {
-    const ormEntity = KardexMapper.toOrm(kardexData);
+    const ormEntity = KardexMapper.toEntity(kardexData);
     const saved = await this.repository.save(ormEntity);
     return KardexMapper.toDomain(saved);
   }

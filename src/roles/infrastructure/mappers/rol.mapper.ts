@@ -6,7 +6,7 @@ export class RolMapper {
     return new Rol(ormEntity.id_rol, ormEntity.nombre);
   }
 
-  static toOrm(domainEntity: Omit<Rol, 'id_rol'> | Rol): RolOrmEntity {
+  static toEntity(domainEntity: Omit<Rol, 'id_rol'> | Rol): RolOrmEntity {
     const ormEntity = new RolOrmEntity();
     if ('id_rol' in domainEntity) {
       ormEntity.id_rol = domainEntity.id_rol;

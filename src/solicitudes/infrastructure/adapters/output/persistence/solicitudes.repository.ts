@@ -25,7 +25,7 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
   }
 
   async create(solicitudData: Omit<Solicitud, 'id_solicitud' | 'usuario' | 'usuario_aprueba' | 'ficha'>): Promise<Solicitud> {
-    const ormEntity = SolicitudMapper.toOrm(solicitudData);
+    const ormEntity = SolicitudMapper.toEntity(solicitudData);
     const saved = await this.repository.save(ormEntity);
     return SolicitudMapper.toDomain(saved);
   }

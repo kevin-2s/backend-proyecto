@@ -25,7 +25,7 @@ export class InventarioRepositoryAdapter implements IInventarioRepository {
   }
 
   async create(inventarioData: Omit<Inventario, 'id_inventario' | 'item' | 'sitio'>): Promise<Inventario> {
-    const ormEntity = InventarioMapper.toOrm(inventarioData);
+    const ormEntity = InventarioMapper.toEntity(inventarioData);
     const saved = await this.repository.save(ormEntity);
     return InventarioMapper.toDomain(saved);
   }

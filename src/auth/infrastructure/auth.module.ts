@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsuarioEntity } from '../../users/infrastructure/entities/usuario.typeorm.entity';
+import { UsuarioOrmEntity } from '../../usuarios/infrastructure/entities/usuario.orm-entity';
 import { AuthController } from './adapters/input/http/auth.controller';
 import { AuthService } from '../application/services/auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -13,7 +13,7 @@ import { AuthUserRepositoryAdapter } from './adapters/output/persistence/auth-us
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsuarioEntity]),
+    TypeOrmModule.forFeature([UsuarioOrmEntity]),
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

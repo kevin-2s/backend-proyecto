@@ -14,24 +14,43 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
   ) {}
 
   async findAll(): Promise<Usuario[]> {
-    const usuariosOrm = await this.repository.find({ relations: ['rol'] });
+    const usuariosOrm = await this.repository.find({
+      relations: ['rol'],
+      select: {
+        id_usuario: true,
+        nombre: true,
+        correo: true,
+        estado: true,
+        id_rol: true,
+      },
+    });
     return usuariosOrm.map(UsuarioMapper.toDomain);
   }
 
   async findById(id: number): Promise<Usuario | null> {
-    const usuarioOrm = await this.repository.findOne({ where: { id_usuario: id }, relations: ['rol'] });
+    const usuarioOrm = await this.repository.findOne({
+      where: { id_usuario: id },
+      relations: ['rol'],
+      select: {
+        id_usuario: true,
+        nombre: true,
+        correo: true,
+        estado: true,
+        id_rol: true,
+      },
+    });
     if (!usuarioOrm) return null;
     return UsuarioMapper.toDomain(usuarioOrm);
   }
 
-  async create(usuarioData: Omit<Usuario, 'id_usuario' | 'estado' | 'rol'>): Promise<Usuario> {
-    const ormEntity = UsuarioMapper.toOrm({ ...usuarioData, estado: true });
+  async create(usuarioData: Omit<Usuario, 'id_usuario' | 'estado' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }): Promise<Usuario> {
+    const ormEntity = UsuarioMapper.toEntity({ ...usuarioData, estado: true } as any);
     const saved = await this.repository.save(ormEntity);
     return UsuarioMapper.toDomain(saved);
   }
 
-  async update(id: number, usuarioData: Partial<Omit<Usuario, 'id_usuario' | 'rol'>>): Promise<Usuario> {
-    await this.repository.update(id, usuarioData);
+  async update(id: number, usuarioData: Partial<Omit<Usuario, 'id_usuario' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }>): Promise<Usuario> {
+    await this.repository.update(id, usuarioData as any);
     return this.findById(id) as Promise<Usuario>;
   }
 }

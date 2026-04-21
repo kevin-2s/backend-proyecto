@@ -15,7 +15,7 @@ export class DetalleSolicitudMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<DetalleSolicitud>): DetalleSolicitudOrmEntity {
+  static toEntity(domainEntity: Partial<DetalleSolicitud>): DetalleSolicitudOrmEntity {
     const ormEntity = new DetalleSolicitudOrmEntity();
     if (domainEntity.id_detalle !== undefined) ormEntity.id_detalle = domainEntity.id_detalle;
     if (domainEntity.cantidad !== undefined) ormEntity.cantidad = domainEntity.cantidad;

@@ -19,7 +19,7 @@ export class ProductoMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Producto>): ProductoOrmEntity {
+  static toEntity(domainEntity: Partial<Producto>): ProductoOrmEntity {
     const ormEntity = new ProductoOrmEntity();
     if (domainEntity.id_producto !== undefined) ormEntity.id_producto = domainEntity.id_producto;
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;

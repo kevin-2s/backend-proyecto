@@ -19,13 +19,13 @@ export class ProductosRepositoryAdapter implements IProductosRepository {
   }
 
   async findById(id: number): Promise<Producto | null> {
-    const productoOrm = await this.repository.findOne({ where: { id_producto: id }, relations: ['categoria'] });
-    if (!productoOrm) return null;
-    return ProductoMapper.toDomain(productoOrm);
+    const productoEntity = await this.repository.findOne({ where: { id_producto: id }, relations: ['categoria'] });
+    if (!productoEntity) return null;
+    return ProductoMapper.toDomain(productoEntity);
   }
 
   async create(productoData: Omit<Producto, 'id_producto' | 'categoria'>): Promise<Producto> {
-    const ormEntity = ProductoMapper.toOrm(productoData);
+    const ormEntity = ProductoMapper.toEntity(productoData);
     const saved = await this.repository.save(ormEntity);
     return ProductoMapper.toDomain(saved);
   }

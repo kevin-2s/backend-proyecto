@@ -15,7 +15,7 @@ export class InventarioMapper {
     );
   }
 
-  static toOrm(domainEntity: Partial<Inventario>): InventarioOrmEntity {
+  static toEntity(domainEntity: Partial<Inventario>): InventarioOrmEntity {
     const ormEntity = new InventarioOrmEntity();
     if (domainEntity.id_inventario !== undefined) ormEntity.id_inventario = domainEntity.id_inventario;
     if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;

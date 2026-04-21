@@ -25,7 +25,7 @@ export class RolesRepositoryAdapter implements IRolesRepository {
   }
 
   async create(rolData: Omit<Rol, 'id_rol'>): Promise<Rol> {
-    const ormEntity = RolMapper.toOrm(rolData);
+    const ormEntity = RolMapper.toEntity(rolData);
     const saved = await this.repository.save(ormEntity);
     return RolMapper.toDomain(saved);
   }

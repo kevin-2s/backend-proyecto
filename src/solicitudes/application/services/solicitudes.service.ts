@@ -41,11 +41,21 @@ export class SolicitudesService implements ISolicitudesUseCases {
   }
 
   async cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba?: number): Promise<Solicitud> {
-    await this.obtenerSolicitudPorId(id);
-    const updateData: any = { estado };
-    if (id_usuario_aprueba) {
-      updateData.id_usuario_aprueba = id_usuario_aprueba;
+    try {
+      console.log('Cambiando estado solicitud:', id, estado, id_usuario_aprueba);
+      const solicitud = await this.obtenerSolicitudPorId(id);
+      console.log('Solicitud encontrada:', solicitud);
+      const updateData: any = { estado };
+      if (id_usuario_aprueba) {
+        updateData.id_usuario_aprueba = id_usuario_aprueba;
+      }
+      console.log('Update data:', updateData);
+      const result = await this.solicitudesRepository.update(id, updateData);
+      console.log('Resultado:', result);
+      return result;
+    } catch (error) {
+      console.error('Error en cambiarEstadoSolicitud:', error);
+      throw error;
     }
-    return this.solicitudesRepository.update(id, updateData);
   }
 }

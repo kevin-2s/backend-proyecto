@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { INotificacionesRepository } from '../../../../domain/ports/output/notificaciones-repository.interface';
-import { NotificacionOrmEntity } from '../../../entities/notificacion.orm-entity';
-import { NotificacionMapper } from '../../../mappers/notificacion.mapper';
-import { Notificacion } from '../../../../domain/entities/notificacion.domain.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { INotificacionesRepository } from "../../../../domain/ports/output/notificaciones-repository.interface";
+import { NotificacionOrmEntity } from "../../../entities/notificacion.orm-entity";
+import { NotificacionMapper } from "../../../mappers/notificacion.mapper";
+import { Notificacion } from "../../../../domain/entities/notificacion.domain.entity";
 
 @Injectable()
 export class NotificacionesRepositoryAdapter implements INotificacionesRepository {
@@ -16,15 +16,17 @@ export class NotificacionesRepositoryAdapter implements INotificacionesRepositor
   async findByUsuarioId(id_usuario: number): Promise<Notificacion[]> {
     const ormList = await this.repository.find({
       where: { id_usuario },
-      order: { fecha: 'DESC' },
+      order: { fecha: "DESC" },
     });
     return ormList.map(NotificacionMapper.toDomain);
   }
 
-  async create(data: Omit<Notificacion, 'id_notificacion' | 'leido' | 'fecha' | 'usuario'>): Promise<Notificacion> {
-    const ormEntity = NotificacionMapper.toOrm({
+  async create(
+    data: Omit<Notificacion, "id_notificacion" | "leida" | "fecha" | "usuario">,
+  ): Promise<Notificacion> {
+    const ormEntity = NotificacionMapper.toEntity({
       ...data,
-      leido: false,
+      leida: false,
       fecha: new Date(),
     });
     const saved = await this.repository.save(ormEntity);
@@ -32,8 +34,10 @@ export class NotificacionesRepositoryAdapter implements INotificacionesRepositor
   }
 
   async marcarLeida(id_notificacion: number): Promise<Notificacion> {
-    await this.repository.update(id_notificacion, { leido: true });
-    const ormEntity = await this.repository.findOne({ where: { id_notificacion } });
+    await this.repository.update(id_notificacion, { leida: true });
+    const ormEntity = await this.repository.findOne({
+      where: { id_notificacion },
+    });
     return NotificacionMapper.toDomain(ormEntity!);
   }
 }

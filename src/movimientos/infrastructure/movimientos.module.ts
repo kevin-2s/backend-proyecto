@@ -6,9 +6,15 @@ import { MovimientosService } from '../application/services/movimientos.service'
 import { MovimientosRepositoryAdapter } from './adapters/output/persistence/movimientos.repository';
 import { MOVIMIENTOS_USE_CASES } from '../domain/ports/input/movimientos-use-cases.interface';
 import { MOVIMIENTOS_REPOSITORY } from '../domain/ports/output/movimientos-repository.interface';
+import { KardexModule } from '../../kardex/infrastructure/kardex.module';
+import { TiposMovimientoModule } from '../../tipos-movimiento/infrastructure/tipos-movimiento.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MovimientoOrmEntity])],
+  imports: [
+    TypeOrmModule.forFeature([MovimientoOrmEntity]),
+    KardexModule,
+    TiposMovimientoModule,
+  ],
   controllers: [MovimientosController],
   providers: [
     {

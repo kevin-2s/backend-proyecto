@@ -19,7 +19,7 @@ export class DetalleSolicitudRepositoryAdapter implements IDetalleSolicitudRepos
   }
 
   async create(detalleData: Omit<DetalleSolicitud, 'id_detalle' | 'solicitud' | 'producto'>): Promise<DetalleSolicitud> {
-    const ormEntity = DetalleSolicitudMapper.toOrm(detalleData);
+    const ormEntity = DetalleSolicitudMapper.toEntity(detalleData);
     const saved = await this.repository.save(ormEntity);
     return DetalleSolicitudMapper.toDomain(saved);
   }
