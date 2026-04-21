@@ -1,6 +1,6 @@
 export class ActaNotFoundException extends Error {
-    constructor(id: string) {
-        super("Acta con identificador " + id + " no encontrado");
-        this.name = "ActaNotFoundException";
-    }
+  constructor(id: number) {
+    super(`El acta con id ${id} no fue encontrada`);
+    this.name = 'ActaNotFoundException';
+  }
 }

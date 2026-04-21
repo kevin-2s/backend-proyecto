@@ -1,24 +1,29 @@
-import { Sitio } from '../../domain/entities/sitio.entity';
-import { FindSitioUseCase } from '../../domain/ports/input/find-sitio.use-case';
-import { CreateSitioUseCase, CreateSitioCommand } from '../../domain/ports/input/create-sitio.use-case';
-import { SitioRepositoryPort, PaginatedResult } from '../../domain/ports/output/sitio.repository.port';
+import { Injectable, Inject } from '@nestjs/common';
+import { ISitiosUseCases } from '../../domain/ports/input/sitios-use-cases.interface';
+import { ISitiosRepository, SITIOS_REPOSITORY } from '../../domain/ports/output/sitios-repository.interface';
+import { Sitio, TipoSitio } from '../../domain/entities/sitio.domain.entity';
 import { SitioNotFoundException } from '../../domain/exceptions/sitio-not-found.exception';
 
-export class SitioService implements FindSitioUseCase, CreateSitioUseCase {
-    constructor(private readonly repository: SitioRepositoryPort) {}
+@Injectable()
+export class SitiosService implements ISitiosUseCases {
+  constructor(
+    @Inject(SITIOS_REPOSITORY)
+    private readonly sitiosRepository: ISitiosRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Sitio>> {
-        return this.repository.findAll(page, limit);
-    }
+  async obtenerSitios(): Promise<Sitio[]> {
+    return this.sitiosRepository.findAll();
+  }
 
-    async findById(id: string): Promise<Sitio> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new SitioNotFoundException(id);
-        return entity;
+  async obtenerSitioPorId(id: number): Promise<Sitio> {
+    const sitio = await this.sitiosRepository.findById(id);
+    if (!sitio) {
+      throw new SitioNotFoundException(id);
     }
+    return sitio;
+  }
 
-    async create(command: CreateSitioCommand): Promise<Sitio> {
-        const newEntity = new Sitio(0, command.nombreSitio, String(command.tipo), command.responsableId);
-        return this.repository.save(newEntity);
-    }
+  async crearSitio(data: { nombre: string; tipo: TipoSitio; id_responsable?: number | null }): Promise<Sitio> {
+    return this.sitiosRepository.create(data);
+  }
 }

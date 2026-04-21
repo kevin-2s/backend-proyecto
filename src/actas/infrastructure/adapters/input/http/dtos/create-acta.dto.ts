@@ -1,8 +1,15 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsInt } from "class-validator";
 
 export class CreateActaDto {
-  @ApiPropertyOptional() @IsString() @IsOptional() urlPdf?: string;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() asignaId?: number;
-  @ApiPropertyOptional() @IsNumber() @IsOptional() devolucionId?: number;
+  @IsString()
+  @IsNotEmpty()
+  url_pdf: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  id_solicitud: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  id_usuario: number;
 }

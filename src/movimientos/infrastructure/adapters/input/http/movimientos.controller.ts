@@ -1,38 +1,76 @@
-import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { MOVIMIENTOS_USE_CASES, IMovimientosUseCases } from '../../../../domain/ports/input/movimientos-use-cases.interface';
 import { CreateMovimientoDto } from './dtos/create-movimiento.dto';
-import { FindMovimientoUseCase } from '../../../../domain/ports/input/find-movimiento.use-case';
-import { CreateMovimientoUseCase } from '../../../../domain/ports/input/create-movimiento.use-case';
+import { MovimientoNotFoundException } from '../../../../domain/exceptions/movimiento-not-found.exception';
 
-@ApiTags('movimientos')
-@ApiBearerAuth()
 @Controller('movimientos')
-export class MovimientoController {
-    constructor(
-        @Inject('FindMovimientoUseCase') private readonly findUseCase: FindMovimientoUseCase,
-        @Inject('CreateMovimientoUseCase') private readonly createUseCase: CreateMovimientoUseCase
-    ) {}
+export class MovimientosController {
+  constructor(
+    @Inject(MOVIMIENTOS_USE_CASES)
+    private readonly movimientosUseCases: IMovimientosUseCases,
+  ) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Crear movimiento' })
-    async create(@Body() dto: CreateMovimientoDto) {
-        const data = await this.createUseCase.create(dto);
-        return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
+  @Get()
+  async getMovimientos() {
+    try {
+      const movimientos = await this.movimientosUseCases.obtenerMovimientos();
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Movimientos obtenidos exitosamente',
+        data: movimientos,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener los movimientos',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar movimientos paginado' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-        const paginatedData = await this.findUseCase.findAll(parseInt(page, 10), parseInt(limit, 10));
-        return { statusCode: HttpStatus.OK, message: 'Listado', data: paginatedData.data, total: paginatedData.total, page: paginatedData.page, limit: paginatedData.limit };
+  @Get(':id')
+  async getMovimiento(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const movimiento = await this.movimientosUseCases.obtenerMovimientoPorId(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Movimiento obtenido exitosamente',
+        data: movimiento,
+      };
+    } catch (error) {
+      if (error instanceof MovimientoNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener el movimiento',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener por ID' })
-    async findById(@Param('id') id: string) {
-        const data = await this.findUseCase.findById(id);
-        return { statusCode: HttpStatus.OK, message: 'Encontrado', data };
+  @Post()
+  async createMovimiento(@Body() createMovimientoDto: CreateMovimientoDto) {
+    try {
+      const movimiento = await this.movimientosUseCases.crearMovimiento({
+        ...createMovimientoDto,
+        observacion: createMovimientoDto.observacion ?? null,
+      });
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Movimiento creado exitosamente',
+        data: movimiento,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al crear el movimiento',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
 }

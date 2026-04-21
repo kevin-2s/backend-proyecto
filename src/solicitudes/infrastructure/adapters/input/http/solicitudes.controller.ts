@@ -1,38 +1,105 @@
-import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { SOLICITUDES_USE_CASES, ISolicitudesUseCases } from '../../../../domain/ports/input/solicitudes-use-cases.interface';
 import { CreateSolicitudDto } from './dtos/create-solicitud.dto';
-import { FindSolicitudUseCase } from '../../../../domain/ports/input/find-solicitud.use-case';
-import { CreateSolicitudUseCase } from '../../../../domain/ports/input/create-solicitud.use-case';
+import { AprobarSolicitudDto } from './dtos/aprobar-solicitud.dto';
+import { EstadoSolicitud } from '../../../../domain/entities/solicitud.domain.entity';
+import { SolicitudNotFoundException } from '../../../../domain/exceptions/solicitud-not-found.exception';
 
-@ApiTags('solicitudes')
-@ApiBearerAuth()
 @Controller('solicitudes')
-export class SolicitudController {
-    constructor(
-        @Inject('FindSolicitudUseCase') private readonly findUseCase: FindSolicitudUseCase,
-        @Inject('CreateSolicitudUseCase') private readonly createUseCase: CreateSolicitudUseCase
-    ) {}
+export class SolicitudesController {
+  constructor(
+    @Inject(SOLICITUDES_USE_CASES)
+    private readonly solicitudesUseCases: ISolicitudesUseCases,
+  ) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Crear solicitud' })
-    async create(@Body() dto: CreateSolicitudDto) {
-        const data = await this.createUseCase.create(dto);
-        return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
+  @Get()
+  async getSolicitudes() {
+    try {
+      const solicitudes = await this.solicitudesUseCases.obtenerSolicitudes();
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Solicitudes obtenidas exitosamente',
+        data: solicitudes,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener las solicitudes',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar solicitudes paginado' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-        const paginatedData = await this.findUseCase.findAll(parseInt(page, 10), parseInt(limit, 10));
-        return { statusCode: HttpStatus.OK, message: 'Listado', data: paginatedData.data, total: paginatedData.total, page: paginatedData.page, limit: paginatedData.limit };
+  @Get(':id')
+  async getSolicitud(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const solicitud = await this.solicitudesUseCases.obtenerSolicitudPorId(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Solicitud obtenida exitosamente',
+        data: solicitud,
+      };
+    } catch (error) {
+      if (error instanceof SolicitudNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener la solicitud',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener por ID' })
-    async findById(@Param('id') id: string) {
-        const data = await this.findUseCase.findById(id);
-        return { statusCode: HttpStatus.OK, message: 'Encontrado', data };
+  @Post()
+  async createSolicitud(@Body() createSolicitudDto: CreateSolicitudDto) {
+    try {
+      const solicitud = await this.solicitudesUseCases.crearSolicitud(createSolicitudDto);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Solicitud creada exitosamente',
+        data: solicitud,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al crear la solicitud',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Patch(':id/aprobar')
+  async aprobarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
+    try {
+      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.APROBADA, aprobarDto.id_usuario_aprueba);
+      return { statusCode: HttpStatus.OK, message: 'Solicitud aprobada', data: solicitud };
+    } catch (error) {
+      throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al aprobar', data: null }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id/rechazar')
+  async rechazarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
+    try {
+      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.RECHAZADA, aprobarDto.id_usuario_aprueba);
+      return { statusCode: HttpStatus.OK, message: 'Solicitud rechazada', data: solicitud };
+    } catch (error) {
+      throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al rechazar', data: null }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id/entregar')
+  async entregarSolicitud(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.ENTREGADA);
+      return { statusCode: HttpStatus.OK, message: 'Solicitud entregada', data: solicitud };
+    } catch (error) {
+      throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al entregar', data: null }, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

@@ -1,35 +1,34 @@
-import { IsNotEmpty, IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { TipoMovimiento } from '../../../../../../shared/domain/enums';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsDateString, IsString, IsOptional, IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateMovimientoDto {
-    @ApiProperty({ enum: TipoMovimiento })
-    @IsEnum(TipoMovimiento)
-    @IsNotEmpty()
-    tipo!: TipoMovimiento;
+  @ApiProperty({ example: '2026-04-19T00:00:00.000Z', description: 'Fecha del movimiento' })
+  @IsDateString()
+  @IsNotEmpty()
+  fecha: Date;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    cantidad!: number;
+  @ApiProperty({ example: 'Ingreso inicial por compra', description: 'Observación del movimiento', required: false })
+  @IsString()
+  @IsOptional()
+  observacion?: string;
 
-    @ApiPropertyOptional()
-    @IsString()
-    @IsOptional()
-    observaciones?: string;
+  @ApiProperty({ example: 1, description: 'ID del item movido' })
+  @IsInt()
+  @IsNotEmpty()
+  id_item: number;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    productoId!: number;
+  @ApiProperty({ example: 1, description: 'ID del tipo de movimiento' })
+  @IsInt()
+  @IsNotEmpty()
+  id_tipo_movimiento: number;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    usuarioId!: number;
+  @ApiProperty({ example: 1, description: 'ID del usuario que realiza el movimiento' })
+  @IsInt()
+  @IsNotEmpty()
+  id_usuario: number;
 
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    sitioId!: number;
+  @ApiProperty({ example: 10, description: 'Cantidad del movimiento' })
+  @IsInt()
+  @IsNotEmpty()
+  cantidad: number;
 }
