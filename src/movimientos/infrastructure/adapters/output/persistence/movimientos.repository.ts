@@ -29,4 +29,19 @@ export class MovimientosRepositoryAdapter implements IMovimientosRepository {
     const saved = await this.repository.save(ormEntity);
     return MovimientoMapper.toDomain(saved);
   }
+
+  async findByFechaAndTipo(fechaInicio: Date, fechaFin: Date, tipo?: string): Promise<any[]> {
+    const query = this.repository.createQueryBuilder('movimiento')
+      .leftJoinAndSelect('movimiento.item', 'item')
+      .leftJoinAndSelect('item.producto', 'producto')
+      .leftJoinAndSelect('movimiento.tipoMovimiento', 'tipoMovimiento')
+      .leftJoinAndSelect('movimiento.usuario', 'usuario')
+      .where('movimiento.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin });
+    
+    if (tipo) {
+      query.andWhere('tipoMovimiento.nombre = :tipo', { tipo });
+    }
+    
+    return query.orderBy('movimiento.fecha', 'DESC').getMany();
+  }
 }
