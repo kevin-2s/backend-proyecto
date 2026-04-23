@@ -6,4 +6,5 @@ export interface IMovimientosUseCases {
   obtenerMovimientos(): Promise<Movimiento[]>;
   obtenerMovimientoPorId(id: number): Promise<Movimiento>;
   crearMovimiento(data: { fecha: Date; observacion: string | null; id_item: number; id_tipo_movimiento: number; id_usuario: number; cantidad: number }): Promise<Movimiento>;
+  generarReporte(fechaInicio: string, fechaFin: string, tipo?: string): Promise<any>;
 }

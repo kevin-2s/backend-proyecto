@@ -6,4 +6,5 @@ export interface IMovimientosRepository {
   findAll(): Promise<Movimiento[]>;
   findById(id: number): Promise<Movimiento | null>;
   create(movimiento: Omit<Movimiento, 'id_movimiento' | 'item' | 'tipoMovimiento' | 'usuario'>): Promise<Movimiento>;
+  findByFechaAndTipo(fechaInicio: Date, fechaFin: Date, tipo?: string): Promise<any[]>;
 }

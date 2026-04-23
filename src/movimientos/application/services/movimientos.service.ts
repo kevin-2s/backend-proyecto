@@ -75,4 +75,41 @@ export class MovimientosService implements IMovimientosUseCases {
 
     return nuevoMovimiento;
   }
+
+  async generarReporte(fechaInicio: string, fechaFin: string, tipo?: string): Promise<any> {
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    fin.setUTCHours(23, 59, 59, 999);
+
+    const movimientos = await this.movimientosRepository.findByFechaAndTipo(inicio, fin, tipo);
+
+    const movimientosMapeados = movimientos.map(mov => ({
+      id_movimiento: mov.id_movimiento,
+      fecha: mov.fecha,
+      observacion: mov.observacion,
+      tipo_movimiento: mov.tipoMovimiento?.nombre,
+      item: mov.item ? {
+        id_item: mov.item.id_item,
+        codigo_sku: mov.item.codigo_sku,
+        producto: mov.item.producto ? {
+          id_producto: mov.item.producto.id_producto,
+          nombre: mov.item.producto.nombre,
+          SKU: mov.item.producto.SKU,
+        } : undefined
+      } : undefined,
+      usuario: mov.usuario ? {
+        id_usuario: mov.usuario.id_usuario,
+        nombre: mov.usuario.nombre,
+        correo: mov.usuario.correo,
+      } : undefined
+    }));
+
+    return {
+      fechaInicio,
+      fechaFin,
+      ...(tipo && { tipo }),
+      total: movimientosMapeados.length,
+      movimientos: movimientosMapeados
+    };
+  }
 }

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { MOVIMIENTOS_USE_CASES, IMovimientosUseCases } from '../../../../domain/ports/input/movimientos-use-cases.interface';
 import { CreateMovimientoDto } from './dtos/create-movimiento.dto';
 import { MovimientoNotFoundException } from '../../../../domain/exceptions/movimiento-not-found.exception';
@@ -23,6 +24,32 @@ export class MovimientosController {
       throw new HttpException({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: 'Error al obtener los movimientos',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('reporte')
+  @ApiOperation({ summary: 'Generar reporte de movimientos por fecha y tipo' })
+  @ApiQuery({ name: 'fechaInicio', required: true, example: '2026-01-01' })
+  @ApiQuery({ name: 'fechaFin', required: true, example: '2026-04-21' })
+  @ApiQuery({ name: 'tipo', required: false, enum: ['ENTRADA', 'SALIDA', 'PRESTAMO', 'DEVOLUCION', 'TRANSFERENCIA'] })
+  async generarReporte(
+    @Query('fechaInicio') fechaInicio: string,
+    @Query('fechaFin') fechaFin: string,
+    @Query('tipo') tipo?: string,
+  ) {
+    try {
+      const data = await this.movimientosUseCases.generarReporte(fechaInicio, fechaFin, tipo);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Reporte generado exitosamente',
+        data,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al generar el reporte',
         data: null,
       }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
