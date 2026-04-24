@@ -23,6 +23,8 @@ import { ChequeosModule } from './chequeos/infrastructure/chequeos.module';
 import { ItemsChequeoModule } from './items-chequeo/infrastructure/items-chequeo.module';
 import { ActasModule } from './actas/infrastructure/actas.module';
 import { NotificacionesModule } from './notificaciones/infrastructure/notificaciones.module';
+import { PermisosModule } from './permisos/permisos.module';
+import { UsuarioPermisosModule } from './usuario-permisos/usuario-permisos.module';
 
 
 @Module({
@@ -73,6 +75,8 @@ import { NotificacionesModule } from './notificaciones/infrastructure/notificaci
     ItemsChequeoModule,
     ActasModule,
     NotificacionesModule,
+    PermisosModule,
+    UsuarioPermisosModule,
   ],
 })
 export class AppModule {}
