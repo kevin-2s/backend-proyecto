@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import { RolOrmEntity } from './roles/infrastructure/entities/rol.orm-entity';
 import { UsuarioOrmEntity } from './usuarios/infrastructure/entities/usuario.orm-entity';
+import { PermisoOrmEntity } from './permisos/infrastructure/entities/permiso.orm-entity';
 import * as bcrypt from 'bcrypt';
 
 async function bootstrap() {
@@ -12,6 +13,7 @@ async function bootstrap() {
 
   const roleRepo = dataSource.getRepository(RolOrmEntity);
   const userRepo = dataSource.getRepository(UsuarioOrmEntity);
+  const permisoRepo = dataSource.getRepository(PermisoOrmEntity);
 
   console.log('Seeding roles...');
   const roles = ['Administrador', 'Responsable', 'Aprendiz'];
@@ -22,6 +24,48 @@ async function bootstrap() {
       console.log(`Role [${roleName}] inserted.`);
     } else {
       console.log(`Role [${roleName}] already exists.`);
+    }
+  }
+
+  console.log('Seeding permisos...');
+  const permisosSeed = [
+    { nombre: 'ver_inventario', descripcion: 'Permite ver el inventario', modulo: 'inventario' },
+    { nombre: 'crear_inventario', descripcion: 'Permite crear en inventario', modulo: 'inventario' },
+    { nombre: 'editar_inventario', descripcion: 'Permite editar inventario', modulo: 'inventario' },
+    { nombre: 'ver_productos', descripcion: 'Permite ver productos', modulo: 'productos' },
+    { nombre: 'crear_productos', descripcion: 'Permite crear productos', modulo: 'productos' },
+    { nombre: 'editar_productos', descripcion: 'Permite editar productos', modulo: 'productos' },
+    { nombre: 'eliminar_productos', descripcion: 'Permite eliminar productos', modulo: 'productos' },
+    { nombre: 'ver_items', descripcion: 'Permite ver items', modulo: 'items' },
+    { nombre: 'crear_items', descripcion: 'Permite crear items', modulo: 'items' },
+    { nombre: 'editar_items', descripcion: 'Permite editar items', modulo: 'items' },
+    { nombre: 'ver_solicitudes', descripcion: 'Permite ver solicitudes', modulo: 'solicitudes' },
+    { nombre: 'crear_solicitudes', descripcion: 'Permite crear solicitudes', modulo: 'solicitudes' },
+    { nombre: 'aprobar_solicitudes', descripcion: 'Permite aprobar solicitudes', modulo: 'solicitudes' },
+    { nombre: 'rechazar_solicitudes', descripcion: 'Permite rechazar solicitudes', modulo: 'solicitudes' },
+    { nombre: 'entregar_solicitudes', descripcion: 'Permite entregar solicitudes', modulo: 'solicitudes' },
+    { nombre: 'ver_devoluciones', descripcion: 'Permite ver devoluciones', modulo: 'devoluciones' },
+    { nombre: 'crear_devoluciones', descripcion: 'Permite crear devoluciones', modulo: 'devoluciones' },
+    { nombre: 'ver_movimientos', descripcion: 'Permite ver movimientos', modulo: 'movimientos' },
+    { nombre: 'crear_movimientos', descripcion: 'Permite crear movimientos', modulo: 'movimientos' },
+    { nombre: 'ver_reportes', descripcion: 'Permite ver reportes', modulo: 'movimientos' },
+    { nombre: 'ver_usuarios', descripcion: 'Permite ver usuarios', modulo: 'usuarios' },
+    { nombre: 'crear_usuarios', descripcion: 'Permite crear usuarios', modulo: 'usuarios' },
+    { nombre: 'editar_usuarios', descripcion: 'Permite editar usuarios', modulo: 'usuarios' },
+    { nombre: 'ver_chequeos', descripcion: 'Permite ver chequeos', modulo: 'chequeos' },
+    { nombre: 'crear_chequeos', descripcion: 'Permite crear chequeos', modulo: 'chequeos' },
+    { nombre: 'ver_actas', descripcion: 'Permite ver actas', modulo: 'actas' },
+    { nombre: 'crear_actas', descripcion: 'Permite crear actas', modulo: 'actas' },
+    { nombre: 'ver_notificaciones', descripcion: 'Permite ver notificaciones', modulo: 'notificaciones' },
+  ];
+
+  for (const p of permisosSeed) {
+    const existing = await permisoRepo.findOne({ where: { nombre: p.nombre } });
+    if (!existing) {
+      await permisoRepo.save(permisoRepo.create(p));
+      console.log(`Permiso [${p.nombre}] inserted.`);
+    } else {
+      console.log(`Permiso [${p.nombre}] already exists.`);
     }
   }
 
