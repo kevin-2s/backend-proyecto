@@ -1,18 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FichaEntity } from './entities/ficha.typeorm.entity';
-import { FichaController } from './adapters/input/http/fichas.controller';
-import { FichaService } from '../application/services/fichas.service';
-import { FichaRepositoryAdapter } from './adapters/output/persistence/ficha.repository.adapter';
+import { FichaOrmEntity } from './entities/ficha.orm-entity';
+import { FichasController } from './adapters/input/http/fichas.controller';
+import { FichasService } from '../application/services/fichas.service';
+import { FichasRepositoryAdapter } from './adapters/output/persistence/fichas.repository';
+import { FICHAS_USE_CASES } from '../domain/ports/input/fichas-use-cases.interface';
+import { FICHAS_REPOSITORY } from '../domain/ports/output/fichas-repository.interface';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([FichaEntity])],
-    controllers: [FichaController],
-    providers: [
-        { provide: 'FichaRepositoryPort', useClass: FichaRepositoryAdapter },
-        { provide: 'FindFichaUseCase', useFactory: (repo) => new FichaService(repo), inject: ['FichaRepositoryPort'] },
-        { provide: 'CreateFichaUseCase', useFactory: (repo) => new FichaService(repo), inject: ['FichaRepositoryPort'] }
-    ],
-    exports: ['FichaRepositoryPort']
+  imports: [TypeOrmModule.forFeature([FichaOrmEntity])],
+  controllers: [FichasController],
+  providers: [
+    {
+      provide: FICHAS_USE_CASES,
+      useClass: FichasService,
+    },
+    {
+      provide: FICHAS_REPOSITORY,
+      useClass: FichasRepositoryAdapter,
+    },
+  ],
+  exports: [FICHAS_USE_CASES, FICHAS_REPOSITORY],
 })
 export class FichasModule {}

@@ -1,38 +1,73 @@
-import { Controller, Get, Post, Body, Param, Query, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { SITIOS_USE_CASES, ISitiosUseCases } from '../../../../domain/ports/input/sitios-use-cases.interface';
 import { CreateSitioDto } from './dtos/create-sitio.dto';
-import { FindSitioUseCase } from '../../../../domain/ports/input/find-sitio.use-case';
-import { CreateSitioUseCase } from '../../../../domain/ports/input/create-sitio.use-case';
+import { SitioNotFoundException } from '../../../../domain/exceptions/sitio-not-found.exception';
 
-@ApiTags('sitios')
-@ApiBearerAuth()
 @Controller('sitios')
-export class SitioController {
-    constructor(
-        @Inject('FindSitioUseCase') private readonly findUseCase: FindSitioUseCase,
-        @Inject('CreateSitioUseCase') private readonly createUseCase: CreateSitioUseCase
-    ) {}
+export class SitiosController {
+  constructor(
+    @Inject(SITIOS_USE_CASES)
+    private readonly sitiosUseCases: ISitiosUseCases,
+  ) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Crear sitio' })
-    async create(@Body() dto: CreateSitioDto) {
-        const data = await this.createUseCase.create(dto);
-        return { statusCode: HttpStatus.CREATED, message: 'Creado', data };
+  @Get()
+  async getSitios() {
+    try {
+      const sitios = await this.sitiosUseCases.obtenerSitios();
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Sitios obtenidos exitosamente',
+        data: sitios,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener los sitios',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Listar sitios paginado' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
-        const paginatedData = await this.findUseCase.findAll(parseInt(page, 10), parseInt(limit, 10));
-        return { statusCode: HttpStatus.OK, message: 'Listado', data: paginatedData.data, total: paginatedData.total, page: paginatedData.page, limit: paginatedData.limit };
+  @Get(':id')
+  async getSitio(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const sitio = await this.sitiosUseCases.obtenerSitioPorId(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Sitio obtenido exitosamente',
+        data: sitio,
+      };
+    } catch (error) {
+      if (error instanceof SitioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener el sitio',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Obtener por ID' })
-    async findById(@Param('id') id: string) {
-        const data = await this.findUseCase.findById(id);
-        return { statusCode: HttpStatus.OK, message: 'Encontrado', data };
+  @Post()
+  async createSitio(@Body() createSitioDto: CreateSitioDto) {
+    try {
+      const sitio = await this.sitiosUseCases.crearSitio(createSitioDto);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Sitio creado exitosamente',
+        data: sitio,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al crear el sitio',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
     }
+  }
 }

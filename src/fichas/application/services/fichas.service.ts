@@ -1,24 +1,29 @@
-import { Ficha } from '../../domain/entities/ficha.entity';
-import { FindFichaUseCase } from '../../domain/ports/input/find-ficha.use-case';
-import { CreateFichaUseCase, CreateFichaCommand } from '../../domain/ports/input/create-ficha.use-case';
-import { FichaRepositoryPort, PaginatedResult } from '../../domain/ports/output/ficha.repository.port';
+import { Injectable, Inject } from '@nestjs/common';
+import { IFichasUseCases } from '../../domain/ports/input/fichas-use-cases.interface';
+import { IFichasRepository, FICHAS_REPOSITORY } from '../../domain/ports/output/fichas-repository.interface';
+import { Ficha } from '../../domain/entities/ficha.domain.entity';
 import { FichaNotFoundException } from '../../domain/exceptions/ficha-not-found.exception';
 
-export class FichaService implements FindFichaUseCase, CreateFichaUseCase {
-    constructor(private readonly repository: FichaRepositoryPort) {}
+@Injectable()
+export class FichasService implements IFichasUseCases {
+  constructor(
+    @Inject(FICHAS_REPOSITORY)
+    private readonly fichasRepository: IFichasRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Ficha>> {
-        return this.repository.findAll(page, limit);
-    }
+  async obtenerFichas(): Promise<Ficha[]> {
+    return this.fichasRepository.findAll();
+  }
 
-    async findById(id: string): Promise<Ficha> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new FichaNotFoundException(id);
-        return entity;
+  async obtenerFichaPorId(id: number): Promise<Ficha> {
+    const ficha = await this.fichasRepository.findById(id);
+    if (!ficha) {
+      throw new FichaNotFoundException(id);
     }
+    return ficha;
+  }
 
-    async create(command: CreateFichaCommand): Promise<Ficha> {
-        const newEntity = new Ficha(0, command.numeroFicha, command.programa);
-        return this.repository.save(newEntity);
-    }
+  async crearFicha(data: { numero_ficha: string; programa: string; id_responsable?: number | null }): Promise<Ficha> {
+    return this.fichasRepository.create(data);
+  }
 }

@@ -1,24 +1,34 @@
-import { Notificacion } from '../../domain/entities/notificacion.entity';
-import { FindNotificacionUseCase } from '../../domain/ports/input/find-notificacion.use-case';
-import { CreateNotificacionUseCase, CreateNotificacionCommand } from '../../domain/ports/input/create-notificacion.use-case';
-import { NotificacionRepositoryPort, PaginatedResult } from '../../domain/ports/output/notificacion.repository.port';
-import { NotificacionNotFoundException } from '../../domain/exceptions/notificacion-not-found.exception';
+import { Injectable, Inject } from "@nestjs/common";
+import { INotificacionesUseCases } from "../../domain/ports/input/notificaciones-use-cases.interface";
+import {
+  INotificacionesRepository,
+  NOTIFICACIONES_REPOSITORY,
+} from "../../domain/ports/output/notificaciones-repository.interface";
+import { Notificacion } from "../../domain/entities/notificacion.domain.entity";
 
-export class NotificacionService implements FindNotificacionUseCase, CreateNotificacionUseCase {
-    constructor(private readonly repository: NotificacionRepositoryPort) {}
+@Injectable()
+export class NotificacionesService implements INotificacionesUseCases {
+  constructor(
+    @Inject(NOTIFICACIONES_REPOSITORY)
+    private readonly repository: INotificacionesRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Notificacion>> {
-        return this.repository.findAll(page, limit);
-    }
+  async obtenerNotificacionesUsuario(
+    id_usuario: number,
+  ): Promise<Notificacion[]> {
+    return this.repository.findByUsuarioId(id_usuario);
+  }
 
-    async findById(id: string): Promise<Notificacion> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new NotificacionNotFoundException(id);
-        return entity;
-    }
+  async crearNotificacion(data: {
+    mensaje: string;
+    id_usuario: number;
+  }): Promise<Notificacion> {
+    return this.repository.create(data);
+  }
 
-    async create(command: CreateNotificacionCommand): Promise<Notificacion> {
-        const newEntity = new Notificacion(0, command.mensaje, command.leida || false, new Date(), command.tipoEvento, command.usuarioId);
-        return this.repository.save(newEntity);
-    }
+  async marcarNotificacionComoLeida(
+    id_notificacion: number,
+  ): Promise<Notificacion> {
+    return this.repository.marcarLeida(id_notificacion);
+  }
 }

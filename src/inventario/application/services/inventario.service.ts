@@ -1,25 +1,30 @@
-import { Inventario } from '../../domain/entities/inventario.entity';
-import { FindInventarioUseCase } from '../../domain/ports/input/find-inventario.use-case';
-import { CreateInventarioUseCase, CreateInventarioCommand } from '../../domain/ports/input/create-inventario.use-case';
-import { InventarioRepositoryPort, PaginatedResult } from '../../domain/ports/output/inventario.repository.port';
+import { Injectable, Inject } from '@nestjs/common';
+import { IInventarioUseCases } from '../../domain/ports/input/inventario-use-cases.interface';
+import { IInventarioRepository, INVENTARIO_REPOSITORY } from '../../domain/ports/output/inventario-repository.interface';
+import { Inventario } from '../../domain/entities/inventario.domain.entity';
 import { InventarioNotFoundException } from '../../domain/exceptions/inventario-not-found.exception';
+import { EstadoItem } from '../../../items/domain/entities/item.domain.entity';
 
-export class InventarioService implements FindInventarioUseCase, CreateInventarioUseCase {
-    constructor(private readonly repository: InventarioRepositoryPort) {}
+@Injectable()
+export class InventarioService implements IInventarioUseCases {
+  constructor(
+    @Inject(INVENTARIO_REPOSITORY)
+    private readonly inventarioRepository: IInventarioRepository,
+  ) {}
 
-    async findAll(page: number, limit: number): Promise<PaginatedResult<Inventario>> {
-        return this.repository.findAll(page, limit);
+  async obtenerInventarios(): Promise<Inventario[]> {
+    return this.inventarioRepository.findAll();
+  }
+
+  async obtenerInventarioPorId(id: number): Promise<Inventario> {
+    const inventario = await this.inventarioRepository.findById(id);
+    if (!inventario) {
+      throw new InventarioNotFoundException(id);
     }
+    return inventario;
+  }
 
-    async findById(id: string): Promise<Inventario> {
-        const entity = await this.repository.findById(id);
-        if (!entity) throw new InventarioNotFoundException(id);
-        return entity;
-    }
-
-    async create(command: CreateInventarioCommand): Promise<Inventario> {
-        const newEntity = new Inventario(0, command.cantidadActual, command.stockMinimo || 0, command.productoId, command.sitioId);
-        // TODO: Integración con BullMQ para alerta de bajo stock
-        return this.repository.save(newEntity);
-    }
+  async crearInventario(data: { estado: EstadoItem; id_item: number; id_sitio: number }): Promise<Inventario> {
+    return this.inventarioRepository.create(data);
+  }
 }

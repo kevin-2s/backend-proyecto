@@ -1,6 +1,6 @@
 export class ProductoNotFoundException extends Error {
-    constructor(id: string) {
-        super("Producto con identificador " + id + " no encontrado");
-        this.name = "ProductoNotFoundException";
-    }
+  constructor(id: number) {
+    super(`El producto con id ${id} no fue encontrado`);
+    this.name = 'ProductoNotFoundException';
+  }
 }

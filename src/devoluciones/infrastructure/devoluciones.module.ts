@@ -1,18 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DevolucionEntity } from './entities/devolucion.typeorm.entity';
-import { DevolucionController } from './adapters/input/http/devoluciones.controller';
-import { DevolucionService } from '../application/services/devoluciones.service';
-import { DevolucionRepositoryAdapter } from './adapters/output/persistence/devolucion.repository.adapter';
+import { DevolucionOrmEntity } from './entities/devolucion.orm-entity';
+import { DevolucionesController } from './adapters/input/http/devoluciones.controller';
+import { DevolucionesService } from '../application/services/devoluciones.service';
+import { DevolucionesRepositoryAdapter } from './adapters/output/persistence/devoluciones.repository';
+import { DEVOLUCIONES_USE_CASES } from '../domain/ports/input/devoluciones-use-cases.interface';
+import { DEVOLUCIONES_REPOSITORY } from '../domain/ports/output/devoluciones-repository.interface';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([DevolucionEntity])],
-    controllers: [DevolucionController],
-    providers: [
-        { provide: 'DevolucionRepositoryPort', useClass: DevolucionRepositoryAdapter },
-        { provide: 'FindDevolucionUseCase', useFactory: (repo) => new DevolucionService(repo), inject: ['DevolucionRepositoryPort'] },
-        { provide: 'CreateDevolucionUseCase', useFactory: (repo) => new DevolucionService(repo), inject: ['DevolucionRepositoryPort'] }
-    ],
-    exports: ['DevolucionRepositoryPort']
+  imports: [TypeOrmModule.forFeature([DevolucionOrmEntity])],
+  controllers: [DevolucionesController],
+  providers: [
+    {
+      provide: DEVOLUCIONES_USE_CASES,
+      useClass: DevolucionesService,
+    },
+    {
+      provide: DEVOLUCIONES_REPOSITORY,
+      useClass: DevolucionesRepositoryAdapter,
+    },
+  ],
+  exports: [DEVOLUCIONES_USE_CASES, DEVOLUCIONES_REPOSITORY],
 })
 export class DevolucionesModule {}

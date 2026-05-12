@@ -1,18 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SitioEntity } from './entities/sitio.typeorm.entity';
-import { SitioController } from './adapters/input/http/sitios.controller';
-import { SitioService } from '../application/services/sitios.service';
-import { SitioRepositoryAdapter } from './adapters/output/persistence/sitio.repository.adapter';
+import { SitioOrmEntity } from './entities/sitio.orm-entity';
+import { SitiosController } from './adapters/input/http/sitios.controller';
+import { SitiosService } from '../application/services/sitios.service';
+import { SitiosRepositoryAdapter } from './adapters/output/persistence/sitios.repository';
+import { SITIOS_USE_CASES } from '../domain/ports/input/sitios-use-cases.interface';
+import { SITIOS_REPOSITORY } from '../domain/ports/output/sitios-repository.interface';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([SitioEntity])],
-    controllers: [SitioController],
-    providers: [
-        { provide: 'SitioRepositoryPort', useClass: SitioRepositoryAdapter },
-        { provide: 'FindSitioUseCase', useFactory: (repo) => new SitioService(repo), inject: ['SitioRepositoryPort'] },
-        { provide: 'CreateSitioUseCase', useFactory: (repo) => new SitioService(repo), inject: ['SitioRepositoryPort'] }
-    ],
-    exports: ['SitioRepositoryPort']
+  imports: [TypeOrmModule.forFeature([SitioOrmEntity])],
+  controllers: [SitiosController],
+  providers: [
+    {
+      provide: SITIOS_USE_CASES,
+      useClass: SitiosService,
+    },
+    {
+      provide: SITIOS_REPOSITORY,
+      useClass: SitiosRepositoryAdapter,
+    },
+  ],
+  exports: [SITIOS_USE_CASES, SITIOS_REPOSITORY],
 })
 export class SitiosModule {}
