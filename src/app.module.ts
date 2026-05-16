@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 
 // Modulos de Infraestructura
+import { JwtAuthGuard } from './auth/infrastructure/guards/jwt-auth.guard';
 import { AuthModule } from './auth/infrastructure/auth.module';
 import { RolesModule } from './roles/infrastructure/roles.module';
 import { UsuariosModule } from './usuarios/infrastructure/usuarios.module';
@@ -77,6 +79,12 @@ import { UsuarioPermisosModule } from './usuario-permisos/usuario-permisos.modul
     NotificacionesModule,
     PermisosModule,
     UsuarioPermisosModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule {}

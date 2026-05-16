@@ -2,6 +2,7 @@ import { Controller, Post, Body, Inject, HttpCode, HttpStatus } from '@nestjs/co
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { LoginUseCase } from '../../../../domain/ports/input/login.use-case';
+import { Public } from '../../../decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -10,6 +11,7 @@ export class AuthController {
         @Inject('LoginUseCase') private readonly loginUseCase: LoginUseCase
     ) {}
 
+    @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Iniciar sesión en el sistema' })
