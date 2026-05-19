@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
 import { CATEGORIAS_USE_CASES, ICategoriasUseCases } from '../../../../domain/ports/input/categorias-use-cases.interface';
 import { CreateCategoriaDto } from './dtos/create-categoria.dto';
+import { UpdateCategoriaDto } from './dtos/update-categoria.dto';
 import { CategoriaNotFoundException } from '../../../../domain/exceptions/categoria-not-found.exception';
 
 @Controller('categorias')
@@ -68,6 +69,59 @@ export class CategoriasController {
         message: 'Error al crear la categoría',
         data: null,
       }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id')
+  async updateCategoria(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCategoriaDto: UpdateCategoriaDto,
+  ) {
+    try {
+      const categoria = await this.categoriasUseCases.actualizarCategoria(id, updateCategoriaDto);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Categoría actualizada exitosamente',
+        data: categoria,
+      };
+    } catch (error) {
+      if (error instanceof CategoriaNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al actualizar la categoría',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete(':id')
+  async deleteCategoria(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.categoriasUseCases.eliminarCategoria(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Categoría eliminada exitosamente',
+        data: null,
+      };
+    } catch (error) {
+      if (error instanceof CategoriaNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al eliminar la categoría',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

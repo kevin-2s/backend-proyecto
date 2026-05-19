@@ -6,4 +6,6 @@ export interface ICategoriasUseCases {
   obtenerCategorias(): Promise<Categoria[]>;
   obtenerCategoriaPorId(id: number): Promise<Categoria>;
   crearCategoria(nombre: string): Promise<Categoria>;
+  actualizarCategoria(id: number, data: Partial<Categoria>): Promise<Categoria>;
+  eliminarCategoria(id: number): Promise<void>;
 }

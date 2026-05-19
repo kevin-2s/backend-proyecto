@@ -6,4 +6,6 @@ export interface IInventarioRepository {
   findAll(): Promise<Inventario[]>;
   findById(id: number): Promise<Inventario | null>;
   create(inventario: Omit<Inventario, 'id_inventario' | 'item' | 'sitio'>): Promise<Inventario>;
+  update(id: number, inventario: Partial<Inventario>): Promise<Inventario>;
+  delete(id: number): Promise<void>;
 }

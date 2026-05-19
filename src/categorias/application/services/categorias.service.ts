@@ -26,4 +26,14 @@ export class CategoriasService implements ICategoriasUseCases {
   async crearCategoria(nombre: string): Promise<Categoria> {
     return this.categoriasRepository.create({ nombre });
   }
+
+  async actualizarCategoria(id: number, data: Partial<Categoria>): Promise<Categoria> {
+    await this.obtenerCategoriaPorId(id);
+    return this.categoriasRepository.update(id, data);
+  }
+
+  async eliminarCategoria(id: number): Promise<void> {
+    await this.obtenerCategoriaPorId(id);
+    await this.categoriasRepository.delete(id);
+  }
 }

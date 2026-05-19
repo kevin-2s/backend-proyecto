@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
 import { INVENTARIO_USE_CASES, IInventarioUseCases } from '../../../../domain/ports/input/inventario-use-cases.interface';
 import { CreateInventarioDto } from './dtos/create-inventario.dto';
+import { UpdateInventarioDto } from './dtos/update-inventario.dto';
 import { InventarioNotFoundException } from '../../../../domain/exceptions/inventario-not-found.exception';
 
 @Controller('inventario')
@@ -68,6 +69,59 @@ export class InventarioController {
         message: 'Error al crear el inventario',
         data: null,
       }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id')
+  async updateInventario(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateInventarioDto: UpdateInventarioDto,
+  ) {
+    try {
+      const inventario = await this.inventarioUseCases.actualizarInventario(id, updateInventarioDto);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Inventario actualizado exitosamente',
+        data: inventario,
+      };
+    } catch (error) {
+      if (error instanceof InventarioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al actualizar el inventario',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete(':id')
+  async deleteInventario(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.inventarioUseCases.eliminarInventario(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Inventario eliminado exitosamente',
+        data: null,
+      };
+    } catch (error) {
+      if (error instanceof InventarioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al eliminar el inventario',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
 import { SITIOS_USE_CASES, ISitiosUseCases } from '../../../../domain/ports/input/sitios-use-cases.interface';
 import { CreateSitioDto } from './dtos/create-sitio.dto';
+import { UpdateSitioDto } from './dtos/update-sitio.dto';
 import { SitioNotFoundException } from '../../../../domain/exceptions/sitio-not-found.exception';
 
 @Controller('sitios')
@@ -68,6 +69,59 @@ export class SitiosController {
         message: 'Error al crear el sitio',
         data: null,
       }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id')
+  async updateSitio(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSitioDto: UpdateSitioDto,
+  ) {
+    try {
+      const sitio = await this.sitiosUseCases.actualizarSitio(id, updateSitioDto);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Sitio actualizado exitosamente',
+        data: sitio,
+      };
+    } catch (error) {
+      if (error instanceof SitioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al actualizar el sitio',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete(':id')
+  async deleteSitio(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.sitiosUseCases.eliminarSitio(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Sitio eliminado exitosamente',
+        data: null,
+      };
+    } catch (error) {
+      if (error instanceof SitioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al eliminar el sitio',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

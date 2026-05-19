@@ -29,4 +29,14 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
     const saved = await this.repository.save(ormEntity);
     return CategoriaMapper.toDomain(saved);
   }
+
+  async update(id: number, categoriaData: Partial<Categoria>): Promise<Categoria> {
+    await this.repository.update(id, CategoriaMapper.toEntity(categoriaData as any));
+    const updated = await this.findById(id);
+    return updated!;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }
