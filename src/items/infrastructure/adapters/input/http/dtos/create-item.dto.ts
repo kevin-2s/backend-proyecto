@@ -12,11 +12,10 @@ export class CreateItemDto {
   codigo_sku: string;
 
   @ApiProperty({
-    example: EstadoItem.DISPONIBLE,
-    enum: EstadoItem,
+    example: 'DISPONIBLE',
     description: "Estado del item",
   })
-  @IsEnum(EstadoItem)
+  @IsString()
   @IsNotEmpty()
   estado: EstadoItem;
 

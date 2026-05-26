@@ -1,14 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsInt } from "class-validator";
+import { IsString, IsNotEmpty, IsInt } from "class-validator";
 import { EstadoItem } from "../../../../../../items/domain/entities/item.domain.entity";
 
 export class CreateInventarioDto {
   @ApiProperty({
-    example: EstadoItem.DISPONIBLE,
-    enum: EstadoItem,
+    example: 'DISPONIBLE',
     description: "Estado actual del item en inventario",
   })
-  @IsEnum(EstadoItem)
+  @IsString()
   @IsNotEmpty()
   estado: EstadoItem;
 

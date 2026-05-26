@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
 import { ITEMS_USE_CASES, IItemsUseCases } from '../../../../domain/ports/input/items-use-cases.interface';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { UpdateEstadoItemDto } from './dtos/update-estado-item.dto';
@@ -12,13 +12,16 @@ export class ItemsController {
   ) {}
 
   @Get()
-  async getItems() {
+  async getItems(@Query('id_producto') id_producto?: string) {
     try {
       const items = await this.itemsUseCases.obtenerItems();
+      const filtered = id_producto
+        ? items.filter(item => item.id_producto === parseInt(id_producto, 10))
+        : items;
       return {
         statusCode: HttpStatus.OK,
         message: 'Items obtenidos exitosamente',
-        data: items,
+        data: filtered,
       };
     } catch (error) {
       throw new HttpException({

@@ -8,8 +8,8 @@ export class KardexOrmEntity {
   @PrimaryGeneratedColumn()
   id_kardex: number;
 
-  @Column({ type: 'enum', enum: TipoKardex })
-  tipo: TipoKardex;
+  @Column({ type: 'varchar', length: 50 })
+  tipo: string;
 
   @Column({ type: 'int' })
   cantidad: number;

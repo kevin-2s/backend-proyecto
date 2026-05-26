@@ -3,8 +3,8 @@ import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt } from 'class-validator
 import { TipoSolicitud } from '../../../../../domain/entities/solicitud.domain.entity';
 
 export class CreateSolicitudDto {
-  @ApiProperty({ example: TipoSolicitud.PRESTAMO, enum: TipoSolicitud, description: 'Tipo de solicitud' })
-  @IsEnum(TipoSolicitud)
+  @ApiProperty({ example: 'PRESTAMO', description: 'Tipo de solicitud' })
+  @IsString()
   @IsNotEmpty()
   tipo: TipoSolicitud;
 

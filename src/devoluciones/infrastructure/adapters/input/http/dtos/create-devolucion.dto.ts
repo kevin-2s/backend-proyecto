@@ -23,11 +23,10 @@ export class CreateDevolucionDto {
   id_item: number;
 
   @ApiProperty({
-    example: EstadoDevolucion.BUENO,
-    enum: EstadoDevolucion,
+    example: 'BUENO',
     description: "Estado del item devuelto",
   })
-  @IsEnum(EstadoDevolucion)
+  @IsString()
   @IsNotEmpty()
   estado: EstadoDevolucion;
 

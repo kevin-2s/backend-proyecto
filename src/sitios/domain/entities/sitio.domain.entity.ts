@@ -10,7 +10,7 @@ export class Sitio {
   constructor(
     public readonly id_sitio: number,
     public nombre: string,
-    public tipo: TipoSitio,
+    public tipo: string,
     public id_responsable?: number | null,
     public responsable?: Usuario,
   ) {}

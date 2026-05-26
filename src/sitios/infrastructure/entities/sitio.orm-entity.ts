@@ -10,8 +10,8 @@ export class SitioOrmEntity {
   @Column({ type: 'varchar', length: 150 })
   nombre: string;
 
-  @Column({ type: 'enum', enum: TipoSitio })
-  tipo: TipoSitio;
+  @Column({ type: 'varchar', length: 50 })
+  tipo: string;
 
   @Column({ nullable: true })
   id_responsable: number;

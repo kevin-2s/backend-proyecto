@@ -11,7 +11,7 @@ export class Item {
   constructor(
     public readonly id_item: number,
     public codigo_sku: string,
-    public estado: EstadoItem,
+    public estado: string,
     public id_producto: number,
     public producto?: Producto,
   ) {}

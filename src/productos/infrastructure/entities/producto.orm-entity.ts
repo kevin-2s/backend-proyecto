@@ -10,8 +10,8 @@ export class ProductoOrmEntity {
   @Column({ type: 'varchar', length: 150 })
   nombre: string;
 
-  @Column({ type: 'text' })
-  descripcion: string;
+  @Column({ type: 'text', nullable: true })
+  descripcion: string | null;
 
   @Column({ type: 'varchar', length: 50 })
   codigo_unspsc: string;
@@ -19,8 +19,8 @@ export class ProductoOrmEntity {
   @Column({ type: 'varchar', length: 100, unique: true })
   SKU: string;
 
-  @Column({ type: 'enum', enum: TipoMaterial })
-  tipo_material: TipoMaterial;
+  @Column({ type: 'varchar', length: 50 })
+  tipo_material: string;
 
   @Column({ type: 'varchar', length: 50 })
   unidad_medida: string;
@@ -33,6 +33,9 @@ export class ProductoOrmEntity {
 
   @Column()
   id_categoria: number;
+
+  @Column({ type: 'int', default: 0 })
+  stock_minimo: number;
 
   @ManyToOne(() => CategoriaOrmEntity)
   @JoinColumn({ name: 'id_categoria' })

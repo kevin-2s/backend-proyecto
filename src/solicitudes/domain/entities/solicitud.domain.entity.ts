@@ -17,8 +17,8 @@ export class Solicitud {
   constructor(
     public readonly id_solicitud: number,
     public fecha: Date,
-    public estado: EstadoSolicitud,
-    public tipo: TipoSolicitud,
+    public estado: string,
+    public tipo: string,
     public observacion: string | null,
     public id_usuario: number,
     public id_usuario_aprueba?: number | null,

@@ -6,9 +6,13 @@ import { ProductosService } from '../application/services/productos.service';
 import { ProductosRepositoryAdapter } from './adapters/output/persistence/productos.repository';
 import { PRODUCTOS_USE_CASES } from '../domain/ports/input/productos-use-cases.interface';
 import { PRODUCTOS_REPOSITORY } from '../domain/ports/output/productos-repository.interface';
+import { ItemsModule } from '../../items/infrastructure/items.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductoOrmEntity])],
+  imports: [
+    TypeOrmModule.forFeature([ProductoOrmEntity]),
+    ItemsModule,
+  ],
   controllers: [ProductosController],
   providers: [
     {

@@ -11,11 +11,11 @@ export class SolicitudOrmEntity {
   @Column({ type: 'timestamp' })
   fecha: Date;
 
-  @Column({ type: 'enum', enum: EstadoSolicitud, default: EstadoSolicitud.PENDIENTE })
-  estado: EstadoSolicitud;
+  @Column({ type: 'varchar', length: 50, default: 'PENDIENTE' })
+  estado: string;
 
-  @Column({ type: 'enum', enum: TipoSolicitud })
-  tipo: TipoSolicitud;
+  @Column({ type: 'varchar', length: 50 })
+  tipo: string;
 
   @Column({ type: 'text', nullable: true })
   observacion: string | null;

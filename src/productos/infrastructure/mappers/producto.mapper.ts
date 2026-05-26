@@ -14,6 +14,7 @@ export class ProductoMapper {
       ormEntity.unidad_medida,
       ormEntity.es_psd,
       ormEntity.id_categoria,
+      ormEntity.stock_minimo,
       ormEntity.fecha_vencimiento,
       ormEntity.categoria ? CategoriaMapper.toDomain(ormEntity.categoria) : undefined,
     );
@@ -31,6 +32,7 @@ export class ProductoMapper {
     if (domainEntity.es_psd !== undefined) ormEntity.es_psd = domainEntity.es_psd;
     if (domainEntity.fecha_vencimiento !== undefined) ormEntity.fecha_vencimiento = domainEntity.fecha_vencimiento;
     if (domainEntity.id_categoria !== undefined) ormEntity.id_categoria = domainEntity.id_categoria;
+    if (domainEntity.stock_minimo !== undefined) ormEntity.stock_minimo = domainEntity.stock_minimo;
     return ormEntity;
   }
 }

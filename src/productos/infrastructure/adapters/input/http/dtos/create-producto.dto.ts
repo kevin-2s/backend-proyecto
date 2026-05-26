@@ -8,10 +8,10 @@ export class CreateProductoDto {
   @IsNotEmpty()
   nombre: string;
 
-  @ApiProperty({ example: 'Martillo de acero templado', description: 'Descripción detallada' })
+  @ApiProperty({ example: 'Martillo de acero templado', description: 'Descripción detallada', required: false })
   @IsString()
-  @IsNotEmpty()
-  descripcion: string;
+  @IsOptional()
+  descripcion?: string;
 
   @ApiProperty({ example: '27111600', description: 'Código UNSPSC del producto' })
   @IsString()
@@ -23,8 +23,8 @@ export class CreateProductoDto {
   @IsNotEmpty()
   SKU: string;
 
-  @ApiProperty({ example: TipoMaterial.CONSUMO, enum: TipoMaterial, description: 'Tipo de material' })
-  @IsEnum(TipoMaterial)
+  @ApiProperty({ example: 'CONSUMO', description: 'Tipo de material' })
+  @IsString()
   @IsNotEmpty()
   tipo_material: TipoMaterial;
 
@@ -47,4 +47,14 @@ export class CreateProductoDto {
   @IsInt()
   @IsNotEmpty()
   id_categoria: number;
+
+  @ApiProperty({ example: 7, description: 'Cantidad de unidades físicas a registrar' })
+  @IsInt()
+  @IsNotEmpty()
+  cantidad: number;
+
+  @ApiProperty({ example: 3, description: 'Stock mínimo para alertas' })
+  @IsInt()
+  @IsNotEmpty()
+  stock_minimo: number;
 }

@@ -10,8 +10,8 @@ export class ItemOrmEntity {
   @Column({ type: 'varchar', length: 150, unique: true })
   codigo_sku: string;
 
-  @Column({ type: 'enum', enum: EstadoItem, default: EstadoItem.DISPONIBLE })
-  estado: EstadoItem;
+  @Column({ type: 'varchar', length: 50, default: 'DISPONIBLE' })
+  estado: string;
 
   @Column()
   id_producto: number;

@@ -57,11 +57,14 @@ export class ProductosController {
   @Post()
   async createProducto(@Body() createProductoDto: CreateProductoDto) {
     try {
-      const producto = await this.productosUseCases.crearProducto(createProductoDto);
+      const result = await this.productosUseCases.crearProducto(createProductoDto);
       return {
         statusCode: HttpStatus.CREATED,
-        message: 'Producto creado exitosamente',
-        data: producto,
+        message: `Producto creado exitosamente con ${result.items_generados.length} items`,
+        data: {
+          producto: result.producto,
+          items_generados: result.items_generados,
+        },
       };
     } catch (error) {
       throw new HttpException({

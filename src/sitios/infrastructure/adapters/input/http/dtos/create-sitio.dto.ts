@@ -8,8 +8,8 @@ export class CreateSitioDto {
   @IsNotEmpty()
   nombre: string;
 
-  @ApiProperty({ example: TipoSitio.BODEGA, enum: TipoSitio, description: 'Tipo de sitio' })
-  @IsEnum(TipoSitio)
+  @ApiProperty({ example: 'BODEGA', description: 'Tipo de sitio' })
+  @IsString()
   @IsNotEmpty()
   tipo: TipoSitio;
 

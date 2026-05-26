@@ -17,8 +17,8 @@ export class InventarioOrmEntity {
   @PrimaryGeneratedColumn()
   id_inventario: number;
 
-  @Column({ type: "enum", enum: EstadoItem })
-  estado: EstadoItem;
+  @Column({ type: 'varchar', length: 50 })
+  estado: string;
 
   @Column({ unique: true })
   id_item: number;

@@ -9,7 +9,7 @@ export enum TipoKardex {
 export class Kardex {
   constructor(
     public readonly id_kardex: number,
-    public tipo: TipoKardex,
+    public tipo: string,
     public cantidad: number,
     public saldo_anterior: number,
     public saldo_actual: number,

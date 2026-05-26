@@ -11,7 +11,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
         
         if (exception.name.includes('NotFoundException')) {
             status = HttpStatus.NOT_FOUND;
-        } else if (exception.name.includes('InvalidCredentialsException')) {
+        } else if (exception.name.includes('InvalidCredentialsException') || exception.name.includes('UnauthorizedException')) {
             status = HttpStatus.UNAUTHORIZED;
         } else if (exception.name.includes('Exception')) {
             status = HttpStatus.BAD_REQUEST; 

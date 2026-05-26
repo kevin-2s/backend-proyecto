@@ -11,7 +11,7 @@ export class Devolucion {
   constructor(
     public readonly id_devolucion: number,
     public fecha: Date,
-    public estado: EstadoDevolucion,
+    public estado: string,
     public observacion: string | null,
     public id_solicitud: number,
     public id_item: number,

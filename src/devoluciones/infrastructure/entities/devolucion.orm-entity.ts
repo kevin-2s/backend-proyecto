@@ -25,8 +25,8 @@ export class DevolucionOrmEntity {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   fecha: Date;
 
-  @Column({ type: "enum", enum: EstadoDevolucion })
-  estado: EstadoDevolucion;
+  @Column({ type: 'varchar', length: 50 })
+  estado: string;
 
   @Column({ type: "text", nullable: true })
   observacion: string | null;

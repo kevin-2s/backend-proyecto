@@ -18,7 +18,7 @@ export class UpdateProductoDto {
   @IsOptional()
   SKU?: string;
 
-  @IsEnum(TipoMaterial)
+  @IsString()
   @IsOptional()
   tipo_material?: TipoMaterial;
 
@@ -37,4 +37,8 @@ export class UpdateProductoDto {
   @IsInt()
   @IsOptional()
   id_categoria?: number;
+
+  @IsInt()
+  @IsOptional()
+  stock_minimo?: number;
 }
