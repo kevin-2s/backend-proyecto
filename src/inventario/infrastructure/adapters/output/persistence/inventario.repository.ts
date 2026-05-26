@@ -29,4 +29,14 @@ export class InventarioRepositoryAdapter implements IInventarioRepository {
     const saved = await this.repository.save(ormEntity);
     return InventarioMapper.toDomain(saved);
   }
+
+  async update(id: number, inventarioData: Partial<Inventario>): Promise<Inventario> {
+    await this.repository.update(id, InventarioMapper.toEntity(inventarioData as any));
+    const updated = await this.findById(id);
+    return updated!;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

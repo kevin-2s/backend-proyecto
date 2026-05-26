@@ -25,6 +25,7 @@ export class AuthUserRepositoryAdapter implements AuthRepositoryPort {
       usuario.correo,
       usuario.password,
       [usuario.rol.nombre],
+      usuario.estado
     );
   }
 }

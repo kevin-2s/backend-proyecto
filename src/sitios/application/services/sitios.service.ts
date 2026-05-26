@@ -26,4 +26,14 @@ export class SitiosService implements ISitiosUseCases {
   async crearSitio(data: { nombre: string; tipo: TipoSitio; id_responsable?: number | null }): Promise<Sitio> {
     return this.sitiosRepository.create(data);
   }
+
+  async actualizarSitio(id: number, data: Partial<Sitio>): Promise<Sitio> {
+    await this.obtenerSitioPorId(id);
+    return this.sitiosRepository.update(id, data);
+  }
+
+  async eliminarSitio(id: number): Promise<void> {
+    await this.obtenerSitioPorId(id);
+    await this.sitiosRepository.delete(id);
+  }
 }

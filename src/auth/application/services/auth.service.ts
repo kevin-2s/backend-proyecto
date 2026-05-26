@@ -16,6 +16,10 @@ export class AuthService implements LoginUseCase {
             throw new InvalidCredentialsException();
         }
 
+        if (!user.estado) {
+            throw new InvalidCredentialsException('Su cuenta ha sido desactivada. Comuníquese con el administrador.');
+        }
+
         const isPasswordValid = await this.passwordHash.compare(contrasena, user.passwordHash);
         if (!isPasswordValid) {
             throw new InvalidCredentialsException();

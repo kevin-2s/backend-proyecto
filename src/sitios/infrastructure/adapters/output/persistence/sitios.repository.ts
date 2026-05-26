@@ -29,4 +29,14 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
     const saved = await this.repository.save(ormEntity);
     return SitioMapper.toDomain(saved);
   }
+
+  async update(id: number, sitioData: Partial<Sitio>): Promise<Sitio> {
+    await this.repository.update(id, SitioMapper.toEntity(sitioData as any));
+    const updated = await this.findById(id);
+    return updated!;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

@@ -6,4 +6,6 @@ export interface ISitiosUseCases {
   obtenerSitios(): Promise<Sitio[]>;
   obtenerSitioPorId(id: number): Promise<Sitio>;
   crearSitio(data: { nombre: string; tipo: TipoSitio; id_responsable?: number | null }): Promise<Sitio>;
+  actualizarSitio(id: number, data: Partial<Sitio>): Promise<Sitio>;
+  eliminarSitio(id: number): Promise<void>;
 }

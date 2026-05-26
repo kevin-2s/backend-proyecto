@@ -58,6 +58,7 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
       acc[moduleName].push({
         id_permiso: permiso.id_permiso,
         nombre: permiso.nombre,
+        descripcion: permiso.descripcion,
         tiene_permiso: tienePermiso,
         heredado_de_rol: heredado,
       });

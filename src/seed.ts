@@ -16,7 +16,7 @@ async function bootstrap() {
   const permisoRepo = dataSource.getRepository(PermisoOrmEntity);
 
   console.log('Seeding roles...');
-  const roles = ['Administrador', 'Responsable', 'Aprendiz'];
+  const roles = ['Administrador', 'Instructor', 'Aprendiz'];
   for (const roleName of roles) {
     const existing = await roleRepo.findOne({ where: { nombre: roleName } });
     if (!existing) {
@@ -73,19 +73,24 @@ async function bootstrap() {
 
   console.log('Seeding default administrator user...');
   if (adminRole) {
-    const existingAdmin = await userRepo.findOne({ where: { correo: 'admin@sgm.com' } });
+    const existingAdmin = await userRepo.findOne({ where: { correo: 'admin@sena.edu.co' } });
+    const hashedPass = await bcrypt.hash('Admin123', 10);
+    
     if (!existingAdmin) {
-      const hashedPass = await bcrypt.hash('Admin123!', 10);
       await userRepo.save(userRepo.create({
         nombre: 'Usuario Administrador',
-        correo: 'admin@sgm.com',
+        correo: 'admin@sena.edu.co',
         password: hashedPass,
         estado: true,
         rol: adminRole
       }));
-      console.log('Administrator user [admin@sgm.com] created successfully.');
+      console.log('Administrator user [admin@sena.edu.co] created successfully.');
     } else {
-      console.log('Administrator user [admin@sgm.com] already exists.');
+      // Update password just in case it was different
+      existingAdmin.password = hashedPass;
+      existingAdmin.rol = adminRole; // Ensure role is correct too
+      await userRepo.save(existingAdmin);
+      console.log('Administrator user [admin@sena.edu.co] updated with requested password.');
     }
   }
 

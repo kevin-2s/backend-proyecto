@@ -27,4 +27,14 @@ export class InventarioService implements IInventarioUseCases {
   async crearInventario(data: { estado: EstadoItem; id_item: number; id_sitio: number }): Promise<Inventario> {
     return this.inventarioRepository.create(data);
   }
+
+  async actualizarInventario(id: number, data: Partial<Inventario>): Promise<Inventario> {
+    await this.obtenerInventarioPorId(id);
+    return this.inventarioRepository.update(id, data);
+  }
+
+  async eliminarInventario(id: number): Promise<void> {
+    await this.obtenerInventarioPorId(id);
+    await this.inventarioRepository.delete(id);
+  }
 }

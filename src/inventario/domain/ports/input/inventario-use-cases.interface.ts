@@ -7,4 +7,6 @@ export interface IInventarioUseCases {
   obtenerInventarios(): Promise<Inventario[]>;
   obtenerInventarioPorId(id: number): Promise<Inventario>;
   crearInventario(data: { estado: EstadoItem; id_item: number; id_sitio: number }): Promise<Inventario>;
+  actualizarInventario(id: number, data: Partial<Inventario>): Promise<Inventario>;
+  eliminarInventario(id: number): Promise<void>;
 }

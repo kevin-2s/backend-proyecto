@@ -3,6 +3,7 @@ export class AuthUser {
         public readonly id: string,
         public readonly email: string,
         public readonly passwordHash: string,
-        public readonly roles: string[]
+        public readonly roles: string[],
+        public readonly estado: boolean
     ) {}
 }
