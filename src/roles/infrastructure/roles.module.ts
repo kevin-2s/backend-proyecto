@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RolOrmEntity } from './entities/rol.orm-entity';
+import { RolPermisoOrmEntity } from './entities/rol-permiso.orm-entity';
 import { RolesController } from './adapters/input/http/roles.controller';
 import { RolesService } from '../application/services/roles.service';
 import { RolesRepositoryAdapter } from './adapters/output/persistence/roles.repository';
@@ -8,7 +9,7 @@ import { ROLES_USE_CASES } from '../domain/ports/input/roles-use-cases.interface
 import { ROLES_REPOSITORY } from '../domain/ports/output/roles-repository.interface';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RolOrmEntity])],
+  imports: [TypeOrmModule.forFeature([RolOrmEntity, RolPermisoOrmEntity])],
   controllers: [RolesController],
   providers: [
     {

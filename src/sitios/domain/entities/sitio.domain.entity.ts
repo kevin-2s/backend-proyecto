@@ -13,5 +13,6 @@ export class Sitio {
     public tipo: string,
     public id_responsable?: number | null,
     public responsable?: Usuario,
+    public estado: boolean = true,
   ) {}
 }

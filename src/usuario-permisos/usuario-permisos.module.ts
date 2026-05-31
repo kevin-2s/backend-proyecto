@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/infrastructure/auth.module';
 import { UsuarioPermisoOrmEntity } from './infrastructure/entities/usuario-permiso.orm-entity';
+import { RolPermisoOrmEntity } from '../roles/infrastructure/entities/rol-permiso.orm-entity';
 import { UsuarioPermisosController } from './infrastructure/adapters/input/http/usuario-permisos.controller';
 import { UsuarioPermisosService } from './application/use-cases/usuario-permisos.service';
 import { UsuarioPermisosRepository } from './infrastructure/adapters/output/persistence/usuario-permisos.repository';
@@ -12,7 +13,7 @@ import { UsuariosModule } from '../usuarios/infrastructure/usuarios.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsuarioPermisoOrmEntity]),
+    TypeOrmModule.forFeature([UsuarioPermisoOrmEntity, RolPermisoOrmEntity]),
     PermisosModule,
     UsuariosModule,
     AuthModule,

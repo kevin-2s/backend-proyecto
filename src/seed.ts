@@ -57,6 +57,10 @@ async function bootstrap() {
     { nombre: 'ver_actas', descripcion: 'Permite ver actas', modulo: 'actas' },
     { nombre: 'crear_actas', descripcion: 'Permite crear actas', modulo: 'actas' },
     { nombre: 'ver_notificaciones', descripcion: 'Permite ver notificaciones', modulo: 'notificaciones' },
+    { nombre: 'ver_dashboard', descripcion: 'Permite ver el dashboard', modulo: 'dashboard' },
+    { nombre: 'ver_roles', descripcion: 'Permite ver roles', modulo: 'roles' },
+    { nombre: 'ver_fichas', descripcion: 'Permite ver fichas', modulo: 'fichas' },
+    { nombre: 'ver_sitios', descripcion: 'Permite ver sitios', modulo: 'sitios' },
   ];
 
   for (const p of permisosSeed) {

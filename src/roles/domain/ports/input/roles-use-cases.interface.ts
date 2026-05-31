@@ -6,4 +6,6 @@ export interface IRolesUseCases {
   obtenerRoles(): Promise<Rol[]>;
   obtenerRolPorId(id: number): Promise<Rol>;
   crearRol(nombre: string): Promise<Rol>;
+  obtenerPermisosPorRol(id: number): Promise<any>;
+  asignarPermisos(id: number, idPermisos: number[]): Promise<void>;
 }

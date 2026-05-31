@@ -1,10 +1,13 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { IUsuarioPermisosUseCases } from '../ports/input/usuario-permisos.use-cases.interface';
 import { IUsuarioPermisosRepository } from '../ports/output/usuario-permisos.repository.interface';
 import { IPermisosRepository } from '../../../permisos/application/ports/output/permisos.repository.interface';
 import { IUsuariosRepository, USUARIOS_REPOSITORY } from '../../../usuarios/domain/ports/output/usuarios-repository.interface';
 import { AsignarPermisoDto } from '../../infrastructure/adapters/input/http/dtos/asignar-permiso.dto';
 import { ActualizarPermisoUsuarioDto } from '../../infrastructure/adapters/input/http/dtos/actualizar-permiso-usuario.dto';
+import { RolPermisoOrmEntity } from '../../../roles/infrastructure/entities/rol-permiso.orm-entity';
 
 @Injectable()
 export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
@@ -15,6 +18,8 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
     private readonly permisosRepo: IPermisosRepository,
     @Inject(USUARIOS_REPOSITORY)
     private readonly usuariosRepo: IUsuariosRepository,
+    @InjectRepository(RolPermisoOrmEntity)
+    private readonly rolPermisoRepo: Repository<RolPermisoOrmEntity>,
   ) {}
 
   async getPermisosByUsuario(id_usuario: number): Promise<Record<string, any[]>> {
@@ -25,10 +30,18 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
 
     const permisos = await this.permisosRepo.findAll();
     const usuarioPermisos = await this.usuarioPermisosRepo.findAllByUserId(id_usuario);
-    
+
+    // Obtener permisos del rol del usuario
+    let rolPermisoIds: number[] = [];
+    if (usuario.rol) {
+      const rps = await this.rolPermisoRepo.find({
+        where: { id_rol: usuario.rol.id_rol },
+      });
+      rolPermisoIds = rps.map(rp => rp.id_permiso);
+    }
+
     const esAdmin = usuario.rol?.nombre === 'Administrador';
-    const esInstructor = usuario.rol?.nombre === 'Instructor';
-    
+
     const grouped = permisos.reduce((acc, permiso) => {
       const moduleName = permiso.modulo;
       if (!acc[moduleName]) {
@@ -45,14 +58,11 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
         heredado = false;
       } else if (esAdmin) {
         tienePermiso = true;
-      } else if (esInstructor) {
-        if (permiso.nombre.startsWith('ver_')) {
-          tienePermiso = true;
-        } else {
-          tienePermiso = false;
-        }
+      } else if (rolPermisoIds.includes(permiso.id_permiso)) {
+        tienePermiso = true;
+        heredado = true;
       } else {
-         tienePermiso = false;
+        tienePermiso = false;
       }
 
       acc[moduleName].push({

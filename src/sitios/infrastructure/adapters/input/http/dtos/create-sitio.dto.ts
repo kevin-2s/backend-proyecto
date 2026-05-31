@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt, IsBoolean } from 'class-validator';
 import { TipoSitio } from '../../../../../domain/entities/sitio.domain.entity';
 
 export class CreateSitioDto {
@@ -17,4 +17,9 @@ export class CreateSitioDto {
   @IsInt()
   @IsOptional()
   id_responsable?: number;
+
+  @ApiProperty({ example: true, description: 'Estado activo/inactivo del sitio', required: false, default: true })
+  @IsBoolean()
+  @IsOptional()
+  estado?: boolean;
 }

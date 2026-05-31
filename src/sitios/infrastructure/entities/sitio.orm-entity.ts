@@ -16,6 +16,9 @@ export class SitioOrmEntity {
   @Column({ nullable: true })
   id_responsable: number;
 
+  @Column({ type: 'boolean', default: true })
+  estado: boolean;
+
   @ManyToOne(() => UsuarioOrmEntity, { nullable: true })
   @JoinColumn({ name: 'id_responsable' })
   responsable: UsuarioOrmEntity;

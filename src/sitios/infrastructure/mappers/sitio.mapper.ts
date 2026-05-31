@@ -10,6 +10,7 @@ export class SitioMapper {
       ormEntity.tipo,
       ormEntity.id_responsable,
       ormEntity.responsable ? UsuarioMapper.toDomain(ormEntity.responsable) : undefined,
+      ormEntity.estado,
     );
   }
 
@@ -19,6 +20,7 @@ export class SitioMapper {
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;
     if (domainEntity.tipo !== undefined) ormEntity.tipo = domainEntity.tipo;
     if (domainEntity.id_responsable !== undefined) ormEntity.id_responsable = domainEntity.id_responsable ?? null as any;
+    if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;
     return ormEntity;
   }
 }

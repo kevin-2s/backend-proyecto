@@ -70,4 +70,43 @@ export class RolesController {
       }, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Get(':id/permisos')
+  async getPermisosByRol(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const data = await this.rolesUseCases.obtenerPermisosPorRol(id);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Permisos del rol obtenidos exitosamente',
+        data,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al obtener permisos del rol',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post(':id/permisos')
+  async asignarPermisos(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: { id_permisos: number[] },
+  ) {
+    try {
+      await this.rolesUseCases.asignarPermisos(id, dto.id_permisos);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Permisos asignados exitosamente',
+        data: null,
+      };
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al asignar permisos',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

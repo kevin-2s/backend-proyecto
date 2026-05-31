@@ -14,12 +14,12 @@ export class InventarioRepositoryAdapter implements IInventarioRepository {
   ) {}
 
   async findAll(): Promise<Inventario[]> {
-    const inventarioOrm = await this.repository.find({ relations: ['item', 'sitio'] });
+    const inventarioOrm = await this.repository.find({ relations: ['item', 'item.producto', 'sitio'] });
     return inventarioOrm.map(InventarioMapper.toDomain);
   }
 
   async findById(id: number): Promise<Inventario | null> {
-    const inventarioOrm = await this.repository.findOne({ where: { id_inventario: id }, relations: ['item', 'sitio'] });
+    const inventarioOrm = await this.repository.findOne({ where: { id_inventario: id }, relations: ['item', 'item.producto', 'sitio'] });
     if (!inventarioOrm) return null;
     return InventarioMapper.toDomain(inventarioOrm);
   }

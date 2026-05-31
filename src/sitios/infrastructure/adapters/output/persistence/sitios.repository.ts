@@ -24,7 +24,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
     return SitioMapper.toDomain(sitioOrm);
   }
 
-  async create(sitioData: Omit<Sitio, 'id_sitio' | 'responsable'>): Promise<Sitio> {
+  async create(sitioData: Partial<Omit<Sitio, 'id_sitio' | 'responsable'>>): Promise<Sitio> {
     const ormEntity = SitioMapper.toEntity(sitioData);
     const saved = await this.repository.save(ormEntity);
     return SitioMapper.toDomain(saved);
