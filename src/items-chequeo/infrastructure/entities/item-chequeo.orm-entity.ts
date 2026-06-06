@@ -25,11 +25,11 @@ export class ItemChequeoOrmEntity {
   @Column()
   id_item: number;
 
-  @ManyToOne(() => ChequeoOrmEntity, (chequeo) => chequeo.itemsChequeo)
+  @ManyToOne(() => ChequeoOrmEntity, (chequeo) => chequeo.itemsChequeo, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_chequeo" })
   chequeo: ChequeoOrmEntity;
 
-  @ManyToOne(() => ItemOrmEntity)
+  @ManyToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_item" })
   item: ItemOrmEntity;
 }

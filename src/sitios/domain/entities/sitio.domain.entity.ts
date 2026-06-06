@@ -1,4 +1,5 @@
 import { Usuario } from '../../../usuarios/domain/entities/usuario.domain.entity';
+import { Centro } from '../../../centros/domain/entities/centro.domain.entity';
 
 export enum TipoSitio {
   BODEGA = 'BODEGA',
@@ -13,6 +14,8 @@ export class Sitio {
     public tipo: string,
     public id_responsable?: number | null,
     public responsable?: Usuario,
+    public id_centro?: number | null,
+    public centro?: Centro,
     public estado: boolean = true,
   ) {}
 }

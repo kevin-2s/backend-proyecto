@@ -28,11 +28,11 @@ export class ActaOrmEntity {
   @Column()
   id_usuario: number;
 
-  @OneToOne(() => SolicitudOrmEntity)
+  @OneToOne(() => SolicitudOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_solicitud" })
   solicitud: SolicitudOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_usuario" })
   usuario: UsuarioOrmEntity;
 }

@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { ACTAS_USE_CASES, IActasUseCases } from '../../../../domain/ports/input/actas-use-cases.interface';
 import { CreateActaDto } from './dtos/create-acta.dto';
 import { ActaNotFoundException } from '../../../../domain/exceptions/acta-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('actas')
+@UseGuards(PermisosGuard)
 export class ActasController {
   constructor(
     @Inject(ACTAS_USE_CASES)
@@ -11,6 +14,7 @@ export class ActasController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_actas')
   async getActas() {
     try {
       const actas = await this.actasUseCases.obtenerActas();
@@ -29,6 +33,7 @@ export class ActasController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_actas')
   async getActa(@Param('id', ParseIntPipe) id: number) {
     try {
       const acta = await this.actasUseCases.obtenerActaPorId(id);
@@ -54,6 +59,7 @@ export class ActasController {
   }
 
   @Post()
+  @RequierePermiso('crear_actas')
   async createActa(@Body() createActaDto: CreateActaDto) {
     try {
       const acta = await this.actasUseCases.crearActa(createActaDto);

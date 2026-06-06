@@ -24,7 +24,7 @@ export class NotificacionOrmEntity {
   @Column()
   id_usuario: number;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_usuario" })
   usuario: UsuarioOrmEntity;
 }

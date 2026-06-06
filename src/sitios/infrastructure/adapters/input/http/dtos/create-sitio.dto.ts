@@ -18,6 +18,11 @@ export class CreateSitioDto {
   @IsOptional()
   id_responsable?: number;
 
+  @ApiProperty({ example: 1, description: 'ID del centro al que pertenece', required: false })
+  @IsInt()
+  @IsOptional()
+  id_centro?: number;
+
   @ApiProperty({ example: true, description: 'Estado activo/inactivo del sitio', required: false, default: true })
   @IsBoolean()
   @IsOptional()

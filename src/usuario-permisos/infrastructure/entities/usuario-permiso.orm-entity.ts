@@ -19,11 +19,11 @@ export class UsuarioPermisoOrmEntity {
   @CreateDateColumn({ type: 'timestamp' })
   fecha_asignacion: Date;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;
 
-  @ManyToOne(() => PermisoOrmEntity, (permiso) => permiso.usuarioPermisos)
+  @ManyToOne(() => PermisoOrmEntity, (permiso) => permiso.usuarioPermisos, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_permiso' })
   permiso: PermisoOrmEntity;
 }

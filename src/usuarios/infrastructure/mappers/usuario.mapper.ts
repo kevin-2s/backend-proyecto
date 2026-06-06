@@ -8,10 +8,12 @@ export class UsuarioMapper {
       ormEntity.id_usuario,
       ormEntity.nombre,
       ormEntity.correo,
-      undefined, // NUNCA incluir password en la respuesta
       ormEntity.estado,
       ormEntity.id_rol,
       ormEntity.rol ? RolMapper.toDomain(ormEntity.rol) : undefined,
+      ormEntity.telefono,
+      ormEntity.documento,
+      undefined, // NUNCA incluir password en la respuesta
     );
   }
 
@@ -29,6 +31,12 @@ export class UsuarioMapper {
     }
     if (domainEntity.correo !== undefined) {
       ormEntity.correo = domainEntity.correo;
+    }
+    if (domainEntity.telefono !== undefined) {
+      ormEntity.telefono = domainEntity.telefono;
+    }
+    if (domainEntity.documento !== undefined) {
+      ormEntity.documento = domainEntity.documento;
     }
     
     // Soporta leer desde domain nativo o de un DTO mapeado

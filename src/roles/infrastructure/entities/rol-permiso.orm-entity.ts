@@ -13,11 +13,11 @@ export class RolPermisoOrmEntity {
   @Column()
   id_permiso: number;
 
-  @ManyToOne(() => RolOrmEntity)
+  @ManyToOne(() => RolOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_rol' })
   rol: RolOrmEntity;
 
-  @ManyToOne(() => PermisoOrmEntity)
+  @ManyToOne(() => PermisoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_permiso' })
   permiso: PermisoOrmEntity;
 }

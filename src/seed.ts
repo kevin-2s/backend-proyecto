@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { RolOrmEntity } from './roles/infrastructure/entities/rol.orm-entity';
 import { UsuarioOrmEntity } from './usuarios/infrastructure/entities/usuario.orm-entity';
 import { PermisoOrmEntity } from './permisos/infrastructure/entities/permiso.orm-entity';
+import { RolPermisoOrmEntity } from './roles/infrastructure/entities/rol-permiso.orm-entity';
 import * as bcrypt from 'bcrypt';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
   const roleRepo = dataSource.getRepository(RolOrmEntity);
   const userRepo = dataSource.getRepository(UsuarioOrmEntity);
   const permisoRepo = dataSource.getRepository(PermisoOrmEntity);
+  const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
 
   console.log('Seeding roles...');
   const roles = ['Administrador', 'Instructor', 'Aprendiz'];
@@ -70,6 +72,79 @@ async function bootstrap() {
       console.log(`Permiso [${p.nombre}] inserted.`);
     } else {
       console.log(`Permiso [${p.nombre}] already exists.`);
+    }
+  }
+
+  console.log('Seeding rol_permisos default mappings...');
+  const rolePermissionsSeed = [
+    {
+      rol: 'Administrador',
+      permisos: [
+        'ver_inventario', 'crear_inventario', 'editar_inventario',
+        'ver_productos', 'crear_productos', 'editar_productos', 'eliminar_productos',
+        'ver_items', 'crear_items', 'editar_items',
+        'ver_solicitudes', 'crear_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+        'ver_devoluciones', 'crear_devoluciones',
+        'ver_movimientos', 'crear_movimientos', 'ver_reportes',
+        'ver_usuarios', 'crear_usuarios', 'editar_usuarios',
+        'ver_chequeos', 'crear_chequeos',
+        'ver_actas', 'crear_actas',
+        'ver_notificaciones',
+        'ver_dashboard',
+        'ver_roles',
+        'ver_fichas',
+        'ver_sitios'
+      ]
+    },
+    {
+      rol: 'Instructor',
+      permisos: [
+        'ver_inventario',
+        'ver_productos',
+        'ver_items',
+        'ver_solicitudes', 'crear_solicitudes',
+        'ver_devoluciones', 'crear_devoluciones',
+        'ver_movimientos',
+        'ver_chequeos', 'crear_chequeos',
+        'ver_actas', 'crear_actas',
+        'ver_notificaciones',
+        'ver_dashboard',
+        'ver_fichas',
+        'ver_sitios'
+      ]
+    },
+    {
+      rol: 'Aprendiz',
+      permisos: [
+        'ver_inventario',
+        'ver_productos',
+        'ver_items',
+        'ver_solicitudes', 'crear_solicitudes',
+        'ver_notificaciones',
+        'ver_dashboard'
+      ]
+    }
+  ];
+
+  for (const item of rolePermissionsSeed) {
+    const roleEntity = await roleRepo.findOne({ where: { nombre: item.rol } });
+    if (!roleEntity) continue;
+
+    for (const permName of item.permisos) {
+      const permisoEntity = await permisoRepo.findOne({ where: { nombre: permName } });
+      if (!permisoEntity) continue;
+
+      const existing = await rolPermisoRepo.findOne({
+        where: { id_rol: roleEntity.id_rol, id_permiso: permisoEntity.id_permiso }
+      });
+
+      if (!existing) {
+        await rolPermisoRepo.save(rolPermisoRepo.create({
+          id_rol: roleEntity.id_rol,
+          id_permiso: permisoEntity.id_permiso
+        }));
+        console.log(`Assigned default permission [${permName}] to role [${item.rol}].`);
+      }
     }
   }
 

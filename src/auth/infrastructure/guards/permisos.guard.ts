@@ -79,7 +79,23 @@ export class PermisosGuard implements CanActivate {
       return result[0].activo === true;
     }
 
-    // 2. Si no hay registro, hereda del rol
+    // 2. Si no hay registro, hereda de los roles configurados en la base de datos (rol_permisos)
+    if (roles && roles.length > 0) {
+      const placeholders = roles.map((_, i) => `$${i + 1}`).join(', ');
+      const roleQuery = `
+        SELECT rp.id 
+        FROM rol_permisos rp
+        INNER JOIN rol r ON r.id_rol = rp.id_rol
+        INNER JOIN permisos p ON p.id_permiso = rp.id_permiso
+        WHERE r.nombre IN (${placeholders}) AND p.nombre = $${roles.length + 1}
+      `;
+      const roleResult = await this.dataSource.query(roleQuery, [...roles, permisoNombre]);
+      if (roleResult.length > 0) {
+        return true;
+      }
+    }
+
+    // 3. Fallback heredado por defecto (compatibilidad si la base de datos no está poblada)
     if (roles.includes('Instructor')) {
       // INSTRUCTOR tiene solo permisos de lectura por defecto (ej. ver_inventario)
       if (permisoNombre.startsWith('ver_')) {

@@ -23,7 +23,7 @@ export class SitiosService implements ISitiosUseCases {
     return sitio;
   }
 
-  async crearSitio(data: { nombre: string; tipo: TipoSitio; id_responsable?: number | null; estado?: boolean }): Promise<Sitio> {
+  async crearSitio(data: { nombre: string; tipo: TipoSitio; id_responsable?: number | null; id_centro?: number | null; estado?: boolean }): Promise<Sitio> {
     return this.sitiosRepository.create(data);
   }
 

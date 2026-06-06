@@ -1,10 +1,15 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete, UseGuards } from '@nestjs/common';
 import { CATEGORIAS_USE_CASES, ICategoriasUseCases } from '../../../../domain/ports/input/categorias-use-cases.interface';
 import { CreateCategoriaDto } from './dtos/create-categoria.dto';
 import { UpdateCategoriaDto } from './dtos/update-categoria.dto';
 import { CategoriaNotFoundException } from '../../../../domain/exceptions/categoria-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
+import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('categorias')
+@UseGuards(PermisosGuard)
 export class CategoriasController {
   constructor(
     @Inject(CATEGORIAS_USE_CASES)
@@ -12,6 +17,7 @@ export class CategoriasController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_inventario')
   async getCategorias() {
     try {
       const categorias = await this.categoriasUseCases.obtenerCategorias();
@@ -30,6 +36,7 @@ export class CategoriasController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_inventario')
   async getCategoria(@Param('id', ParseIntPipe) id: number) {
     try {
       const categoria = await this.categoriasUseCases.obtenerCategoriaPorId(id);
@@ -55,6 +62,7 @@ export class CategoriasController {
   }
 
   @Post()
+  @RequierePermiso('crear_inventario')
   async createCategoria(@Body() createCategoriaDto: CreateCategoriaDto) {
     try {
       const categoria = await this.categoriasUseCases.crearCategoria(createCategoriaDto.nombre);
@@ -73,6 +81,7 @@ export class CategoriasController {
   }
 
   @Patch(':id')
+  @RequierePermiso('editar_inventario')
   async updateCategoria(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
@@ -101,6 +110,8 @@ export class CategoriasController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles('Administrador')
   async deleteCategoria(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.categoriasUseCases.eliminarCategoria(id);

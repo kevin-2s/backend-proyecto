@@ -37,7 +37,7 @@ export class ProductoOrmEntity {
   @Column({ type: 'int', default: 0 })
   stock_minimo: number;
 
-  @ManyToOne(() => CategoriaOrmEntity)
+  @ManyToOne(() => CategoriaOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_categoria' })
   categoria: CategoriaOrmEntity;
 }

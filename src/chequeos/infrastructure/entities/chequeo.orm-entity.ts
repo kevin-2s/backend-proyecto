@@ -27,11 +27,11 @@ export class ChequeoOrmEntity {
   @Column({ unique: true })
   id_solicitud: number;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_usuario" })
   usuario: UsuarioOrmEntity;
 
-  @OneToOne(() => SolicitudOrmEntity)
+  @OneToOne(() => SolicitudOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_solicitud" })
   solicitud: SolicitudOrmEntity;
 

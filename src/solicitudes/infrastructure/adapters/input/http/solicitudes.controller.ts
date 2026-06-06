@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { SOLICITUDES_USE_CASES, ISolicitudesUseCases } from '../../../../domain/ports/input/solicitudes-use-cases.interface';
 import { CreateSolicitudDto } from './dtos/create-solicitud.dto';
 import { AprobarSolicitudDto } from './dtos/aprobar-solicitud.dto';
 import { EstadoSolicitud } from '../../../../domain/entities/solicitud.domain.entity';
 import { SolicitudNotFoundException } from '../../../../domain/exceptions/solicitud-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('solicitudes')
+@UseGuards(PermisosGuard)
 export class SolicitudesController {
   constructor(
     @Inject(SOLICITUDES_USE_CASES)
@@ -13,6 +16,7 @@ export class SolicitudesController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_solicitudes')
   async getSolicitudes() {
     try {
       const solicitudes = await this.solicitudesUseCases.obtenerSolicitudes();
@@ -31,6 +35,7 @@ export class SolicitudesController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_solicitudes')
   async getSolicitud(@Param('id', ParseIntPipe) id: number) {
     try {
       const solicitud = await this.solicitudesUseCases.obtenerSolicitudPorId(id);
@@ -56,6 +61,7 @@ export class SolicitudesController {
   }
 
   @Post()
+  @RequierePermiso('crear_solicitudes')
   async createSolicitud(@Body() createSolicitudDto: CreateSolicitudDto) {
     try {
       const solicitud = await this.solicitudesUseCases.crearSolicitud(createSolicitudDto);
@@ -74,6 +80,7 @@ export class SolicitudesController {
   }
 
   @Patch(':id/aprobar')
+  @RequierePermiso('aprobar_solicitudes')
   async aprobarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
     try {
       const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.APROBADA, aprobarDto.id_usuario_aprueba);
@@ -84,6 +91,7 @@ export class SolicitudesController {
   }
 
   @Patch(':id/rechazar')
+  @RequierePermiso('rechazar_solicitudes')
   async rechazarSolicitud(@Param('id', ParseIntPipe) id: number, @Body() aprobarDto: AprobarSolicitudDto) {
     try {
       const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.RECHAZADA, aprobarDto.id_usuario_aprueba);
@@ -94,6 +102,7 @@ export class SolicitudesController {
   }
 
   @Patch(':id/entregar')
+  @RequierePermiso('entregar_solicitudes')
   async entregarSolicitud(@Param('id', ParseIntPipe) id: number) {
     try {
       const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.ENTREGADA);

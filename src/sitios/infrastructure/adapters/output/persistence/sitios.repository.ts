@@ -14,12 +14,12 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   ) {}
 
   async findAll(): Promise<Sitio[]> {
-    const sitiosOrm = await this.repository.find({ relations: ['responsable'] });
+    const sitiosOrm = await this.repository.find({ relations: ['responsable', 'centro'] });
     return sitiosOrm.map(SitioMapper.toDomain);
   }
 
   async findById(id: number): Promise<Sitio | null> {
-    const sitioOrm = await this.repository.findOne({ where: { id_sitio: id }, relations: ['responsable'] });
+    const sitioOrm = await this.repository.findOne({ where: { id_sitio: id }, relations: ['responsable', 'centro'] });
     if (!sitioOrm) return null;
     return SitioMapper.toDomain(sitioOrm);
   }

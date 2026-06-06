@@ -20,6 +20,8 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         id_usuario: true,
         nombre: true,
         correo: true,
+        telefono: true,
+        documento: true,
         estado: true,
         id_rol: true,
       },
@@ -35,6 +37,8 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         id_usuario: true,
         nombre: true,
         correo: true,
+        telefono: true,
+        documento: true,
         estado: true,
         id_rol: true,
       },
@@ -52,5 +56,9 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
   async update(id: number, usuarioData: Partial<Omit<Usuario, 'id_usuario' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }>): Promise<Usuario> {
     await this.repository.update(id, usuarioData as any);
     return this.findById(id) as Promise<Usuario>;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 }
