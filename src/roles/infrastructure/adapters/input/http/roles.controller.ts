@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, H
 import { ROLES_USE_CASES, IRolesUseCases } from '../../../../domain/ports/input/roles-use-cases.interface';
 import { CreateRolDto } from './dtos/create-rol.dto';
 import { RolNotFoundException } from '../../../../domain/exceptions/rol-not-found.exception';
-import { RolesGuard } from '../../../../auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../../auth/infrastructure/decorators/roles.decorator';
+import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
+import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('roles')
 @UseGuards(RolesGuard)

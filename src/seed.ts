@@ -173,7 +173,7 @@ async function bootstrap() {
     }
   }
 
-  const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
+
   const instructorRole = await roleRepo.findOne({ where: { nombre: 'Instructor' } });
   const aprendizRole = await roleRepo.findOne({ where: { nombre: 'Aprendiz' } });
 

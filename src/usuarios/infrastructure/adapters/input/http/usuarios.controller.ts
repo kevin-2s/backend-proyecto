@@ -3,8 +3,8 @@ import { USUARIOS_USE_CASES, IUsuariosUseCases } from '../../../../domain/ports/
 import { CreateUsuarioDto } from './dtos/create-usuario.dto';
 import { UpdateUsuarioDto } from './dtos/update-usuario.dto';
 import { UsuarioNotFoundException } from '../../../../domain/exceptions/usuario-not-found.exception';
-import { RolesGuard } from '../../../../auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../../auth/infrastructure/decorators/roles.decorator';
+import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
+import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('usuarios')
 @UseGuards(RolesGuard)
