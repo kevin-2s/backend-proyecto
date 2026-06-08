@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { RolOrmEntity } from './roles/infrastructure/entities/rol.orm-entity';
 import { UsuarioOrmEntity } from './usuarios/infrastructure/entities/usuario.orm-entity';
 import { PermisoOrmEntity } from './permisos/infrastructure/entities/permiso.orm-entity';
+import { RolPermisoOrmEntity } from './roles/infrastructure/entities/rol-permiso.orm-entity';
 import * as bcrypt from 'bcrypt';
 
 async function bootstrap() {
@@ -96,6 +97,59 @@ async function bootstrap() {
       await userRepo.save(existingAdmin);
       console.log('Administrator user [admin@sena.edu.co] updated with requested password.');
     }
+  }
+
+  const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
+  const instructorRole = await roleRepo.findOne({ where: { nombre: 'Instructor' } });
+  const aprendizRole = await roleRepo.findOne({ where: { nombre: 'Aprendiz' } });
+
+  console.log('Seeding role permissions...');
+  if (instructorRole) {
+    const instructorPermNames = [
+      'ver_inventario', 'ver_productos', 'ver_items',
+      'ver_solicitudes', 'crear_solicitudes', 'ver_devoluciones',
+      'crear_devoluciones', 'ver_movimientos', 'ver_chequeos',
+      'crear_chequeos', 'ver_actas', 'crear_actas',
+      'ver_notificaciones', 'ver_dashboard', 'ver_fichas',
+      'ver_sitios'
+    ];
+    for (const name of instructorPermNames) {
+      const perm = await permisoRepo.findOne({ where: { nombre: name } });
+      if (perm) {
+        const existing = await rolPermisoRepo.findOne({
+          where: { id_rol: instructorRole.id_rol, id_permiso: perm.id_permiso }
+        });
+        if (!existing) {
+          await rolPermisoRepo.save(rolPermisoRepo.create({
+            id_rol: instructorRole.id_rol,
+            id_permiso: perm.id_permiso
+          }));
+        }
+      }
+    }
+    console.log('Permissions for Instructor seeded.');
+  }
+
+  if (aprendizRole) {
+    const aprendizPermNames = [
+      'ver_inventario', 'ver_productos', 'ver_items',
+      'ver_solicitudes', 'crear_solicitudes', 'ver_dashboard'
+    ];
+    for (const name of aprendizPermNames) {
+      const perm = await permisoRepo.findOne({ where: { nombre: name } });
+      if (perm) {
+        const existing = await rolPermisoRepo.findOne({
+          where: { id_rol: aprendizRole.id_rol, id_permiso: perm.id_permiso }
+        });
+        if (!existing) {
+          await rolPermisoRepo.save(rolPermisoRepo.create({
+            id_rol: aprendizRole.id_rol,
+            id_permiso: perm.id_permiso
+          }));
+        }
+      }
+    }
+    console.log('Permissions for Aprendiz seeded.');
   }
 
   console.log('Seeding completed successfully.');

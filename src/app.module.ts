@@ -27,6 +27,11 @@ import { ActasModule } from './actas/infrastructure/actas.module';
 import { NotificacionesModule } from './notificaciones/infrastructure/notificaciones.module';
 import { PermisosModule } from './permisos/permisos.module';
 import { UsuarioPermisosModule } from './usuario-permisos/usuario-permisos.module';
+import { CentrosModule } from './centros/infrastructure/centros.module';
+import { SedesModule } from './sedes/infrastructure/sedes.module';
+import { AreasModule } from './areas/infrastructure/areas.module';
+import { ProgramasModule } from './programas/infrastructure/programas.module';
+
 
 
 @Module({
@@ -79,6 +84,10 @@ import { UsuarioPermisosModule } from './usuario-permisos/usuario-permisos.modul
     NotificacionesModule,
     PermisosModule,
     UsuarioPermisosModule,
+    CentrosModule,
+    SedesModule,
+    AreasModule,
+    ProgramasModule,
   ],
   providers: [
     {
