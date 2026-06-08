@@ -31,8 +31,9 @@ import { CentrosModule } from './centros/infrastructure/centros.module';
 import { SedesModule } from './sedes/infrastructure/sedes.module';
 import { AreasModule } from './areas/infrastructure/areas.module';
 import { ProgramasModule } from './programas/infrastructure/programas.module';
-
-
+import { ProveedoresModule } from './proveedores/infrastructure/proveedores.module';
+import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
+import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 
 @Module({
   imports: [
@@ -88,6 +89,9 @@ import { ProgramasModule } from './programas/infrastructure/programas.module';
     SedesModule,
     AreasModule,
     ProgramasModule,
+    ProveedoresModule,
+    OrdenesCompraModule,
+    PrestamosModule,
   ],
   providers: [
     {
