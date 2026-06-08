@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query, UseGuards } from '@nestjs/common';
 import { NOTIFICACIONES_USE_CASES, INotificacionesUseCases } from '../../../../domain/ports/input/notificaciones-use-cases.interface';
 import { CreateNotificacionDto } from './dtos/create-notificacion.dto';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('notificaciones')
+@UseGuards(PermisosGuard)
 export class NotificacionesController {
   constructor(
     @Inject(NOTIFICACIONES_USE_CASES)
@@ -10,6 +13,7 @@ export class NotificacionesController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_notificaciones')
   async getNotificaciones(@Query('id_usuario', ParseIntPipe) id_usuario: number) {
     try {
       const notificaciones = await this.notificacionesUseCases.obtenerNotificacionesUsuario(id_usuario);
@@ -28,6 +32,7 @@ export class NotificacionesController {
   }
 
   @Post()
+  @RequierePermiso('ver_notificaciones')
   async createNotificacion(@Body() createDto: CreateNotificacionDto) {
     try {
       const notificacion = await this.notificacionesUseCases.crearNotificacion(createDto);
@@ -46,6 +51,7 @@ export class NotificacionesController {
   }
 
   @Patch(':id/marcar-leida')
+  @RequierePermiso('ver_notificaciones')
   async marcarLeida(@Param('id', ParseIntPipe) id: number) {
     try {
       const notificacion = await this.notificacionesUseCases.marcarNotificacionComoLeida(id);

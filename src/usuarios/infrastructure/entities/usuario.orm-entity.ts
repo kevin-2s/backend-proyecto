@@ -12,6 +12,12 @@ export class UsuarioOrmEntity {
   @Column({ type: 'varchar', length: 100, unique: true })
   correo: string;
 
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  telefono?: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  documento?: string;
+
   @Column({ type: 'varchar' })
   password: string;
 
@@ -21,7 +27,7 @@ export class UsuarioOrmEntity {
   @Column()
   id_rol: number;
 
-  @ManyToOne(() => RolOrmEntity)
+  @ManyToOne(() => RolOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_rol' })
   rol: RolOrmEntity;
 }

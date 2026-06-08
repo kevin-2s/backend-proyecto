@@ -14,12 +14,12 @@ export class FichasRepositoryAdapter implements IFichasRepository {
   ) {}
 
   async findAll(): Promise<Ficha[]> {
-    const fichasOrm = await this.repository.find({ relations: ['responsable'] });
+    const fichasOrm = await this.repository.find({ relations: ['responsable', 'programa', 'programa.area'] });
     return fichasOrm.map(FichaMapper.toDomain);
   }
 
   async findById(id: number): Promise<Ficha | null> {
-    const fichaOrm = await this.repository.findOne({ where: { id_ficha: id }, relations: ['responsable'] });
+    const fichaOrm = await this.repository.findOne({ where: { id_ficha: id }, relations: ['responsable', 'programa', 'programa.area'] });
     if (!fichaOrm) return null;
     return FichaMapper.toDomain(fichaOrm);
   }
@@ -27,6 +27,19 @@ export class FichasRepositoryAdapter implements IFichasRepository {
   async create(fichaData: Omit<Ficha, 'id_ficha' | 'responsable'>): Promise<Ficha> {
     const ormEntity = FichaMapper.toEntity(fichaData);
     const saved = await this.repository.save(ormEntity);
-    return FichaMapper.toDomain(saved);
+    const savedWithRelations = await this.repository.findOne({ where: { id_ficha: saved.id_ficha }, relations: ['responsable', 'programa', 'programa.area'] });
+    return FichaMapper.toDomain(savedWithRelations ?? saved);
+  }
+
+  async update(id: number, data: Partial<Ficha>): Promise<Ficha> {
+    const ormEntity = FichaMapper.toEntity(data);
+    await this.repository.update(id, ormEntity);
+    const updated = await this.findById(id);
+    if (!updated) throw new Error('Ficha no encontrada después de actualizar');
+    return updated;
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 }

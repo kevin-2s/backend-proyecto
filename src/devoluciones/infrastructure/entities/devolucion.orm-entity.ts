@@ -37,11 +37,11 @@ export class DevolucionOrmEntity {
   @Column()
   id_item: number;
 
-  @ManyToOne(() => SolicitudOrmEntity)
+  @ManyToOne(() => SolicitudOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_solicitud" })
   solicitud: SolicitudOrmEntity;
 
-  @ManyToOne(() => ItemOrmEntity)
+  @ManyToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_item" })
   item: ItemOrmEntity;
 }

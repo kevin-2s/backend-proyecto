@@ -9,6 +9,8 @@ import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decor
 
 @ApiTags('Usuario Permisos')
 @Controller('usuarios/:id/permisos')
+@UseGuards(RolesGuard)
+@Roles('Administrador')
 export class UsuarioPermisosController {
   constructor(
     @Inject(IUsuarioPermisosUseCases)

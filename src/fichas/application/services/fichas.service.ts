@@ -23,7 +23,17 @@ export class FichasService implements IFichasUseCases {
     return ficha;
   }
 
-  async crearFicha(data: { numero_ficha: string; programa: string; id_responsable?: number | null }): Promise<Ficha> {
+  async crearFicha(data: { numero_ficha: string; id_programa: number; id_responsable: number; ambiente?: string }): Promise<Ficha> {
     return this.fichasRepository.create(data);
+  }
+
+  async actualizarFicha(id: number, data: any): Promise<Ficha> {
+    const ficha = await this.fichasRepository.findById(id);
+    if (!ficha) throw new FichaNotFoundException(id);
+    return this.fichasRepository.update(id, data);
+  }
+
+  async eliminarFicha(id: number): Promise<void> {
+    return this.fichasRepository.delete(id);
   }
 }

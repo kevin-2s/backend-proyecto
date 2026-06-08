@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { MOVIMIENTOS_USE_CASES, IMovimientosUseCases } from '../../../../domain/ports/input/movimientos-use-cases.interface';
 import { CreateMovimientoDto } from './dtos/create-movimiento.dto';
 import { MovimientoNotFoundException } from '../../../../domain/exceptions/movimiento-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('movimientos')
+@UseGuards(PermisosGuard)
 export class MovimientosController {
   constructor(
     @Inject(MOVIMIENTOS_USE_CASES)
@@ -12,6 +15,7 @@ export class MovimientosController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_movimientos')
   async getMovimientos() {
     try {
       const movimientos = await this.movimientosUseCases.obtenerMovimientos();
@@ -30,6 +34,7 @@ export class MovimientosController {
   }
 
   @Get('reporte')
+  @RequierePermiso('ver_reportes')
   @ApiOperation({ summary: 'Generar reporte de movimientos por fecha y tipo' })
   @ApiQuery({ name: 'fechaInicio', required: true, example: '2026-01-01' })
   @ApiQuery({ name: 'fechaFin', required: true, example: '2026-04-21' })
@@ -56,6 +61,7 @@ export class MovimientosController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_movimientos')
   async getMovimiento(@Param('id', ParseIntPipe) id: number) {
     try {
       const movimiento = await this.movimientosUseCases.obtenerMovimientoPorId(id);
@@ -81,6 +87,7 @@ export class MovimientosController {
   }
 
   @Post()
+  @RequierePermiso('crear_movimientos')
   async createMovimiento(@Body() createMovimientoDto: CreateMovimientoDto) {
     try {
       const movimiento = await this.movimientosUseCases.crearMovimiento({

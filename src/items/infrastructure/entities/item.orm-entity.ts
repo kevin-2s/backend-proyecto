@@ -16,7 +16,7 @@ export class ItemOrmEntity {
   @Column()
   id_producto: number;
 
-  @ManyToOne(() => ProductoOrmEntity)
+  @ManyToOne(() => ProductoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_producto' })
   producto: ProductoOrmEntity;
 }

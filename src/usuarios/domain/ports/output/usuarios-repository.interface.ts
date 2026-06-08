@@ -7,4 +7,5 @@ export interface IUsuariosRepository {
   findById(id: number): Promise<Usuario | null>;
   create(usuario: Omit<Usuario, 'id_usuario' | 'estado' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }): Promise<Usuario>;
   update(id: number, usuario: Partial<Omit<Usuario, 'id_usuario' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }>): Promise<Usuario>;
+  delete(id: number): Promise<void>;
 }

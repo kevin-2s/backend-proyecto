@@ -23,15 +23,15 @@ export class MovimientoOrmEntity {
   @Column()
   id_usuario: number;
 
-  @ManyToOne(() => ItemOrmEntity)
+  @ManyToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_item' })
   item: ItemOrmEntity;
 
-  @ManyToOne(() => TipoMovimientoOrmEntity)
+  @ManyToOne(() => TipoMovimientoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_tipo_movimiento' })
   tipoMovimiento: TipoMovimientoOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;
 }

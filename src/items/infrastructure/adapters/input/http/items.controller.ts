@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, Query, UseGuards } from '@nestjs/common';
 import { ITEMS_USE_CASES, IItemsUseCases } from '../../../../domain/ports/input/items-use-cases.interface';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { UpdateEstadoItemDto } from './dtos/update-estado-item.dto';
 import { ItemNotFoundException } from '../../../../domain/exceptions/item-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('items')
+@UseGuards(PermisosGuard)
 export class ItemsController {
   constructor(
     @Inject(ITEMS_USE_CASES)
@@ -12,6 +15,7 @@ export class ItemsController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_items')
   async getItems(@Query('id_producto') id_producto?: string) {
     try {
       const items = await this.itemsUseCases.obtenerItems();
@@ -33,6 +37,7 @@ export class ItemsController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_items')
   async getItem(@Param('id', ParseIntPipe) id: number) {
     try {
       const item = await this.itemsUseCases.obtenerItemPorId(id);
@@ -58,6 +63,7 @@ export class ItemsController {
   }
 
   @Post()
+  @RequierePermiso('crear_items')
   async createItem(@Body() createItemDto: CreateItemDto) {
     try {
       const item = await this.itemsUseCases.crearItem(createItemDto);
@@ -76,6 +82,7 @@ export class ItemsController {
   }
 
   @Patch(':id/estado')
+  @RequierePermiso('editar_items')
   async updateEstadoItem(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateEstadoItemDto: UpdateEstadoItemDto,

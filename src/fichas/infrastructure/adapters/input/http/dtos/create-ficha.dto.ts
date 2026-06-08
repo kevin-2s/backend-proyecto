@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsInt } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt } from 'class-validator';
 
 export class CreateFichaDto {
   @ApiProperty({ example: '2712345', description: 'Número de la ficha de formación' })
@@ -7,13 +7,17 @@ export class CreateFichaDto {
   @IsNotEmpty()
   numero_ficha: string;
 
-  @ApiProperty({ example: 'ADSO', description: 'Programa de formación' })
-  @IsString()
-  @IsNotEmpty()
-  programa: string;
-
-  @ApiProperty({ example: 1, description: 'ID del instructor responsable', required: false })
+  @ApiProperty({ example: 1, description: 'ID del programa de formación' })
   @IsInt()
-  @IsOptional()
-  id_responsable?: number;
+  @IsNotEmpty()
+  id_programa: number;
+
+  @ApiProperty({ example: 1, description: 'ID del instructor responsable', required: true })
+  @IsInt()
+  @IsNotEmpty()
+  id_responsable: number;
+
+  @ApiProperty({ example: 'Ambiente 102', description: 'Ambiente de formación', required: false })
+  @IsString()
+  ambiente?: string;
 }

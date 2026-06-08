@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { CHEQUEOS_USE_CASES, IChequeosUseCases } from '../../../../domain/ports/input/chequeos-use-cases.interface';
 import { CreateChequeoDto } from './dtos/create-chequeo.dto';
 import { ChequeoNotFoundException } from '../../../../domain/exceptions/chequeo-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('chequeos')
+@UseGuards(PermisosGuard)
 export class ChequeosController {
   constructor(
     @Inject(CHEQUEOS_USE_CASES)
@@ -11,6 +14,7 @@ export class ChequeosController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_chequeos')
   async getChequeos() {
     try {
       const chequeos = await this.chequeosUseCases.obtenerChequeos();
@@ -29,6 +33,7 @@ export class ChequeosController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_chequeos')
   async getChequeo(@Param('id', ParseIntPipe) id: number) {
     try {
       const chequeo = await this.chequeosUseCases.obtenerChequeoPorId(id);
@@ -54,6 +59,7 @@ export class ChequeosController {
   }
 
   @Post()
+  @RequierePermiso('crear_chequeos')
   async createChequeo(@Body() createChequeoDto: CreateChequeoDto) {
     try {
       const chequeo = await this.chequeosUseCases.crearChequeo(createChequeoDto);

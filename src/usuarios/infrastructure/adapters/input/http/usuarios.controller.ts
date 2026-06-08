@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { USUARIOS_USE_CASES, IUsuariosUseCases } from '../../../../domain/ports/input/usuarios-use-cases.interface';
 import { CreateUsuarioDto } from './dtos/create-usuario.dto';
 import { UpdateUsuarioDto } from './dtos/update-usuario.dto';
 import { UsuarioNotFoundException } from '../../../../domain/exceptions/usuario-not-found.exception';
+import { RolesGuard } from '../../../../auth/infrastructure/guards/roles.guard';
+import { Roles } from '../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('usuarios')
+@UseGuards(RolesGuard)
+@Roles('Administrador')
 export class UsuariosController {
   constructor(
     @Inject(USUARIOS_USE_CASES)
@@ -14,6 +18,30 @@ export class UsuariosController {
   private excludePassword(usuario: any) {
     const { password, ...usuarioSinPassword } = usuario;
     return usuarioSinPassword;
+  }
+
+  @Delete(':id')
+  async deleteUsuario(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.usuariosUseCases.eliminarUsuario(id);
+      return {
+        statusCode: HttpStatus.NO_CONTENT,
+        message: 'Usuario eliminado exitosamente',
+      };
+    } catch (error) {
+      if (error instanceof UsuarioNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al eliminar el usuario',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get()

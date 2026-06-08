@@ -1,10 +1,15 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete, UseGuards } from '@nestjs/common';
 import { INVENTARIO_USE_CASES, IInventarioUseCases } from '../../../../domain/ports/input/inventario-use-cases.interface';
 import { CreateInventarioDto } from './dtos/create-inventario.dto';
 import { UpdateInventarioDto } from './dtos/update-inventario.dto';
 import { InventarioNotFoundException } from '../../../../domain/exceptions/inventario-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
+import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('inventario')
+@UseGuards(PermisosGuard)
 export class InventarioController {
   constructor(
     @Inject(INVENTARIO_USE_CASES)
@@ -12,6 +17,7 @@ export class InventarioController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_inventario')
   async getInventarios() {
     try {
       const inventarios = await this.inventarioUseCases.obtenerInventarios();
@@ -30,6 +36,7 @@ export class InventarioController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_inventario')
   async getInventario(@Param('id', ParseIntPipe) id: number) {
     try {
       const inventario = await this.inventarioUseCases.obtenerInventarioPorId(id);
@@ -55,6 +62,7 @@ export class InventarioController {
   }
 
   @Post()
+  @RequierePermiso('crear_inventario')
   async createInventario(@Body() createInventarioDto: CreateInventarioDto) {
     try {
       const inventario = await this.inventarioUseCases.crearInventario(createInventarioDto);
@@ -73,6 +81,7 @@ export class InventarioController {
   }
 
   @Patch(':id')
+  @RequierePermiso('editar_inventario')
   async updateInventario(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateInventarioDto: UpdateInventarioDto,
@@ -101,6 +110,8 @@ export class InventarioController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles('Administrador')
   async deleteInventario(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.inventarioUseCases.eliminarInventario(id);

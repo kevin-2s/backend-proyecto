@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { PRODUCTOS_USE_CASES, IProductosUseCases } from '../../../../domain/ports/input/productos-use-cases.interface';
 import { CreateProductoDto } from './dtos/create-producto.dto';
 import { UpdateProductoDto } from './dtos/update-producto.dto';
 import { ProductoNotFoundException } from '../../../../domain/exceptions/producto-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('productos')
+@UseGuards(PermisosGuard)
 export class ProductosController {
   constructor(
     @Inject(PRODUCTOS_USE_CASES)
@@ -12,6 +15,7 @@ export class ProductosController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_productos')
   async getProductos() {
     try {
       const productos = await this.productosUseCases.obtenerProductos();
@@ -30,6 +34,7 @@ export class ProductosController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_productos')
   async getProducto(@Param('id', ParseIntPipe) id: number) {
     try {
       const producto = await this.productosUseCases.obtenerProductoPorId(id);
@@ -55,6 +60,7 @@ export class ProductosController {
   }
 
   @Post()
+  @RequierePermiso('crear_productos')
   async createProducto(@Body() createProductoDto: CreateProductoDto) {
     try {
       const result = await this.productosUseCases.crearProducto(createProductoDto);
@@ -76,6 +82,7 @@ export class ProductosController {
   }
 
   @Patch(':id')
+  @RequierePermiso('editar_productos')
   async updateProducto(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductoDto: UpdateProductoDto,
@@ -104,6 +111,7 @@ export class ProductosController {
   }
 
   @Delete(':id')
+  @RequierePermiso('eliminar_productos')
   async deleteProducto(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.productosUseCases.eliminarProducto(id);

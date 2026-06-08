@@ -29,15 +29,15 @@ export class SolicitudOrmEntity {
   @Column({ nullable: true })
   id_ficha: number;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity, { nullable: true })
+  @ManyToOne(() => UsuarioOrmEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_usuario_aprueba' })
   usuario_aprueba: UsuarioOrmEntity;
 
-  @ManyToOne(() => FichaOrmEntity, { nullable: true })
+  @ManyToOne(() => FichaOrmEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_ficha' })
   ficha: FichaOrmEntity;
 }

@@ -9,6 +9,8 @@ import { Inject } from '@nestjs/common';
 
 @ApiTags('Permisos')
 @Controller('permisos')
+@UseGuards(RolesGuard)
+@Roles('Administrador')
 export class PermisosController {
   constructor(
     @Inject(IPermisosUseCases)

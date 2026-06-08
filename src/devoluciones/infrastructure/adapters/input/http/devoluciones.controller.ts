@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { DEVOLUCIONES_USE_CASES, IDevolucionesUseCases } from '../../../../domain/ports/input/devoluciones-use-cases.interface';
 import { CreateDevolucionDto } from './dtos/create-devolucion.dto';
 import { DevolucionNotFoundException } from '../../../../domain/exceptions/devolucion-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('devoluciones')
+@UseGuards(PermisosGuard)
 export class DevolucionesController {
   constructor(
     @Inject(DEVOLUCIONES_USE_CASES)
@@ -11,6 +14,7 @@ export class DevolucionesController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_devoluciones')
   async getDevoluciones() {
     try {
       const devoluciones = await this.devolucionesUseCases.obtenerDevoluciones();
@@ -29,6 +33,7 @@ export class DevolucionesController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_devoluciones')
   async getDevolucion(@Param('id', ParseIntPipe) id: number) {
     try {
       const devolucion = await this.devolucionesUseCases.obtenerDevolucionPorId(id);
@@ -54,6 +59,7 @@ export class DevolucionesController {
   }
 
   @Post()
+  @RequierePermiso('crear_devoluciones')
   async createDevolucion(@Body() createDevolucionDto: CreateDevolucionDto) {
     try {
       const devolucion = await this.devolucionesUseCases.crearDevolucion(createDevolucionDto);

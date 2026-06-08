@@ -16,11 +16,11 @@ export class DetalleSolicitudOrmEntity {
   @Column()
   id_producto: number;
 
-  @ManyToOne(() => SolicitudOrmEntity)
+  @ManyToOne(() => SolicitudOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_solicitud' })
   solicitud: SolicitudOrmEntity;
 
-  @ManyToOne(() => ProductoOrmEntity)
+  @ManyToOne(() => ProductoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_producto' })
   producto: ProductoOrmEntity;
 }

@@ -7,10 +7,12 @@ export class Usuario {
     public readonly id_usuario: number,
     public nombre: string,
     public correo: string,
-    password_input: string | undefined, // Se recibe internamente, no se expone en JSON
     public estado: boolean,
     public id_rol: number,
     public rol?: Rol,
+    public telefono?: string,
+    public documento?: string,
+    password_input?: string, // Se recibe internamente, no se expone en JSON
   ) {
     this._password = password_input;
   }

@@ -26,11 +26,11 @@ export class InventarioOrmEntity {
   @Column()
   id_sitio: number;
 
-  @OneToOne(() => ItemOrmEntity)
+  @OneToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_item" })
   item: ItemOrmEntity;
 
-  @ManyToOne(() => SitioOrmEntity)
+  @ManyToOne(() => SitioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "id_sitio" })
   sitio: SitioOrmEntity;
 }

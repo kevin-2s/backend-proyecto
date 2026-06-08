@@ -32,11 +32,11 @@ export class KardexOrmEntity {
   @Column()
   id_usuario: number;
 
-  @ManyToOne(() => ItemOrmEntity)
+  @ManyToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_item' })
   item: ItemOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity)
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;
 }

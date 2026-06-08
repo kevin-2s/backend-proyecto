@@ -11,6 +11,14 @@ export class UpdateUsuarioDto {
 
   @IsString()
   @IsOptional()
+  telefono?: string;
+
+  @IsString()
+  @IsOptional()
+  documento?: string;
+
+  @IsString()
+  @IsOptional()
   @MinLength(6)
   password?: string;
 
