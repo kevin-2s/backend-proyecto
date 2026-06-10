@@ -24,6 +24,12 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     return ItemMapper.toDomain(itemOrm);
   }
 
+  async findBySku(sku: string): Promise<Item | null> {
+    const itemOrm = await this.repository.findOne({ where: { codigo_sku: sku }, relations: ['producto'] });
+    if (!itemOrm) return null;
+    return ItemMapper.toDomain(itemOrm);
+  }
+
   async create(itemData: Omit<Item, 'id_item' | 'producto'>): Promise<Item> {
     const ormEntity = ItemMapper.toEntity(itemData);
     const saved = await this.repository.save(ormEntity);

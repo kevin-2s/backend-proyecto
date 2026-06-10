@@ -1,52 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { IPrestamosRepository } from '../../../../domain/ports/output/prestamos-repository.interface';
+import { Prestamo, EstadoPrestamo } from '../../../../domain/entities/prestamo.domain.entity';
 import { PrestamoOrmEntity } from '../../../entities/prestamo.orm-entity';
-import { PrestamoDomainEntity } from '../../../../domain/entities/prestamo.domain.entity';
-import { PrestamosRepositoryInterface } from '../../../../domain/ports/output/prestamos-repository.interface';
 import { PrestamoMapper } from '../../../mappers/prestamo.mapper';
 
 @Injectable()
-export class PrestamosRepository implements PrestamosRepositoryInterface {
+export class PrestamosRepositoryAdapter implements IPrestamosRepository {
   constructor(
     @InjectRepository(PrestamoOrmEntity)
-    private readonly ormRepository: Repository<PrestamoOrmEntity>,
+    private readonly repo: Repository<PrestamoOrmEntity>,
   ) {}
 
-  async create(prestamo: PrestamoDomainEntity): Promise<PrestamoDomainEntity> {
-    const ormEntity = PrestamoMapper.toOrmEntity(prestamo);
-    const saved = await this.ormRepository.save(ormEntity);
-    return PrestamoMapper.toDomainEntity(saved);
-  }
-
-  async findAll(): Promise<PrestamoDomainEntity[]> {
-    const entities = await this.ormRepository.find({
-      relations: ['item', 'item.producto', 'usuario'],
+  async findAll(): Promise<Prestamo[]> {
+    const orms = await this.repo.find({
       order: { fecha_prestamo: 'DESC' },
+      relations: ['item', 'usuario_solicitante', 'usuario_responsable'],
     });
-    return entities.map(PrestamoMapper.toDomainEntity);
+    return orms.map(PrestamoMapper.toDomain);
   }
 
-  async findActivos(): Promise<PrestamoDomainEntity[]> {
-    const entities = await this.ormRepository.find({
-      where: { estado: 'ACTIVO' },
-      relations: ['item', 'item.producto', 'usuario'],
-      order: { fecha_devolucion_esperada: 'ASC' },
-    });
-    return entities.map(PrestamoMapper.toDomainEntity);
-  }
-
-  async findById(id: number): Promise<PrestamoDomainEntity | null> {
-    const entity = await this.ormRepository.findOne({
+  async findById(id: number): Promise<Prestamo | null> {
+    const orm = await this.repo.findOne({
       where: { id_prestamo: id },
-      relations: ['item', 'item.producto', 'usuario'],
+      relations: ['item', 'usuario_solicitante', 'usuario_responsable'],
     });
-    if (!entity) return null;
-    return PrestamoMapper.toDomainEntity(entity);
+    return orm ? PrestamoMapper.toDomain(orm) : null;
   }
 
-  async update(id: number, prestamo: Partial<PrestamoDomainEntity>): Promise<PrestamoDomainEntity | null> {
-    await this.ormRepository.update(id, prestamo);
-    return this.findById(id);
+  async findActivos(): Promise<Prestamo[]> {
+    const orms = await this.repo.find({
+      where: { estado: EstadoPrestamo.ACTIVO },
+      order: { fecha_prestamo: 'DESC' },
+      relations: ['item', 'usuario_solicitante', 'usuario_responsable'],
+    });
+    return orms.map(PrestamoMapper.toDomain);
+  }
+
+  async create(data: Omit<Prestamo, 'id_prestamo'>): Promise<Prestamo> {
+    const entity = this.repo.create(PrestamoMapper.toOrm(data));
+    const saved = await this.repo.save(entity);
+    return PrestamoMapper.toDomain(saved);
+  }
+
+  async update(id: number, data: Partial<Prestamo>): Promise<Prestamo> {
+    await this.repo.update(id, {
+      estado: data.estado,
+      fecha_devolucion_real: data.fecha_devolucion_real ?? undefined,
+      observacion: data.observacion ?? undefined,
+    });
+    const updated = await this.repo.findOne({
+      where: { id_prestamo: id },
+      relations: ['item', 'usuario_solicitante', 'usuario_responsable'],
+    });
+    return PrestamoMapper.toDomain(updated!);
   }
 }

@@ -2,19 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { ItemOrmEntity } from '../../../items/infrastructure/entities/item.orm-entity';
 import { UsuarioOrmEntity } from '../../../usuarios/infrastructure/entities/usuario.orm-entity';
 
-@Entity('prestamos')
+@Entity('prestamo')
 export class PrestamoOrmEntity {
   @PrimaryGeneratedColumn()
   id_prestamo: number;
-
-  @Column()
-  id_item: number;
-
-  @Column()
-  id_usuario: number;
-
-  @Column({ nullable: true })
-  id_ficha: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   fecha_prestamo: Date;
@@ -23,25 +14,32 @@ export class PrestamoOrmEntity {
   fecha_devolucion_esperada: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  fecha_devolucion_real: Date;
+  fecha_devolucion_real: Date | null;
 
   @Column({ type: 'varchar', length: 20, default: 'ACTIVO' })
-  estado: string; // ACTIVO, DEVUELTO, VENCIDO
-
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  estado_devolucion: string; // BUENO, REGULAR, DAÑADO, PERDIDO
+  estado: string;
 
   @Column({ type: 'text', nullable: true })
-  observacion: string;
+  observacion: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  observacion_devolucion: string;
+  @Column()
+  id_item: number;
 
-  @ManyToOne(() => ItemOrmEntity, { onDelete: 'RESTRICT' })
+  @Column()
+  id_usuario_solicitante: number;
+
+  @Column()
+  id_usuario_responsable: number;
+
+  @ManyToOne(() => ItemOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_item' })
   item: ItemOrmEntity;
 
-  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'id_usuario' })
-  usuario: UsuarioOrmEntity;
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_usuario_solicitante' })
+  usuario_solicitante: UsuarioOrmEntity;
+
+  @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_usuario_responsable' })
+  usuario_responsable: UsuarioOrmEntity;
 }

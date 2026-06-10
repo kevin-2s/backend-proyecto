@@ -1,9 +1,11 @@
-import { PrestamoDomainEntity } from '../../entities/prestamo.domain.entity';
+import { Prestamo } from '../../entities/prestamo.domain.entity';
 
-export interface PrestamosRepositoryInterface {
-  create(prestamo: PrestamoDomainEntity): Promise<PrestamoDomainEntity>;
-  findAll(): Promise<PrestamoDomainEntity[]>;
-  findActivos(): Promise<PrestamoDomainEntity[]>;
-  findById(id: number): Promise<PrestamoDomainEntity | null>;
-  update(id: number, prestamo: Partial<PrestamoDomainEntity>): Promise<PrestamoDomainEntity | null>;
+export const PRESTAMOS_REPOSITORY = Symbol('PRESTAMOS_REPOSITORY');
+
+export interface IPrestamosRepository {
+  findAll(): Promise<Prestamo[]>;
+  findById(id: number): Promise<Prestamo | null>;
+  findActivos(): Promise<Prestamo[]>;
+  create(data: Omit<Prestamo, 'id_prestamo'>): Promise<Prestamo>;
+  update(id: number, data: Partial<Prestamo>): Promise<Prestamo>;
 }

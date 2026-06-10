@@ -14,14 +14,14 @@ export class KardexRepositoryAdapter implements IKardexRepository {
   ) {}
 
   async findAll(): Promise<Kardex[]> {
-    const kardexOrm = await this.repository.find({ relations: ['item', 'usuario'] });
+    const kardexOrm = await this.repository.find({ relations: ['item', 'item.producto', 'usuario'] });
     return kardexOrm.map(KardexMapper.toDomain);
   }
 
   async findByItemId(id_item: number): Promise<Kardex[]> {
     const kardexOrm = await this.repository.find({
       where: { id_item },
-      relations: ['item', 'usuario'],
+      relations: ['item', 'item.producto', 'usuario'],
       order: { fecha: 'ASC' }
     });
     return kardexOrm.map(KardexMapper.toDomain);

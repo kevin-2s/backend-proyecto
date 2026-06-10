@@ -6,9 +6,13 @@ import { InventarioService } from '../application/services/inventario.service';
 import { InventarioRepositoryAdapter } from './adapters/output/persistence/inventario.repository';
 import { INVENTARIO_USE_CASES } from '../domain/ports/input/inventario-use-cases.interface';
 import { INVENTARIO_REPOSITORY } from '../domain/ports/output/inventario-repository.interface';
+import { KardexModule } from '../../kardex/infrastructure/kardex.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InventarioOrmEntity])],
+  imports: [
+    TypeOrmModule.forFeature([InventarioOrmEntity]),
+    KardexModule,
+  ],
   controllers: [InventarioController],
   providers: [
     {
