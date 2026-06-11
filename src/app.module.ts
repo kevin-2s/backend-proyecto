@@ -31,7 +31,7 @@ import { CentrosModule } from './centros/infrastructure/centros.module';
 import { SedesModule } from './sedes/infrastructure/sedes.module';
 import { AreasModule } from './areas/infrastructure/areas.module';
 import { ProgramasModule } from './programas/infrastructure/programas.module';
-import { ProveedoresModule } from './proveedores/infrastructure/proveedores.module';
+
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { QrModule } from './qr/infrastructure/qr.module';
 import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
@@ -91,7 +91,7 @@ import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
     SedesModule,
     AreasModule,
     ProgramasModule,
-    ProveedoresModule,
+
     OrdenesCompraModule,
     ReportesModule,
     QrModule,

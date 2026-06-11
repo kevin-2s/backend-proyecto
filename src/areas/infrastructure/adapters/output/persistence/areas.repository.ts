@@ -14,12 +14,12 @@ export class AreasRepositoryAdapter implements IAreasRepository {
   ) {}
 
   async findAll(): Promise<Area[]> {
-    const areasOrm = await this.repository.find();
+    const areasOrm = await this.repository.find({ relations: ['sede', 'sede.centro'] });
     return areasOrm.map(AreaMapper.toDomain);
   }
 
   async findById(id: number): Promise<Area | null> {
-    const areaOrm = await this.repository.findOne({ where: { id_area: id } });
+    const areaOrm = await this.repository.findOne({ where: { id_area: id }, relations: ['sede', 'sede.centro'] });
     if (!areaOrm) return null;
     return AreaMapper.toDomain(areaOrm);
   }

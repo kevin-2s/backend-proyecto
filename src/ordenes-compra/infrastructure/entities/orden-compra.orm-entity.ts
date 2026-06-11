@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-import { ProveedorOrmEntity } from '../../../proveedores/infrastructure/entities/proveedor.orm-entity';
+
 import { ItemOrmEntity } from '../../../items/infrastructure/entities/item.orm-entity';
 
 @Entity('ordenes_compra')
@@ -31,9 +31,7 @@ export class OrdenCompraOrmEntity {
   @Column({ type: 'text', nullable: true })
   observacion: string;
 
-  @ManyToOne(() => ProveedorOrmEntity, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'id_proveedor' })
-  proveedor: ProveedorOrmEntity;
+
 
   @ManyToOne(() => ItemOrmEntity, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'id_item' })
