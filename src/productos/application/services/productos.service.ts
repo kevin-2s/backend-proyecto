@@ -30,8 +30,8 @@ export class ProductosService implements IProductosUseCases {
   async crearProducto(data: {
     nombre: string;
     descripcion?: string | null;
-    codigo_unspsc: string;
-    SKU: string;
+    codigo_unspsc?: string | null;
+    SKU?: string | null;
     tipo_material: TipoMaterial;
     unidad_medida: string;
     es_psd: boolean;
@@ -39,26 +39,31 @@ export class ProductosService implements IProductosUseCases {
     stock_minimo: number;
     cantidad: number;
     fecha_vencimiento?: Date | null;
+    unidad_peso_bulto?: string | null;
+    peso_por_bulto?: number | null;
+    id_sitio?: number | null;
   }): Promise<{ producto: Producto; items_generados: Item[] }> {
-    // 1. Crear el producto en la base de datos
     const producto = await this.productosRepository.create({
       nombre: data.nombre,
       descripcion: data.descripcion ?? null,
-      codigo_unspsc: data.codigo_unspsc,
-      SKU: data.SKU,
+      codigo_unspsc: data.codigo_unspsc ?? null,
+      SKU: data.SKU ?? null,
       tipo_material: data.tipo_material,
       unidad_medida: data.unidad_medida,
       es_psd: data.es_psd,
       id_categoria: data.id_categoria,
       stock_minimo: data.stock_minimo,
       fecha_vencimiento: data.fecha_vencimiento ?? null,
+      unidad_peso_bulto: data.unidad_peso_bulto ?? null,
+      peso_por_bulto: data.peso_por_bulto ?? null,
+      id_sitio: data.id_sitio ?? null,
     });
 
-    // 2. Generar items con SKU secuencial y estado DISPONIBLE
     const items_generados: Item[] = [];
     for (let i = 0; i < data.cantidad; i++) {
       const padNum = String(i + 1).padStart(3, '0');
-      const itemSku = `${producto.SKU}-${padNum}`;
+      const baseSku = producto.SKU || `PROD-${producto.id_producto}`;
+      const itemSku = `${baseSku}-${padNum}`;
 
       const item = await this.itemsRepository.create({
         codigo_sku: itemSku,
@@ -75,21 +80,24 @@ export class ProductosService implements IProductosUseCases {
   async actualizarProducto(id: number, data: Partial<{
     nombre: string;
     descripcion: string;
-    codigo_unspsc: string;
-    SKU: string;
+    codigo_unspsc: string | null;
+    SKU: string | null;
     tipo_material: TipoMaterial;
     unidad_medida: string;
     es_psd: boolean;
     id_categoria: number;
     stock_minimo: number;
     fecha_vencimiento?: Date | null;
+    unidad_peso_bulto?: string | null;
+    peso_por_bulto?: number | null;
+    id_sitio?: number | null;
   }>): Promise<Producto> {
-    await this.obtenerProductoPorId(id); // Verifica existencia
+    await this.obtenerProductoPorId(id);
     return this.productosRepository.update(id, data);
   }
 
   async eliminarProducto(id: number): Promise<void> {
-    await this.obtenerProductoPorId(id); // Verifica existencia
+    await this.obtenerProductoPorId(id);
     return this.productosRepository.delete(id);
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsBoolean, IsOptional, IsDateString, IsInt } from 'class-validator';
+import { IsString, IsBoolean, IsOptional, IsDateString, IsInt, IsNumber } from 'class-validator';
 import { TipoMaterial } from '../../../../../domain/entities/producto.domain.entity';
 
 export class UpdateProductoDto {
@@ -41,4 +41,16 @@ export class UpdateProductoDto {
   @IsInt()
   @IsOptional()
   stock_minimo?: number;
+
+  @IsString()
+  @IsOptional()
+  unidad_peso_bulto?: string;
+
+  @IsNumber()
+  @IsOptional()
+  peso_por_bulto?: number;
+
+  @IsInt()
+  @IsOptional()
+  id_sitio?: number;
 }

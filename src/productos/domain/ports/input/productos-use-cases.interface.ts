@@ -8,9 +8,9 @@ export interface IProductosUseCases {
   obtenerProductoPorId(id: number): Promise<Producto>;
   crearProducto(data: {
     nombre: string;
-    descripcion?: string;
-    codigo_unspsc: string;
-    SKU: string;
+    descripcion?: string | null;
+    codigo_unspsc?: string | null;
+    SKU?: string | null;
     tipo_material: TipoMaterial;
     unidad_medida: string;
     es_psd: boolean;
@@ -18,18 +18,24 @@ export interface IProductosUseCases {
     stock_minimo: number;
     cantidad: number;
     fecha_vencimiento?: Date | null;
+    unidad_peso_bulto?: string | null;
+    peso_por_bulto?: number | null;
+    id_sitio?: number | null;
   }): Promise<{ producto: Producto; items_generados: Item[] }>;
   actualizarProducto(id: number, data: Partial<{
     nombre: string;
     descripcion: string;
-    codigo_unspsc: string;
-    SKU: string;
+    codigo_unspsc: string | null;
+    SKU: string | null;
     tipo_material: TipoMaterial;
     unidad_medida: string;
     es_psd: boolean;
     id_categoria: number;
     stock_minimo: number;
     fecha_vencimiento?: Date | null;
+    unidad_peso_bulto?: string | null;
+    peso_por_bulto?: number | null;
+    id_sitio?: number | null;
   }>): Promise<Producto>;
   eliminarProducto(id: number): Promise<void>;
 }

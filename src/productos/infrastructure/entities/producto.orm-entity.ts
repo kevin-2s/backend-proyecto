@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CategoriaOrmEntity } from '../../../categorias/infrastructure/entities/categoria.orm-entity';
-import { TipoMaterial } from '../../domain/entities/producto.domain.entity';
 
 @Entity('producto')
 export class ProductoOrmEntity {
@@ -13,11 +12,11 @@ export class ProductoOrmEntity {
   @Column({ type: 'text', nullable: true })
   descripcion: string | null;
 
-  @Column({ type: 'varchar', length: 50 })
-  codigo_unspsc: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  codigo_unspsc: string | null;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  SKU: string;
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  SKU: string | null;
 
   @Column({ type: 'varchar', length: 50 })
   tipo_material: string;
@@ -36,6 +35,15 @@ export class ProductoOrmEntity {
 
   @Column({ type: 'int', default: 0 })
   stock_minimo: number;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  unidad_peso_bulto: string | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  peso_por_bulto: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  id_sitio: number | null;
 
   @ManyToOne(() => CategoriaOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_categoria' })
