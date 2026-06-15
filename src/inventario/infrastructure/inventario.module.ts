@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InventarioOrmEntity } from './entities/inventario.orm-entity';
+import { ItemOrmEntity } from '../../items/infrastructure/entities/item.orm-entity';
 import { InventarioController } from './adapters/input/http/inventario.controller';
 import { InventarioService } from '../application/services/inventario.service';
 import { InventarioRepositoryAdapter } from './adapters/output/persistence/inventario.repository';
@@ -10,7 +11,7 @@ import { KardexModule } from '../../kardex/infrastructure/kardex.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([InventarioOrmEntity]),
+    TypeOrmModule.forFeature([InventarioOrmEntity, ItemOrmEntity]),
     KardexModule,
   ],
   controllers: [InventarioController],

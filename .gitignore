@@ -43,3 +43,9 @@ update_git.bat
 
 # NestJS
 .nest/
+
+# Agent files
+.agents/
+.claude/
+skills-lock.json
+

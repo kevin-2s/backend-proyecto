@@ -36,6 +36,8 @@ import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { QrModule } from './qr/infrastructure/qr.module';
 import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
+import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
+import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 
 @Module({
   imports: [
@@ -96,6 +98,8 @@ import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
     ReportesModule,
     QrModule,
     PrestamosModule,
+    AsignacionesModule,
+    NovedadesModule,
   ],
   providers: [
     {
