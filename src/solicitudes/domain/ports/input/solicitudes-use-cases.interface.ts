@@ -7,6 +7,8 @@ export interface ISolicitudesUseCases {
   obtenerSolicitudPorId(id: number): Promise<Solicitud>;
   crearSolicitud(data: {
     tipo: TipoSolicitud;
+    id_producto: number;
+    cantidad: number;
     observacion?: string | null;
     id_usuario: number;
     id_ficha?: number | null;

@@ -38,6 +38,7 @@ export class ProductosService implements IProductosUseCases {
     id_categoria: number;
     stock_minimo: number;
     cantidad: number;
+    placas_sena?: string[];
     fecha_vencimiento?: Date | null;
     unidad_peso_bulto?: string | null;
     peso_por_bulto?: number | null;
@@ -61,20 +62,28 @@ export class ProductosService implements IProductosUseCases {
 
     const items_generados: Item[] = [];
     for (let i = 0; i < data.cantidad; i++) {
-      const padNum = String(i + 1).padStart(3, '0');
-      const baseSku = producto.SKU || `PROD-${producto.id_producto}`;
-      const itemSku = `${baseSku}-${padNum}`;
-
       const item = await this.itemsRepository.create({
-        codigo_sku: itemSku,
+        codigo_sku: producto.SKU ?? null,
         estado: 'DISPONIBLE',
         id_producto: producto.id_producto,
+        placa_sena: data.placas_sena?.[i] ?? null,
       });
 
       items_generados.push(item);
     }
 
     return { producto, items_generados };
+  }
+
+  async agregarItemAProducto(id_producto: number, placa_sena?: string | null): Promise<Item> {
+    const producto = await this.obtenerProductoPorId(id_producto);
+
+    return this.itemsRepository.create({
+      codigo_sku: producto.SKU ?? null,
+      estado: 'DISPONIBLE',
+      id_producto,
+      placa_sena: placa_sena ?? null,
+    });
   }
 
   async actualizarProducto(id: number, data: Partial<{

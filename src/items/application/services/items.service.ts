@@ -23,12 +23,21 @@ export class ItemsService implements IItemsUseCases {
     return item;
   }
 
-  async crearItem(data: { codigo_sku: string; estado: EstadoItem; id_producto: number }): Promise<Item> {
-    return this.itemsRepository.create(data);
+  async crearItem(data: { codigo_sku?: string | null; estado: EstadoItem; id_producto: number; placa_sena?: string | null }): Promise<Item> {
+    return this.itemsRepository.create({ ...data, codigo_sku: data.codigo_sku ?? null, placa_sena: data.placa_sena ?? null });
   }
 
   async actualizarEstadoItem(id: number, estado: EstadoItem): Promise<Item> {
     await this.obtenerItemPorId(id); // Verifica si existe
     return this.itemsRepository.update(id, { estado });
+  }
+
+  async actualizarItem(id: number, data: { placa_sena?: string | null }): Promise<Item> {
+    await this.obtenerItemPorId(id); // Verifica si existe
+    return this.itemsRepository.update(id, data);
+  }
+
+  async buscarPorPlaca(placa: string): Promise<{ item: Item; prestamo_activo: any | null } | null> {
+    return this.itemsRepository.findDetalleByPlaca(placa);
   }
 }

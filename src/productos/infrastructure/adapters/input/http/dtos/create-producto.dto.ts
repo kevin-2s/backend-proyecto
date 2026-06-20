@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsDateString, IsInt, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsDateString, IsInt, IsNumber, ValidateIf, IsArray } from 'class-validator';
 import { TipoMaterial } from '../../../../../domain/entities/producto.domain.entity';
 
 export class CreateProductoDto {
@@ -18,9 +18,10 @@ export class CreateProductoDto {
   @IsOptional()
   codigo_unspsc?: string;
 
-  @ApiPropertyOptional({ example: 'ARR-001', description: 'SKU del producto (opcional para productos de gastronomía)' })
+  @ApiPropertyOptional({ example: 'ARR-001', description: 'SKU del producto. Obligatorio salvo para productos de gastronomía (UNSPSC que inicia en 50)' })
+  @ValidateIf((o) => !o.codigo_unspsc?.startsWith('50'))
   @IsString()
-  @IsOptional()
+  @IsNotEmpty({ message: 'El SKU es obligatorio salvo para productos de gastronomía' })
   SKU?: string;
 
   @ApiProperty({ example: 'CONSUMO', description: 'Tipo de material: CONSUMO, DEVOLUTIVO o PERECEDERO' })
@@ -52,6 +53,15 @@ export class CreateProductoDto {
   @IsInt()
   @IsNotEmpty()
   cantidad: number;
+
+  @ApiPropertyOptional({
+    example: ['SENA-001', 'SENA-002'],
+    description: 'Placas SENA opcionales para cada ítem generado, en el mismo orden que se crean (índice por índice). Si se omite o hay menos placas que la cantidad, los ítems restantes quedan sin placa.',
+  })
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  placas_sena?: string[];
 
   @ApiProperty({ example: 2, description: 'Stock mínimo para alertas' })
   @IsInt()

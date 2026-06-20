@@ -1,16 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsEnum, IsInt } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsNotEmpty, IsOptional, IsInt } from "class-validator";
 import { EstadoItem } from "../../../../../domain/entities/item.domain.entity";
 
 export class CreateItemDto {
-  @ApiProperty({
-    example: "MAR-001-A",
-    description: "Código único de SKU de la instancia",
-  })
-  @IsString()
-  @IsNotEmpty()
-  codigo_sku: string;
-
   @ApiProperty({
     example: 'DISPONIBLE',
     description: "Estado del item",
@@ -23,4 +15,9 @@ export class CreateItemDto {
   @IsInt()
   @IsNotEmpty()
   id_producto: number;
+
+  @ApiPropertyOptional({ example: "SENA-12345", description: "Placa SENA del ítem (opcional, única por ítem)" })
+  @IsString()
+  @IsOptional()
+  placa_sena?: string;
 }

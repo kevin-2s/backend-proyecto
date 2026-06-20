@@ -9,6 +9,7 @@ export class ItemMapper {
       ormEntity.codigo_sku,
       ormEntity.estado,
       ormEntity.id_producto,
+      ormEntity.placa_sena,
       ormEntity.producto ? ProductoMapper.toDomain(ormEntity.producto) : undefined,
     );
   }
@@ -19,6 +20,7 @@ export class ItemMapper {
     if (domainEntity.codigo_sku !== undefined) ormEntity.codigo_sku = domainEntity.codigo_sku;
     if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;
     if (domainEntity.id_producto !== undefined) ormEntity.id_producto = domainEntity.id_producto;
+    if (domainEntity.placa_sena !== undefined) ormEntity.placa_sena = domainEntity.placa_sena;
     return ormEntity;
   }
 }

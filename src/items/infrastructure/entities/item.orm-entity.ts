@@ -7,8 +7,11 @@ export class ItemOrmEntity {
   @PrimaryGeneratedColumn()
   id_item: number;
 
-  @Column({ type: 'varchar', length: 150, unique: true })
-  codigo_sku: string;
+  @Column({ type: 'varchar', length: 150, nullable: true })
+  codigo_sku: string | null;
+
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  placa_sena: string | null;
 
   @Column({ type: 'varchar', length: 50, default: 'DISPONIBLE' })
   estado: string;

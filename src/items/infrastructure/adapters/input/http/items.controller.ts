@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpSt
 import { ITEMS_USE_CASES, IItemsUseCases } from '../../../../domain/ports/input/items-use-cases.interface';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { UpdateEstadoItemDto } from './dtos/update-estado-item.dto';
+import { UpdateItemDto } from './dtos/update-item.dto';
 import { ItemNotFoundException } from '../../../../domain/exceptions/item-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
@@ -31,6 +32,33 @@ export class ItemsController {
       throw new HttpException({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: 'Error al obtener los items',
+        data: null,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('buscar/:placa')
+  @RequierePermiso('ver_items')
+  async buscarPorPlaca(@Param('placa') placa: string) {
+    try {
+      const detalle = await this.itemsUseCases.buscarPorPlaca(placa);
+      if (!detalle) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: `No se encontró ningún ítem con la placa SENA: ${placa}`,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Ítem encontrado',
+        data: detalle,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error al buscar el ítem por placa SENA',
         data: null,
       }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -73,9 +101,52 @@ export class ItemsController {
         data: item,
       };
     } catch (error) {
+      if ((error as any)?.code === '23505') {
+        throw new HttpException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'La placa SENA ya está en uso por otro ítem',
+          data: null,
+        }, HttpStatus.CONFLICT);
+      }
       throw new HttpException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Error al crear el item',
+        data: null,
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id')
+  @RequierePermiso('editar_items')
+  async updateItem(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateItemDto: UpdateItemDto,
+  ) {
+    try {
+      const item = await this.itemsUseCases.actualizarItem(id, updateItemDto);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Item actualizado exitosamente',
+        data: item,
+      };
+    } catch (error) {
+      if (error instanceof ItemNotFoundException) {
+        throw new HttpException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: error.message,
+          data: null,
+        }, HttpStatus.NOT_FOUND);
+      }
+      if ((error as any)?.code === '23505') {
+        throw new HttpException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'La placa SENA ya está en uso por otro ítem',
+          data: null,
+        }, HttpStatus.CONFLICT);
+      }
+      throw new HttpException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al actualizar el item',
         data: null,
       }, HttpStatus.BAD_REQUEST);
     }

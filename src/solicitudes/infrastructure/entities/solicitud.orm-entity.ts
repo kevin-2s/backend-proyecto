@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { UsuarioOrmEntity } from '../../../usuarios/infrastructure/entities/usuario.orm-entity';
 import { FichaOrmEntity } from '../../../fichas/infrastructure/entities/ficha.orm-entity';
+import { ProductoOrmEntity } from '../../../productos/infrastructure/entities/producto.orm-entity';
 import { EstadoSolicitud, TipoSolicitud } from '../../domain/entities/solicitud.domain.entity';
 
 @Entity('solicitud')
@@ -29,6 +30,12 @@ export class SolicitudOrmEntity {
   @Column({ nullable: true })
   id_ficha: number;
 
+  @Column({ nullable: true })
+  id_producto: number | null;
+
+  @Column({ type: 'int', default: 1 })
+  cantidad: number;
+
   @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;
@@ -40,4 +47,8 @@ export class SolicitudOrmEntity {
   @ManyToOne(() => FichaOrmEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_ficha' })
   ficha: FichaOrmEntity;
+
+  @ManyToOne(() => ProductoOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'id_producto' })
+  producto: ProductoOrmEntity;
 }

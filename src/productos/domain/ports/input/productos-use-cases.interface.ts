@@ -17,11 +17,13 @@ export interface IProductosUseCases {
     id_categoria: number;
     stock_minimo: number;
     cantidad: number;
+    placas_sena?: string[];
     fecha_vencimiento?: Date | null;
     unidad_peso_bulto?: string | null;
     peso_por_bulto?: number | null;
     id_sitio?: number | null;
   }): Promise<{ producto: Producto; items_generados: Item[] }>;
+  agregarItemAProducto(id_producto: number, placa_sena?: string | null): Promise<Item>;
   actualizarProducto(id: number, data: Partial<{
     nombre: string;
     descripcion: string;

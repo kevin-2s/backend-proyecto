@@ -10,9 +10,10 @@ export enum EstadoItem {
 export class Item {
   constructor(
     public readonly id_item: number,
-    public codigo_sku: string,
+    public codigo_sku: string | null,
     public estado: string,
     public id_producto: number,
+    public placa_sena: string | null = null,
     public producto?: Producto,
   ) {}
 }
