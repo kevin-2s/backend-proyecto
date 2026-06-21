@@ -37,7 +37,12 @@ export class ItemsService implements IItemsUseCases {
     return this.itemsRepository.update(id, data);
   }
 
-  async buscarPorPlaca(placa: string): Promise<{ item: Item; prestamo_activo: any | null } | null> {
+  async buscarPorPlaca(placa: string): Promise<{
+    item: Item;
+    prestamo_activo: any | null;
+    asignacion_activa: any | null;
+    novedad_activa: any | null;
+  } | null> {
     return this.itemsRepository.findDetalleByPlaca(placa);
   }
 }

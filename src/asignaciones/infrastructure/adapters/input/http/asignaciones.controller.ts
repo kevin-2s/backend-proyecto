@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { ASIGNACIONES_USE_CASES, IAsignacionesUseCases } from '../../../../domain/ports/input/asignaciones-use-cases.interface';
 import { CreateAsignacionDto } from './dtos/create-asignacion.dto';
+import { AgregarItemAsignacionDto } from './dtos/agregar-item-asignacion.dto';
 import { AsignacionNotFoundException } from '../../../../domain/exceptions/asignacion-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
@@ -60,6 +61,21 @@ export class AsignacionesController {
         throw new HttpException({ statusCode: HttpStatus.NOT_FOUND, message: error.message, data: null }, HttpStatus.NOT_FOUND);
       }
       throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al anular la asignación', data: null }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post(':id/items')
+  @RequierePermiso('crear_asignaciones')
+  async agregarItem(@Param('id', ParseIntPipe) id: number, @Body() dto: AgregarItemAsignacionDto) {
+    try {
+      const data = await this.useCases.agregarItemAAsignacion(id, dto.id_item);
+      return { statusCode: HttpStatus.CREATED, message: 'Ítem agregado a la asignación exitosamente', data };
+    } catch (error) {
+      if (error instanceof AsignacionNotFoundException) {
+        throw new HttpException({ statusCode: HttpStatus.NOT_FOUND, message: error.message, data: null }, HttpStatus.NOT_FOUND);
+      }
+      const message = error instanceof Error ? error.message : 'Error al agregar el ítem a la asignación';
+      throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message, data: null }, HttpStatus.BAD_REQUEST);
     }
   }
 

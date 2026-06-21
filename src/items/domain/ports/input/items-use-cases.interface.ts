@@ -8,5 +8,10 @@ export interface IItemsUseCases {
   crearItem(data: { codigo_sku?: string | null; estado: EstadoItem; id_producto: number; placa_sena?: string | null }): Promise<Item>;
   actualizarEstadoItem(id: number, estado: EstadoItem): Promise<Item>;
   actualizarItem(id: number, data: { placa_sena?: string | null }): Promise<Item>;
-  buscarPorPlaca(placa: string): Promise<{ item: Item; prestamo_activo: any | null } | null>;
+  buscarPorPlaca(placa: string): Promise<{
+    item: Item;
+    prestamo_activo: any | null;
+    asignacion_activa: any | null;
+    novedad_activa: any | null;
+  } | null>;
 }

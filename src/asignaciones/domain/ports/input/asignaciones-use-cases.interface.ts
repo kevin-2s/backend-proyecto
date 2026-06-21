@@ -13,5 +13,6 @@ export interface IAsignacionesUseCases {
     observacion?: string | null;
   }): Promise<Asignacion>;
   anularAsignacion(id: number): Promise<Asignacion>;
+  agregarItemAAsignacion(id_asignacion: number, id_item: number): Promise<Asignacion>;
   eliminarAsignacion(id: number): Promise<void>;
 }

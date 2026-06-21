@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AsignacionOrmEntity } from './entities/asignacion.orm-entity';
+import { AsignacionItemOrmEntity } from './entities/asignacion-item.orm-entity';
 import { ItemOrmEntity } from '../../items/infrastructure/entities/item.orm-entity';
 import { AsignacionesController } from './adapters/input/http/asignaciones.controller';
 import { AsignacionesService } from '../application/services/asignaciones.service';
@@ -9,7 +10,7 @@ import { ASIGNACIONES_USE_CASES } from '../domain/ports/input/asignaciones-use-c
 import { ASIGNACIONES_REPOSITORY } from '../domain/ports/output/asignaciones-repository.interface';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AsignacionOrmEntity, ItemOrmEntity])],
+  imports: [TypeOrmModule.forFeature([AsignacionOrmEntity, ItemOrmEntity, AsignacionItemOrmEntity])],
   controllers: [AsignacionesController],
   providers: [
     { provide: ASIGNACIONES_USE_CASES, useClass: AsignacionesService },
