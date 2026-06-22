@@ -29,6 +29,13 @@ async function bootstrap() {
     }
   }
 
+  console.log('Cleaning up old ver_sitios permission...');
+  await dataSource.query(`
+    DELETE FROM rol_permisos WHERE id_permiso IN (SELECT id_permiso FROM permisos WHERE nombre = 'ver_sitios');
+    DELETE FROM usuario_permisos WHERE id_permiso IN (SELECT id_permiso FROM permisos WHERE nombre = 'ver_sitios');
+    DELETE FROM permisos WHERE nombre = 'ver_sitios';
+  `).catch(err => console.log('Cleanup ver_sitios error:', err.message));
+
   console.log('Seeding permisos...');
   const permisosSeed = [
     { nombre: 'ver_inventario', descripcion: 'Permite ver el inventario', modulo: 'inventario' },
@@ -62,7 +69,9 @@ async function bootstrap() {
     { nombre: 'ver_dashboard', descripcion: 'Permite ver el dashboard', modulo: 'dashboard' },
     { nombre: 'ver_roles', descripcion: 'Permite ver roles', modulo: 'roles' },
     { nombre: 'ver_fichas', descripcion: 'Permite ver fichas', modulo: 'fichas' },
-    { nombre: 'ver_sitios', descripcion: 'Permite ver sitios', modulo: 'sitios' },
+    { nombre: 'ver_centros', descripcion: 'Permite ver centros', modulo: 'centros' },
+    { nombre: 'ver_sedes', descripcion: 'Permite ver sedes', modulo: 'sedes' },
+    { nombre: 'ver_areas', descripcion: 'Permite ver áreas', modulo: 'areas' },
   ];
 
   for (const p of permisosSeed) {
@@ -93,7 +102,9 @@ async function bootstrap() {
         'ver_dashboard',
         'ver_roles',
         'ver_fichas',
-        'ver_sitios'
+        'ver_centros',
+        'ver_sedes',
+        'ver_areas'
       ]
     },
     {
@@ -110,7 +121,9 @@ async function bootstrap() {
         'ver_notificaciones',
         'ver_dashboard',
         'ver_fichas',
-        'ver_sitios'
+        'ver_centros',
+        'ver_sedes',
+        'ver_areas'
       ]
     },
     {
@@ -185,7 +198,7 @@ async function bootstrap() {
       'crear_devoluciones', 'ver_movimientos', 'ver_chequeos',
       'crear_chequeos', 'ver_actas', 'crear_actas',
       'ver_notificaciones', 'ver_dashboard', 'ver_fichas',
-      'ver_sitios'
+      'ver_centros', 'ver_sedes', 'ver_areas'
     ];
     for (const name of instructorPermNames) {
       const perm = await permisoRepo.findOne({ where: { nombre: name } });
