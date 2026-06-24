@@ -3,8 +3,10 @@ import { UsuarioOrmEntity } from '../../../usuarios/infrastructure/entities/usua
 import { CentroOrmEntity } from '../../../centros/infrastructure/entities/centro.orm-entity';
 import { TipoSitio } from '../../domain/entities/sitio.domain.entity';
 
+import { TenantOrmEntity } from '../../../shared/tenancy/tenant.orm-entity';
+
 @Entity('sitio')
-export class SitioOrmEntity {
+export class SitioOrmEntity extends TenantOrmEntity {
   @PrimaryGeneratedColumn()
   id_sitio: number;
 

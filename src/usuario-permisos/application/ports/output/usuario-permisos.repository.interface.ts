@@ -6,6 +6,7 @@ export interface IUsuarioPermisosRepository {
   create(usuarioPermiso: Partial<UsuarioPermiso>): Promise<UsuarioPermiso>;
   update(id: number, activo: boolean): Promise<UsuarioPermiso>;
   delete(id: number): Promise<void>;
+  deleteAllByUserId(id_usuario: number): Promise<void>;
 }
 
 export const IUsuarioPermisosRepository = Symbol('IUsuarioPermisosRepository');

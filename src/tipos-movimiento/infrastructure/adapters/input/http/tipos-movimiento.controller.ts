@@ -2,9 +2,7 @@ import { Controller, Get, Post, Body, Inject, HttpStatus, HttpException, UseGuar
 import { TIPOS_MOVIMIENTO_USE_CASES, ITiposMovimientoUseCases } from '../../../../domain/ports/input/tipos-movimiento-use-cases.interface';
 import { CreateTipoMovimientoDto } from './dtos/create-tipo-movimiento.dto';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('tipo-movimiento')
 @UseGuards(PermisosGuard)
@@ -34,8 +32,7 @@ export class TiposMovimientoController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('crear_movimientos')
   async createTipoMovimiento(@Body() createTipoMovimientoDto: CreateTipoMovimientoDto) {
     try {
       const tipo = await this.tiposMovimientoUseCases.crearTipoMovimiento(createTipoMovimientoDto.nombre);

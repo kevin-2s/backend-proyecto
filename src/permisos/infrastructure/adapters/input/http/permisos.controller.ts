@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { IPermisosUseCases } from '../../../../application/ports/input/permisos.use-cases.interface';
 import { CrearPermisoDto } from './dtos/crear-permiso.dto';
 import { JwtAuthGuard } from '../../../../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
-import { Inject } from '@nestjs/common';
+
 
 @ApiTags('Permisos')
 @Controller('permisos')

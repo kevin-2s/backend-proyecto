@@ -4,9 +4,7 @@ import { CreateInventarioDto } from './dtos/create-inventario.dto';
 import { UpdateInventarioDto } from './dtos/update-inventario.dto';
 import { InventarioNotFoundException } from '../../../../domain/exceptions/inventario-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('inventario')
 @UseGuards(PermisosGuard)
@@ -29,7 +27,7 @@ export class InventarioController {
     } catch (error) {
       throw new HttpException({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Error al obtener el inventario',
+        message: 'Error al obtener the inventario',
         data: null,
       }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -121,8 +119,7 @@ export class InventarioController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_inventario')
   async deleteInventario(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.inventarioUseCases.eliminarInventario(id);

@@ -4,9 +4,7 @@ import { CreateCategoriaDto } from './dtos/create-categoria.dto';
 import { UpdateCategoriaDto } from './dtos/update-categoria.dto';
 import { CategoriaNotFoundException } from '../../../../domain/exceptions/categoria-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('categorias')
 @UseGuards(PermisosGuard)
@@ -110,8 +108,7 @@ export class CategoriasController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_inventario')
   async deleteCategoria(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.categoriasUseCases.eliminarCategoria(id);

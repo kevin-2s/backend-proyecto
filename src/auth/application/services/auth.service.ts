@@ -25,7 +25,7 @@ export class AuthService implements LoginUseCase {
             throw new InvalidCredentialsException();
         }
 
-        const payload = { sub: user.id, roles: user.roles };
+        const payload = { sub: user.id, roles: user.roles, tenantId: user.tenantId };
         const accessToken = this.tokenProvider.generateAccessToken(payload);
         const refreshToken = this.tokenProvider.generateRefreshToken(payload);
 

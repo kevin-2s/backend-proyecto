@@ -2,12 +2,11 @@ import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, H
 import { ROLES_USE_CASES, IRolesUseCases } from '../../../../domain/ports/input/roles-use-cases.interface';
 import { CreateRolDto } from './dtos/create-rol.dto';
 import { RolNotFoundException } from '../../../../domain/exceptions/rol-not-found.exception';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('roles')
-@UseGuards(RolesGuard)
-@Roles('Administrador')
+@UseGuards(PermisosGuard)
 export class RolesController {
   constructor(
     @Inject(ROLES_USE_CASES)
@@ -15,6 +14,7 @@ export class RolesController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_roles')
   async getRoles() {
     try {
       const roles = await this.rolesUseCases.obtenerRoles();
@@ -33,6 +33,7 @@ export class RolesController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_roles')
   async getRol(@Param('id', ParseIntPipe) id: number) {
     try {
       const rol = await this.rolesUseCases.obtenerRolPorId(id);
@@ -58,6 +59,7 @@ export class RolesController {
   }
 
   @Post()
+  @RequierePermiso('crear_roles')
   async createRol(@Body() createRolDto: CreateRolDto) {
     try {
       const rol = await this.rolesUseCases.crearRol(createRolDto.nombre);
@@ -76,6 +78,7 @@ export class RolesController {
   }
 
   @Get(':id/permisos')
+  @RequierePermiso('ver_roles')
   async getPermisosByRol(@Param('id', ParseIntPipe) id: number) {
     try {
       const data = await this.rolesUseCases.obtenerPermisosPorRol(id);
@@ -94,6 +97,7 @@ export class RolesController {
   }
 
   @Post(':id/permisos')
+  @RequierePermiso('editar_roles')
   async asignarPermisos(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: { id_permisos: number[] },

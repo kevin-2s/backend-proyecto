@@ -4,6 +4,7 @@ export class AuthUser {
         public readonly email: string,
         public readonly passwordHash: string,
         public readonly roles: string[],
-        public readonly estado: boolean
+        public readonly estado: boolean,
+        public readonly tenantId: string
     ) {}
 }

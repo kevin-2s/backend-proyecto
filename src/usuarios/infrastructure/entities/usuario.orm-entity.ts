@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { RolOrmEntity } from '../../../roles/infrastructure/entities/rol.orm-entity';
+import { TenantOrmEntity } from '../../../shared/tenancy/tenant.orm-entity';
 
 @Entity('usuario')
-export class UsuarioOrmEntity {
+export class UsuarioOrmEntity extends TenantOrmEntity {
   @PrimaryGeneratedColumn()
   id_usuario: number;
 

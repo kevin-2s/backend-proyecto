@@ -4,9 +4,7 @@ import { CreateAreaDto } from './dtos/create-area.dto';
 import { UpdateAreaDto } from './dtos/update-area.dto';
 import { AreaNotFoundException } from '../../../../domain/exceptions/area-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('areas')
 @UseGuards(PermisosGuard)
@@ -62,8 +60,7 @@ export class AreasController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('crear_areas')
   async createArea(@Body() createAreaDto: CreateAreaDto) {
     try {
       const area = await this.areasUseCases.crearArea(createAreaDto);
@@ -82,8 +79,7 @@ export class AreasController {
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('editar_areas')
   async updateArea(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAreaDto: UpdateAreaDto,
@@ -112,8 +108,7 @@ export class AreasController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_areas')
   async deleteArea(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.areasUseCases.eliminarArea(id);

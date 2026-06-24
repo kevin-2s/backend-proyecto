@@ -6,6 +6,7 @@ export interface IUsuarioPermisosUseCases {
   asignarPermiso(id_usuario: number, dto: AsignarPermisoDto): Promise<any>;
   actualizarPermiso(id_usuario: number, id_permiso: number, dto: ActualizarPermisoUsuarioDto): Promise<any>;
   eliminarPermiso(id_usuario: number, id_permiso: number): Promise<void>;
+  restablecerPermisos(id_usuario: number): Promise<void>;
 }
 
 export const IUsuarioPermisosUseCases = Symbol('IUsuarioPermisosUseCases');

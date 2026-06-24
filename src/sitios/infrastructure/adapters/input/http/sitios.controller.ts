@@ -4,9 +4,7 @@ import { CreateSitioDto } from './dtos/create-sitio.dto';
 import { UpdateSitioDto } from './dtos/update-sitio.dto';
 import { SitioNotFoundException } from '../../../../domain/exceptions/sitio-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('sitios')
 @UseGuards(PermisosGuard)
@@ -62,8 +60,7 @@ export class SitiosController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('crear_sitios')
   async createSitio(@Body() createSitioDto: CreateSitioDto) {
     try {
       const sitio = await this.sitiosUseCases.crearSitio(createSitioDto);
@@ -82,8 +79,7 @@ export class SitiosController {
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('editar_sitios')
   async updateSitio(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSitioDto: UpdateSitioDto,
@@ -112,8 +108,7 @@ export class SitiosController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_sitios')
   async deleteSitio(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.sitiosUseCases.eliminarSitio(id);

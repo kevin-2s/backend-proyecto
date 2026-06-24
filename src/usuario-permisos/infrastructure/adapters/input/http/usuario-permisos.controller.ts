@@ -4,13 +4,12 @@ import { IUsuarioPermisosUseCases } from '../../../../application/ports/input/us
 import { AsignarPermisoDto } from './dtos/asignar-permiso.dto';
 import { ActualizarPermisoUsuarioDto } from './dtos/actualizar-permiso-usuario.dto';
 import { JwtAuthGuard } from '../../../../../auth/infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @ApiTags('Usuario Permisos')
 @Controller('usuarios/:id/permisos')
-@UseGuards(RolesGuard)
-@Roles('Administrador')
+@UseGuards(PermisosGuard)
 export class UsuarioPermisosController {
   constructor(
     @Inject(IUsuarioPermisosUseCases)
@@ -18,6 +17,7 @@ export class UsuarioPermisosController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_usuario_permisos')
   @ApiOperation({ summary: 'Obtener todos los permisos de un usuario con su estado' })
   @ApiResponse({ status: 200, description: 'Permisos del usuario obtenidos exitosamente' })
   async getPermisos(@Param('id', ParseIntPipe) id: number) {
@@ -30,7 +30,7 @@ export class UsuarioPermisosController {
   }
 
   @Post()
-  @Roles('Administrador')
+  @RequierePermiso('editar_usuario_permisos')
   @ApiOperation({ summary: 'Asigna un permiso a un usuario' })
   @ApiResponse({ status: 201, description: 'Permiso asignado exitosamente' })
   async asignarPermiso(
@@ -46,7 +46,7 @@ export class UsuarioPermisosController {
   }
 
   @Patch(':id_permiso')
-  @Roles('Administrador')
+  @RequierePermiso('editar_usuario_permisos')
   @ApiOperation({ summary: 'Activa o desactiva un permiso específico de un usuario' })
   @ApiResponse({ status: 200, description: 'Permiso actualizado exitosamente' })
   async actualizarPermiso(
@@ -63,7 +63,7 @@ export class UsuarioPermisosController {
   }
 
   @Delete(':id_permiso')
-  @Roles('Administrador')
+  @RequierePermiso('editar_usuario_permisos')
   @ApiOperation({ summary: 'Elimina un permiso de un usuario' })
   @ApiResponse({ status: 200, description: 'Permiso eliminado exitosamente' })
   async eliminarPermiso(
@@ -74,6 +74,20 @@ export class UsuarioPermisosController {
     return {
       statusCode: 200,
       message: 'Permiso eliminado exitosamente',
+    };
+  }
+
+  @Delete()
+  @RequierePermiso('editar_usuario_permisos')
+  @ApiOperation({ summary: 'Restablece todos los permisos de un usuario a los de su rol' })
+  @ApiResponse({ status: 200, description: 'Permisos restablecidos exitosamente' })
+  async restablecerPermisos(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.usuarioPermisosService.restablecerPermisos(id);
+    return {
+      statusCode: 200,
+      message: 'Permisos restablecidos exitosamente al rol del usuario',
     };
   }
 }

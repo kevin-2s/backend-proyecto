@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
@@ -38,6 +38,8 @@ import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-com
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
+import { TenancyModule } from './shared/tenancy/tenancy.module';
+import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
 
 @Module({
   imports: [
@@ -100,6 +102,7 @@ import { NovedadesModule } from './novedades/infrastructure/novedades.module';
     PrestamosModule,
     AsignacionesModule,
     NovedadesModule,
+    TenancyModule,
   ],
   providers: [
     {
@@ -108,4 +111,8 @@ import { NovedadesModule } from './novedades/infrastructure/novedades.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenancyMiddleware).forRoutes('*');
+  }
+}

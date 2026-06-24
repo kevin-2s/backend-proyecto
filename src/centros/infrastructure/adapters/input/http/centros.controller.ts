@@ -4,9 +4,7 @@ import { CreateCentroDto } from './dtos/create-centro.dto';
 import { UpdateCentroDto } from './dtos/update-centro.dto';
 import { CentroNotFoundException } from '../../../../domain/exceptions/centro-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('centros')
 @UseGuards(PermisosGuard)
@@ -62,8 +60,7 @@ export class CentrosController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('crear_centros')
   async createCentro(@Body() createCentroDto: CreateCentroDto) {
     try {
       const centro = await this.centrosUseCases.crearCentro(createCentroDto);
@@ -82,8 +79,7 @@ export class CentrosController {
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('editar_centros')
   async updateCentro(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCentroDto: UpdateCentroDto,
@@ -112,8 +108,7 @@ export class CentrosController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_centros')
   async deleteCentro(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.centrosUseCases.eliminarCentro(id);
