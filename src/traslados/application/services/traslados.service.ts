@@ -37,9 +37,6 @@ export class TrasladosService implements ITrasladosUseCases {
     if (!ubicacion.id_sitio) {
       throw new Error('El ítem no tiene una ubicación asignada actualmente, no se puede trasladar');
     }
-    if (ubicacion.estado !== 'DISPONIBLE') {
-      throw new Error(`Solo se pueden trasladar ítems disponibles (estado actual: ${ubicacion.estado})`);
-    }
     if (ubicacion.id_sitio === data.id_sitio_destino) {
       throw new Error('El ítem ya se encuentra en ese lugar');
     }

@@ -14,4 +14,5 @@ export interface ISolicitudesUseCases {
     id_ficha?: number | null;
   }): Promise<Solicitud>;
   cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba?: number): Promise<Solicitud>;
+  entregarSolicitud(id: number): Promise<Solicitud>;
 }

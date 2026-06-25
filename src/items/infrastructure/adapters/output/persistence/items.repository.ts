@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { IItemsRepository } from '../../../../domain/ports/output/items-repository.interface';
 import { ItemOrmEntity } from '../../../entities/item.orm-entity';
 import { ItemMapper } from '../../../mappers/item.mapper';
@@ -40,6 +40,11 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     return ItemMapper.toDomain(itemOrm);
   }
 
+  async findByProducto(id_producto: number): Promise<Item[]> {
+    const items = await this.repository.find({ where: { id_producto }, relations: ['producto'] });
+    return items.map(ItemMapper.toDomain);
+  }
+
   async countByProducto(id_producto: number): Promise<number> {
     return this.repository.count({ where: { id_producto } });
   }
@@ -50,7 +55,10 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     asignacion_activa: any | null;
     novedad_activa: any | null;
   } | null> {
-    const itemOrm = await this.repository.findOne({ where: { placa_sena: placa }, relations: ['producto', 'producto.categoria'] });
+    const itemOrm = await this.repository.findOne({
+      where: { placa_sena: ILike(placa) },
+      relations: ['producto', 'producto.categoria', 'sitio', 'sitio.responsable'],
+    });
     if (!itemOrm) return null;
 
     const prestamoOrm = await this.prestamoRepository.findOne({

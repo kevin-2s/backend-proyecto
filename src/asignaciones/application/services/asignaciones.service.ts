@@ -27,14 +27,24 @@ export class AsignacionesService implements IAsignacionesUseCases {
     cantidad: number;
     id_usuario_asigna: number;
     observacion?: string | null;
+    id_items?: number[];
   }): Promise<Asignacion> {
-    console.log(`[Asignacion] descontando ${data.cantidad} unidades del producto ${data.id_producto}`);
-    const itemIds = await this.repository.descontarStock(data.id_producto, data.cantidad);
-    console.log(`[Asignacion] stock descontado OK`);
+    let itemIds: number[];
+    if (data.id_items && data.id_items.length > 0) {
+      // Usar ítems específicos provistos — marcarlos como PRESTADO directamente
+      for (const id_item of data.id_items) {
+        await this.repository.marcarItemComoPrestado(id_item);
+      }
+      itemIds = data.id_items;
+    } else {
+      console.log(`[Asignacion] descontando ${data.cantidad} unidades del producto ${data.id_producto}`);
+      itemIds = await this.repository.descontarStock(data.id_producto, data.cantidad);
+      console.log(`[Asignacion] stock descontado OK`);
+    }
     const asignacion = await this.repository.create({
       id_ficha: data.id_ficha,
       id_producto: data.id_producto,
-      cantidad: data.cantidad,
+      cantidad: itemIds.length,
       id_usuario_asigna: data.id_usuario_asigna,
       observacion: data.observacion ?? null,
       fecha_asignacion: new Date(),

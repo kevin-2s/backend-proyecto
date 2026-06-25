@@ -104,7 +104,16 @@ export class ProductosService implements IProductosUseCases {
     id_sitio?: number | null;
   }>): Promise<Producto> {
     await this.obtenerProductoPorId(id);
-    return this.productosRepository.update(id, data);
+    const producto = await this.productosRepository.update(id, data);
+
+    if (data.id_sitio !== undefined) {
+      const items = await this.itemsRepository.findByProducto(id);
+      for (const item of items) {
+        await this.itemsRepository.update(item.id_item, { id_sitio: data.id_sitio });
+      }
+    }
+
+    return producto;
   }
 
   async eliminarProducto(id: number): Promise<void> {

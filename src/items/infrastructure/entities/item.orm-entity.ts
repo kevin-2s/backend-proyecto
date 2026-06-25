@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ProductoOrmEntity } from '../../../productos/infrastructure/entities/producto.orm-entity';
+import { SitioOrmEntity } from '../../../sitios/infrastructure/entities/sitio.orm-entity';
 import { EstadoItem } from '../../domain/entities/item.domain.entity';
 
 @Entity('item')
@@ -25,4 +26,8 @@ export class ItemOrmEntity {
   @ManyToOne(() => ProductoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_producto' })
   producto: ProductoOrmEntity;
+
+  @ManyToOne(() => SitioOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'id_sitio' })
+  sitio: SitioOrmEntity;
 }
