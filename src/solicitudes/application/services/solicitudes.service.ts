@@ -66,4 +66,9 @@ export class SolicitudesService implements ISolicitudesUseCases {
     if (id_usuario_aprueba) updateData.id_usuario_aprueba = id_usuario_aprueba;
     return this.solicitudesRepository.update(id, updateData);
   }
+
+  async entregarSolicitud(id: number): Promise<Solicitud> {
+    await this.obtenerSolicitudPorId(id);
+    return this.solicitudesRepository.marcarEntregada(id);
+  }
 }

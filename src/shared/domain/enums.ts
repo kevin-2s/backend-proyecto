@@ -25,4 +25,5 @@ export enum TipoSitio {
   BODEGA = 'BODEGA',
   AMBIENTE = 'AMBIENTE',
   LABORATORIO = 'LABORATORIO',
+  OTRO = 'OTRO',
 }

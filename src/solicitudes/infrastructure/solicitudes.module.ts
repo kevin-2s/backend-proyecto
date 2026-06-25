@@ -4,6 +4,7 @@ import { SolicitudOrmEntity } from './entities/solicitud.orm-entity';
 import { ProductoOrmEntity } from '../../productos/infrastructure/entities/producto.orm-entity';
 import { SitioOrmEntity } from '../../sitios/infrastructure/entities/sitio.orm-entity';
 import { NotificacionOrmEntity } from '../../notificaciones/infrastructure/entities/notificacion.orm-entity';
+import { ItemOrmEntity } from '../../items/infrastructure/entities/item.orm-entity';
 import { SolicitudesController } from './adapters/input/http/solicitudes.controller';
 import { SolicitudesService } from '../application/services/solicitudes.service';
 import { SolicitudesRepositoryAdapter } from './adapters/output/persistence/solicitudes.repository';
@@ -13,7 +14,7 @@ import { NotificacionesModule } from '../../notificaciones/infrastructure/notifi
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SolicitudOrmEntity, ProductoOrmEntity, SitioOrmEntity, NotificacionOrmEntity]),
+    TypeOrmModule.forFeature([SolicitudOrmEntity, ProductoOrmEntity, SitioOrmEntity, NotificacionOrmEntity, ItemOrmEntity]),
     NotificacionesModule,
   ],
   controllers: [SolicitudesController],

@@ -40,6 +40,7 @@ import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.m
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TenancyModule } from './shared/tenancy/tenancy.module';
 import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
+import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
     AsignacionesModule,
     NovedadesModule,
     TenancyModule,
+    TrasladosModule,
   ],
   providers: [
     {

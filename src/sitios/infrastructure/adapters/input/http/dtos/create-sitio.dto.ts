@@ -13,6 +13,16 @@ export class CreateSitioDto {
   @IsNotEmpty()
   tipo: TipoSitio;
 
+  @ApiProperty({ example: 'Auditorio', description: 'Nombre del tipo cuando tipo = OTRO', required: false })
+  @IsString()
+  @IsOptional()
+  tipo_personalizado?: string;
+
+  @ApiProperty({ example: 'Y-14', description: 'Código o identificador del lugar (para distinguir entre varios ambientes/laboratorios del mismo tipo)', required: false })
+  @IsString()
+  @IsOptional()
+  codigo_lugar?: string;
+
   @ApiProperty({ example: 1, description: 'ID del usuario responsable', required: false })
   @IsInt()
   @IsOptional()

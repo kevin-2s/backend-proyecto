@@ -10,6 +10,7 @@ export class ItemMapper {
       ormEntity.estado,
       ormEntity.id_producto,
       ormEntity.placa_sena,
+      ormEntity.id_sitio,
       ormEntity.producto ? ProductoMapper.toDomain(ormEntity.producto) : undefined,
     );
   }
@@ -21,6 +22,7 @@ export class ItemMapper {
     if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;
     if (domainEntity.id_producto !== undefined) ormEntity.id_producto = domainEntity.id_producto;
     if (domainEntity.placa_sena !== undefined) ormEntity.placa_sena = domainEntity.placa_sena;
+    if (domainEntity.id_sitio !== undefined) ormEntity.id_sitio = domainEntity.id_sitio;
     return ormEntity;
   }
 }

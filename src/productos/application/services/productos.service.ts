@@ -67,6 +67,7 @@ export class ProductosService implements IProductosUseCases {
         estado: 'DISPONIBLE',
         id_producto: producto.id_producto,
         placa_sena: data.placas_sena?.[i] ?? null,
+        id_sitio: producto.id_sitio ?? null,
       });
 
       items_generados.push(item);
@@ -83,6 +84,7 @@ export class ProductosService implements IProductosUseCases {
       estado: 'DISPONIBLE',
       id_producto,
       placa_sena: placa_sena ?? null,
+      id_sitio: producto.id_sitio ?? null,
     });
   }
 
@@ -102,7 +104,16 @@ export class ProductosService implements IProductosUseCases {
     id_sitio?: number | null;
   }>): Promise<Producto> {
     await this.obtenerProductoPorId(id);
-    return this.productosRepository.update(id, data);
+    const producto = await this.productosRepository.update(id, data);
+
+    if (data.id_sitio !== undefined) {
+      const items = await this.itemsRepository.findByProducto(id);
+      for (const item of items) {
+        await this.itemsRepository.update(item.id_item, { id_sitio: data.id_sitio });
+      }
+    }
+
+    return producto;
   }
 
   async eliminarProducto(id: number): Promise<void> {

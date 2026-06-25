@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAsignacionDto {
@@ -26,4 +26,10 @@ export class CreateAsignacionDto {
   @IsOptional()
   @IsString()
   observacion?: string;
+
+  @ApiProperty({ example: [5, 7], description: 'IDs específicos de ítems a asignar (omite el descuento automático de stock)', required: false })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  id_items?: number[];
 }

@@ -92,6 +92,10 @@ async function bootstrap() {
     { nombre: 'editar_usuario_permisos', descripcion: 'Permite asignar/editar permisos a usuarios', modulo: 'usuarios' },
     { nombre: 'ver_permisos', descripcion: 'Permite ver todos los permisos', modulo: 'permisos' },
     { nombre: 'crear_permisos', descripcion: 'Permite crear nuevos permisos', modulo: 'permisos' },
+    { nombre: 'ver_traslados', descripcion: 'Permite ver traslados', modulo: 'traslados' },
+    { nombre: 'crear_traslados', descripcion: 'Permite crear traslados', modulo: 'traslados' },
+    { nombre: 'aprobar_traslados', descripcion: 'Permite aprobar traslados', modulo: 'traslados' },
+    { nombre: 'rechazar_traslados', descripcion: 'Permite rechazar traslados', modulo: 'traslados' },
   ];
 
   for (const p of permisosSeed) {
@@ -127,7 +131,8 @@ async function bootstrap() {
         'ver_areas', 'crear_areas', 'editar_areas', 'eliminar_areas',
         'ver_sitios', 'crear_sitios', 'editar_sitios', 'eliminar_sitios',
         'ver_usuario_permisos', 'editar_usuario_permisos',
-        'ver_permisos', 'crear_permisos'
+        'ver_permisos', 'crear_permisos',
+        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados'
       ]
     },
     {
@@ -146,7 +151,9 @@ async function bootstrap() {
         'ver_fichas',
         'ver_centros',
         'ver_sedes',
-        'ver_areas'
+        'ver_areas',
+        'ver_sitios',
+        'ver_traslados', 'crear_traslados'
       ]
     },
     {
@@ -221,7 +228,8 @@ async function bootstrap() {
       'crear_devoluciones', 'ver_movimientos', 'ver_chequeos',
       'crear_chequeos', 'ver_actas', 'crear_actas',
       'ver_notificaciones', 'ver_dashboard', 'ver_fichas',
-      'ver_centros', 'ver_sedes', 'ver_areas'
+      'ver_centros', 'ver_sedes', 'ver_areas',
+      'ver_sitios', 'ver_traslados', 'crear_traslados'
     ];
     for (const name of instructorPermNames) {
       const perm = await permisoRepo.findOne({ where: { nombre: name } });
