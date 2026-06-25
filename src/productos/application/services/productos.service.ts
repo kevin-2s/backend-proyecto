@@ -67,6 +67,7 @@ export class ProductosService implements IProductosUseCases {
         estado: 'DISPONIBLE',
         id_producto: producto.id_producto,
         placa_sena: data.placas_sena?.[i] ?? null,
+        id_sitio: producto.id_sitio ?? null,
       });
 
       items_generados.push(item);
@@ -83,6 +84,7 @@ export class ProductosService implements IProductosUseCases {
       estado: 'DISPONIBLE',
       id_producto,
       placa_sena: placa_sena ?? null,
+      id_sitio: producto.id_sitio ?? null,
     });
   }
 

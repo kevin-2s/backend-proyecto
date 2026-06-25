@@ -19,6 +19,9 @@ export class ItemOrmEntity {
   @Column()
   id_producto: number;
 
+  @Column({ type: 'int', nullable: true })
+  id_sitio: number | null;
+
   @ManyToOne(() => ProductoOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_producto' })
   producto: ProductoOrmEntity;

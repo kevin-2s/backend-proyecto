@@ -24,7 +24,7 @@ export class ItemsService implements IItemsUseCases {
   }
 
   async crearItem(data: { codigo_sku?: string | null; estado: EstadoItem; id_producto: number; placa_sena?: string | null }): Promise<Item> {
-    return this.itemsRepository.create({ ...data, codigo_sku: data.codigo_sku ?? null, placa_sena: data.placa_sena ?? null });
+    return this.itemsRepository.create({ ...data, codigo_sku: data.codigo_sku ?? null, placa_sena: data.placa_sena ?? null, id_sitio: null });
   }
 
   async actualizarEstadoItem(id: number, estado: EstadoItem): Promise<Item> {
@@ -32,7 +32,7 @@ export class ItemsService implements IItemsUseCases {
     return this.itemsRepository.update(id, { estado });
   }
 
-  async actualizarItem(id: number, data: { placa_sena?: string | null }): Promise<Item> {
+  async actualizarItem(id: number, data: { placa_sena?: string | null; id_sitio?: number | null }): Promise<Item> {
     await this.obtenerItemPorId(id); // Verifica si existe
     return this.itemsRepository.update(id, data);
   }

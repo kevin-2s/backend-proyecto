@@ -38,6 +38,7 @@ import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-com
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
+import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { NovedadesModule } from './novedades/infrastructure/novedades.module';
     PrestamosModule,
     AsignacionesModule,
     NovedadesModule,
+    TrasladosModule,
   ],
   providers: [
     {
