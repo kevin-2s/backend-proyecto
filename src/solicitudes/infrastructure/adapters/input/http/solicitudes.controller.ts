@@ -105,7 +105,7 @@ export class SolicitudesController {
   @RequierePermiso('entregar_solicitudes')
   async entregarSolicitud(@Param('id', ParseIntPipe) id: number) {
     try {
-      const solicitud = await this.solicitudesUseCases.cambiarEstadoSolicitud(id, EstadoSolicitud.ENTREGADA);
+      const solicitud = await this.solicitudesUseCases.entregarSolicitud(id);
       return { statusCode: HttpStatus.OK, message: 'Solicitud entregada', data: solicitud };
     } catch (error) {
       throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al entregar', data: null }, HttpStatus.BAD_REQUEST);

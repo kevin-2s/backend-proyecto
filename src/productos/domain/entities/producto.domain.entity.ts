@@ -5,6 +5,7 @@ export enum TipoMaterial {
   DEVOLUTIVO = 'DEVOLUTIVO',
   SOFTWARE = 'SOFTWARE',
   EPP = 'EPP',
+  PERECEDERO = 'PERECEDERO',
 }
 
 export class Producto {
@@ -12,8 +13,8 @@ export class Producto {
     public readonly id_producto: number,
     public nombre: string,
     public descripcion: string | null,
-    public codigo_unspsc: string,
-    public SKU: string,
+    public codigo_unspsc: string | null,
+    public SKU: string | null,
     public tipo_material: string,
     public unidad_medida: string,
     public es_psd: boolean,
@@ -21,5 +22,8 @@ export class Producto {
     public stock_minimo: number,
     public fecha_vencimiento?: Date | null,
     public categoria?: Categoria,
+    public unidad_peso_bulto?: string | null,
+    public peso_por_bulto?: number | null,
+    public id_sitio?: number | null,
   ) {}
 }

@@ -5,6 +5,7 @@ export enum TipoSitio {
   BODEGA = 'BODEGA',
   AMBIENTE = 'AMBIENTE',
   LABORATORIO = 'LABORATORIO',
+  OTRO = 'OTRO',
 }
 
 export class Sitio {
@@ -17,5 +18,7 @@ export class Sitio {
     public id_centro?: number | null,
     public centro?: Centro,
     public estado: boolean = true,
+    public tipo_personalizado?: string | null,
+    public codigo_lugar?: string | null,
   ) {}
 }

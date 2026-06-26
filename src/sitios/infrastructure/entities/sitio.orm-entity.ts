@@ -14,6 +14,12 @@ export class SitioOrmEntity {
   @Column({ type: 'varchar', length: 50 })
   tipo: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  tipo_personalizado: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  codigo_lugar: string | null;
+
   @Column({ nullable: true })
   id_responsable: number;
 

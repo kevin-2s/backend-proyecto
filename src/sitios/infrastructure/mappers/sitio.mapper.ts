@@ -14,6 +14,8 @@ export class SitioMapper {
       ormEntity.id_centro,
       ormEntity.centro ? CentroMapper.toDomain(ormEntity.centro) : undefined,
       ormEntity.estado,
+      ormEntity.tipo_personalizado,
+      ormEntity.codigo_lugar,
     );
   }
 
@@ -22,6 +24,8 @@ export class SitioMapper {
     if (domainEntity.id_sitio !== undefined) ormEntity.id_sitio = domainEntity.id_sitio;
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;
     if (domainEntity.tipo !== undefined) ormEntity.tipo = domainEntity.tipo;
+    if (domainEntity.tipo_personalizado !== undefined) ormEntity.tipo_personalizado = domainEntity.tipo_personalizado ?? null;
+    if (domainEntity.codigo_lugar !== undefined) ormEntity.codigo_lugar = domainEntity.codigo_lugar ?? null;
     if (domainEntity.id_responsable !== undefined) ormEntity.id_responsable = domainEntity.id_responsable ?? null as any;
     if (domainEntity.id_centro !== undefined) ormEntity.id_centro = domainEntity.id_centro ?? null as any;
     if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;

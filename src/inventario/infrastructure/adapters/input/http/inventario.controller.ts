@@ -35,6 +35,17 @@ export class InventarioController {
     }
   }
 
+  @Get('producto/:id_producto/stock')
+  @RequierePermiso('ver_inventario')
+  async getStockPorProducto(@Param('id_producto', ParseIntPipe) id_producto: number) {
+    try {
+      const stock = await this.inventarioUseCases.obtenerStockPorProducto(id_producto);
+      return { statusCode: HttpStatus.OK, message: 'Stock obtenido exitosamente', data: stock };
+    } catch {
+      throw new HttpException({ statusCode: HttpStatus.INTERNAL_SERVER_ERROR, message: 'Error al obtener el stock', data: null }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @Get(':id')
   @RequierePermiso('ver_inventario')
   async getInventario(@Param('id', ParseIntPipe) id: number) {

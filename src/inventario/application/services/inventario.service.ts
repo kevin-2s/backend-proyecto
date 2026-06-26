@@ -28,6 +28,10 @@ export class InventarioService implements IInventarioUseCases {
     return inventario;
   }
 
+  async obtenerStockPorProducto(id_producto: number): Promise<{ disponibles: number; total: number }> {
+    return this.inventarioRepository.countStockByProducto(id_producto);
+  }
+
   async crearInventario(data: { estado: EstadoItem; id_item: number; id_sitio: number }): Promise<Inventario> {
     const inv = await this.inventarioRepository.create(data);
     

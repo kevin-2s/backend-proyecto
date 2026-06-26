@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import * as Joi from 'joi';
 
 // Modulos de Infraestructura
@@ -36,6 +37,9 @@ import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { QrModule } from './qr/infrastructure/qr.module';
 import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
+import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
+import { NovedadesModule } from './novedades/infrastructure/novedades.module';
+import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 
 @Module({
   imports: [
@@ -52,6 +56,11 @@ import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
         REDIS_PORT: Joi.number().default(6379),
       }),
     }),
+    ThrottlerModule.forRoot([{
+      name: 'default',
+      ttl: 60000,
+      limit: 100,
+    }]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -96,8 +105,15 @@ import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
     ReportesModule,
     QrModule,
     PrestamosModule,
+    AsignacionesModule,
+    NovedadesModule,
+    TrasladosModule,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
