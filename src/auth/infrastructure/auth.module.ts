@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsuarioOrmEntity } from '../../usuarios/infrastructure/entities/usuario.orm-entity';
 import { AuthController } from './adapters/input/http/auth.controller';
 import { AuthService } from '../application/services/auth.service';
+import { RefreshService } from '../application/services/refresh.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtTokenProvider } from './adapters/output/providers/jwt-token.provider';
 import { BcryptPasswordProvider } from './adapters/output/providers/bcrypt-password.provider';
@@ -21,7 +22,7 @@ import { AuthUserRepositoryAdapter } from './adapters/output/persistence/auth-us
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '15m' },
+        signOptions: { expiresIn: '5m' },
       }),
     }),
   ],
@@ -32,6 +33,11 @@ import { AuthUserRepositoryAdapter } from './adapters/output/persistence/auth-us
       useFactory: (authRepo, passHash, tokenProv) =>
         new AuthService(authRepo, passHash, tokenProv),
       inject: ['AuthRepositoryPort', 'PasswordHashPort', 'TokenProviderPort'],
+    },
+    {
+      provide: 'RefreshUseCase',
+      useFactory: (tokenProv) => new RefreshService(tokenProv),
+      inject: ['TokenProviderPort'],
     },
     {
       provide: 'AuthRepositoryPort',

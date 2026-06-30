@@ -29,6 +29,6 @@ export class AuthService implements LoginUseCase {
         const accessToken = this.tokenProvider.generateAccessToken(payload);
         const refreshToken = this.tokenProvider.generateRefreshToken(payload);
 
-        return new AuthToken(accessToken, refreshToken, 900); // 15 min en segundos
+        return new AuthToken(accessToken, refreshToken, 300); // 5 min en segundos
     }
 }
