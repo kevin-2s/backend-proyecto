@@ -16,8 +16,6 @@ import { ItemsModule } from './items/infrastructure/items.module';
 import { SitiosModule } from './sitios/infrastructure/sitios.module';
 import { InventarioModule } from './inventario/infrastructure/inventario.module';
 import { FichasModule } from './fichas/infrastructure/fichas.module';
-import { TiposMovimientoModule } from './tipos-movimiento/infrastructure/tipos-movimiento.module';
-import { MovimientosModule } from './movimientos/infrastructure/movimientos.module';
 import { KardexModule } from './kardex/infrastructure/kardex.module';
 import { SolicitudesModule } from './solicitudes/infrastructure/solicitudes.module';
 import { DetalleSolicitudModule } from './detalle-solicitud/infrastructure/detalle-solicitud.module';
@@ -35,7 +33,6 @@ import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { CodigoBarrasModule } from './codigo-barras/infrastructure/codigo-barras.module';
-import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TenancyModule } from './shared/tenancy/tenancy.module';
@@ -85,8 +82,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     SitiosModule,
     InventarioModule,
     FichasModule,
-    TiposMovimientoModule,
-    MovimientosModule,
     KardexModule,
     SolicitudesModule,
     DetalleSolicitudModule,
@@ -104,7 +99,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 
     ReportesModule,
     CodigoBarrasModule,
-    PrestamosModule,
     AsignacionesModule,
     NovedadesModule,
     TenancyModule,

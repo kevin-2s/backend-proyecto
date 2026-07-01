@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsInt, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsInt, Min } from 'class-validator';
 import { TipoSolicitud } from '../../../../../domain/entities/solicitud.domain.entity';
 
 export class CreateSolicitudDto {
@@ -22,11 +22,6 @@ export class CreateSolicitudDto {
   @IsString()
   @IsOptional()
   observacion?: string;
-
-  @ApiProperty({ example: 1, description: 'ID del usuario que realiza la solicitud' })
-  @IsInt()
-  @IsNotEmpty()
-  id_usuario: number;
 
   @ApiProperty({ example: 1, description: 'ID de la ficha de formación', required: false })
   @IsInt()

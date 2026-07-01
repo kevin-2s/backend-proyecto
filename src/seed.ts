@@ -18,7 +18,7 @@ async function bootstrap() {
   const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
 
   console.log('Seeding roles...');
-  const roles = ['Super Administrador', 'Administrador', 'Instructor', 'Aprendiz'];
+  const roles = ['Super Administrador', 'Administrador', 'Instructor', 'Aprendiz', 'Responsable de Bodega'];
   for (const roleName of roles) {
     const existing = await roleRepo.findOne({ where: { nombre: roleName } });
     if (!existing) {
@@ -191,6 +191,23 @@ async function bootstrap() {
         'ver_notificaciones',
         'ver_dashboard'
       ]
+    },
+    {
+      rol: 'Responsable de Bodega',
+      permisos: [
+        'ver_inventario',
+        'ver_productos',
+        'ver_items',
+        'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+        'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
+        'ver_devoluciones', 'crear_devoluciones',
+        'ver_chequeos', 'crear_chequeos',
+        'ver_actas', 'crear_actas',
+        'ver_notificaciones',
+        'ver_dashboard',
+        'ver_fichas',
+        'ver_sitios',
+      ]
     }
   ];
 
@@ -270,6 +287,7 @@ async function bootstrap() {
 
   const instructorRole = await roleRepo.findOne({ where: { nombre: 'Instructor' } });
   const aprendizRole = await roleRepo.findOne({ where: { nombre: 'Aprendiz' } });
+  const responsableBodegaRole = await roleRepo.findOne({ where: { nombre: 'Responsable de Bodega' } });
 
   console.log('Seeding role permissions...');
   if (instructorRole) {
@@ -319,6 +337,38 @@ async function bootstrap() {
       }
     }
     console.log('Permissions for Aprendiz seeded.');
+  }
+
+  if (responsableBodegaRole) {
+    const responsablePermNames = [
+      'ver_inventario',
+      'ver_productos',
+      'ver_items',
+      'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+      'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
+      'ver_devoluciones', 'crear_devoluciones',
+      'ver_chequeos', 'crear_chequeos',
+      'ver_actas', 'crear_actas',
+      'ver_notificaciones',
+      'ver_dashboard',
+      'ver_fichas',
+      'ver_sitios',
+    ];
+    for (const name of responsablePermNames) {
+      const perm = await permisoRepo.findOne({ where: { nombre: name } });
+      if (perm) {
+        const existing = await rolPermisoRepo.findOne({
+          where: { id_rol: responsableBodegaRole.id_rol, id_permiso: perm.id_permiso }
+        });
+        if (!existing) {
+          await rolPermisoRepo.save(rolPermisoRepo.create({
+            id_rol: responsableBodegaRole.id_rol,
+            id_permiso: perm.id_permiso
+          }));
+        }
+      }
+    }
+    console.log('Permissions for Responsable de Bodega seeded.');
   }
 
   console.log('Seeding completed successfully.');
