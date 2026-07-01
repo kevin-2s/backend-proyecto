@@ -7,7 +7,7 @@ export class RefreshService implements RefreshUseCase {
 
     async execute(refreshToken: string): Promise<AuthToken> {
         const payload = this.tokenProvider.verifyRefreshToken(refreshToken);
-        const newPayload = { sub: payload.sub, roles: payload.roles };
+        const newPayload = { sub: payload.sub, roles: payload.roles, tenantId: payload.tenantId };
         const accessToken = this.tokenProvider.generateAccessToken(newPayload);
         const newRefreshToken = this.tokenProvider.generateRefreshToken(newPayload);
         return new AuthToken(accessToken, newRefreshToken, 300);

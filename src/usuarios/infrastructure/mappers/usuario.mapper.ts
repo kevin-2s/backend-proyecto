@@ -14,6 +14,7 @@ export class UsuarioMapper {
       ormEntity.telefono,
       ormEntity.documento,
       undefined, // NUNCA incluir password en la respuesta
+      ormEntity.tenant_id,
     );
   }
 

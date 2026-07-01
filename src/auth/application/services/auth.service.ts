@@ -20,6 +20,10 @@ export class AuthService implements LoginUseCase {
             throw new InvalidCredentialsException('Su cuenta ha sido desactivada. Comuníquese con el administrador.');
         }
 
+        if (user.roles.includes('Administrador') && (!user.tenantId || user.tenantId === 'default')) {
+            throw new InvalidCredentialsException('Su cuenta no tiene una sede asignada. Comuníquese con el Super Administrador.');
+        }
+
         const isPasswordValid = await this.passwordHash.compare(contrasena, user.passwordHash);
         if (!isPasswordValid) {
             throw new InvalidCredentialsException();

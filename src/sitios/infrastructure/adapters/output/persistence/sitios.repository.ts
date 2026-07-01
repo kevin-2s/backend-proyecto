@@ -18,7 +18,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   async findAll(): Promise<Sitio[]> {
     const tenantId = this.tenancyService.getTenantId();
     const sitiosOrm = await this.repository.find({
-      where: { tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? {} : { tenant_id: tenantId },
       relations: ['responsable', 'centro'],
     });
     return sitiosOrm.map(SitioMapper.toDomain);
@@ -27,7 +27,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   async findById(id: number): Promise<Sitio | null> {
     const tenantId = this.tenancyService.getTenantId();
     const sitioOrm = await this.repository.findOne({
-      where: { id_sitio: id, tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? { id_sitio: id } : { id_sitio: id, tenant_id: tenantId },
       relations: ['responsable', 'centro'],
     });
     if (!sitioOrm) return null;
@@ -37,7 +37,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   async create(sitioData: Partial<Omit<Sitio, 'id_sitio' | 'responsable'>>): Promise<Sitio> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = SitioMapper.toEntity(sitioData);
-    ormEntity.tenant_id = tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (arguments[0] as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return SitioMapper.toDomain(saved);
   }
@@ -45,7 +45,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   async update(id: number, sitioData: Partial<Sitio>): Promise<Sitio> {
     const tenantId = this.tenancyService.getTenantId();
     await this.repository.update(
-      { id_sitio: id, tenant_id: tenantId },
+      tenantId === 'GLOBAL' ? { id_sitio: id } : { id_sitio: id, tenant_id: tenantId },
       { ...SitioMapper.toEntity(sitioData as any), tenant_id: tenantId } as any
     );
     const updated = await this.findById(id);
@@ -54,6 +54,6 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
 
   async delete(id: number): Promise<void> {
     const tenantId = this.tenancyService.getTenantId();
-    await this.repository.delete({ id_sitio: id, tenant_id: tenantId });
+    await this.repository.delete(tenantId === 'GLOBAL' ? { id_sitio: id } : { id_sitio: id, tenant_id: tenantId });
   }
 }

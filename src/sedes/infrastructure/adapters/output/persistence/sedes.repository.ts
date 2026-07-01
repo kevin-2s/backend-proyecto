@@ -14,12 +14,12 @@ export class SedesRepositoryAdapter implements ISedesRepository {
   ) {}
 
   async findAll(): Promise<Sede[]> {
-    const sedesOrm = await this.repository.find({ relations: ['centro'] });
+    const sedesOrm = await this.repository.find({ relations: ['centro', 'administrador'] });
     return sedesOrm.map(SedeMapper.toDomain);
   }
 
   async findById(id: number): Promise<Sede | null> {
-    const sedeOrm = await this.repository.findOne({ where: { id_sede: id }, relations: ['centro'] });
+    const sedeOrm = await this.repository.findOne({ where: { id_sede: id }, relations: ['centro', 'administrador'] });
     if (!sedeOrm) return null;
     return SedeMapper.toDomain(sedeOrm);
   }

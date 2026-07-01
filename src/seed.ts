@@ -18,7 +18,7 @@ async function bootstrap() {
   const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
 
   console.log('Seeding roles...');
-  const roles = ['Administrador', 'Instructor', 'Aprendiz'];
+  const roles = ['Super Administrador', 'Administrador', 'Instructor', 'Aprendiz'];
   for (const roleName of roles) {
     const existing = await roleRepo.findOne({ where: { nombre: roleName } });
     if (!existing) {
@@ -111,7 +111,7 @@ async function bootstrap() {
   console.log('Seeding rol_permisos default mappings...');
   const rolePermissionsSeed = [
     {
-      rol: 'Administrador',
+      rol: 'Super Administrador',
       permisos: [
         'ver_inventario', 'crear_inventario', 'editar_inventario', 'eliminar_inventario',
         'ver_productos', 'crear_productos', 'editar_productos', 'eliminar_productos',
@@ -128,6 +128,31 @@ async function bootstrap() {
         'ver_fichas', 'crear_fichas', 'editar_fichas', 'eliminar_fichas',
         'ver_centros', 'crear_centros', 'editar_centros', 'eliminar_centros',
         'ver_sedes', 'crear_sedes', 'editar_sedes', 'eliminar_sedes',
+        'ver_areas', 'crear_areas', 'editar_areas', 'eliminar_areas',
+        'ver_sitios', 'crear_sitios', 'editar_sitios', 'eliminar_sitios',
+        'ver_usuario_permisos', 'editar_usuario_permisos',
+        'ver_permisos', 'crear_permisos',
+        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados'
+      ]
+    },
+    {
+      rol: 'Administrador',
+      permisos: [
+        'ver_inventario', 'crear_inventario', 'editar_inventario', 'eliminar_inventario',
+        'ver_productos', 'crear_productos', 'editar_productos', 'eliminar_productos',
+        'ver_items', 'crear_items', 'editar_items',
+        'ver_solicitudes', 'crear_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+        'ver_devoluciones', 'crear_devoluciones',
+        'ver_movimientos', 'crear_movimientos', 'ver_reportes',
+        'ver_usuarios', 'crear_usuarios', 'editar_usuarios', 'eliminar_usuarios',
+        'ver_chequeos', 'crear_chequeos',
+        'ver_actas', 'crear_actas',
+        'ver_notificaciones',
+        'ver_dashboard',
+        'ver_roles', 'crear_roles', 'editar_roles', 'eliminar_roles',
+        'ver_fichas', 'crear_fichas', 'editar_fichas', 'eliminar_fichas',
+        'ver_centros',
+        'ver_sedes',
         'ver_areas', 'crear_areas', 'editar_areas', 'eliminar_areas',
         'ver_sitios', 'crear_sitios', 'editar_sitios', 'eliminar_sitios',
         'ver_usuario_permisos', 'editar_usuario_permisos',
@@ -188,6 +213,32 @@ async function bootstrap() {
         }));
         console.log(`Assigned default permission [${permName}] to role [${item.rol}].`);
       }
+    }
+  }
+
+  const superAdminRole = await roleRepo.findOne({ where: { nombre: 'Super Administrador' } });
+
+  console.log('Seeding default super administrator user...');
+  if (superAdminRole) {
+    const existingSuperAdmin = await userRepo.findOne({ where: { correo: 'SuperAdmin@sena.co' } });
+    const hashedPass = await bcrypt.hash('Super1234', 10);
+    
+    if (!existingSuperAdmin) {
+      await userRepo.save(userRepo.create({
+        nombre: 'Super Administrador Global',
+        correo: 'SuperAdmin@sena.co',
+        password: hashedPass,
+        estado: true,
+        rol: superAdminRole,
+        tenant_id: 'GLOBAL'
+      }));
+      console.log('Super Administrator user [SuperAdmin@sena.co] created successfully.');
+    } else {
+      existingSuperAdmin.password = hashedPass;
+      existingSuperAdmin.rol = superAdminRole;
+      existingSuperAdmin.tenant_id = 'GLOBAL';
+      await userRepo.save(existingSuperAdmin);
+      console.log('Super Administrator user updated.');
     }
   }
 

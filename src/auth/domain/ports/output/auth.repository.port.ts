@@ -7,7 +7,7 @@ export interface AuthRepositoryPort {
 export interface TokenProviderPort {
     generateAccessToken(payload: any): string;
     generateRefreshToken(payload: any): string;
-    verifyRefreshToken(token: string): { sub: string; roles: string[] };
+    verifyRefreshToken(token: string): { sub: string; roles: string[]; tenantId?: string };
 }
 
 export interface PasswordHashPort {

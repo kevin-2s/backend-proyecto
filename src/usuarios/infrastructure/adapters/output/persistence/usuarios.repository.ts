@@ -18,7 +18,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
   async findAll(): Promise<Usuario[]> {
     const tenantId = this.tenancyService.getTenantId();
     const usuariosOrm = await this.repository.find({
-      where: { tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? {} : { tenant_id: tenantId },
       relations: ['rol'],
       select: {
         id_usuario: true,
@@ -40,7 +40,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
   async findById(id: number): Promise<Usuario | null> {
     const tenantId = this.tenancyService.getTenantId();
     const usuarioOrm = await this.repository.findOne({
-      where: { id_usuario: id, tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? { id_usuario: id } : { id_usuario: id, tenant_id: tenantId },
       relations: ['rol'],
       select: {
         id_usuario: true,
@@ -49,6 +49,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         telefono: true,
         documento: true,
         estado: true,
+        tenant_id: true,
         id_rol: true,
         rol: {
           id_rol: true,
@@ -63,19 +64,22 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
   async create(usuarioData: Omit<Usuario, 'id_usuario' | 'estado' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }): Promise<Usuario> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = UsuarioMapper.toEntity({ ...usuarioData, estado: true } as any);
-    ormEntity.tenant_id = tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (usuarioData as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return UsuarioMapper.toDomain(saved);
   }
 
   async update(id: number, usuarioData: Partial<Omit<Usuario, 'id_usuario' | 'rol' | 'setPassword' | 'getPassword'> & { password?: string }>): Promise<Usuario> {
     const tenantId = this.tenancyService.getTenantId();
-    await this.repository.update({ id_usuario: id, tenant_id: tenantId }, { ...usuarioData, tenant_id: tenantId } as any);
+    const whereClause = tenantId === 'GLOBAL' ? { id_usuario: id } : { id_usuario: id, tenant_id: tenantId };
+    const updateData = tenantId === 'GLOBAL' ? { ...usuarioData } : { ...usuarioData, tenant_id: tenantId };
+    await this.repository.update(whereClause, updateData as any);
     return this.findById(id) as Promise<Usuario>;
   }
 
   async delete(id: number): Promise<void> {
     const tenantId = this.tenancyService.getTenantId();
-    await this.repository.delete({ id_usuario: id, tenant_id: tenantId });
+    const whereClause = tenantId === 'GLOBAL' ? { id_usuario: id } : { id_usuario: id, tenant_id: tenantId };
+    await this.repository.delete(whereClause);
   }
 }
