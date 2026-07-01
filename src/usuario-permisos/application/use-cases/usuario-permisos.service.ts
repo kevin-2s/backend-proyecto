@@ -50,7 +50,7 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
       
       const up = usuarioPermisos.find(up => up.id_permiso === permiso.id_permiso);
       
-      let tienePermiso = false;
+      let tienePermiso: boolean;
       let heredado = true;
       
       if (up) {

@@ -34,7 +34,7 @@ import { AreasModule } from './areas/infrastructure/areas.module';
 import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
-import { QrModule } from './qr/infrastructure/qr.module';
+import { CodigoBarrasModule } from './codigo-barras/infrastructure/codigo-barras.module';
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
@@ -103,7 +103,7 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     ProgramasModule,
 
     ReportesModule,
-    QrModule,
+    CodigoBarrasModule,
     PrestamosModule,
     AsignacionesModule,
     NovedadesModule,
