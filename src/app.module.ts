@@ -35,7 +35,6 @@ import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { QrModule } from './qr/infrastructure/qr.module';
-import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
 import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
@@ -101,7 +100,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     AreasModule,
     ProgramasModule,
 
-    OrdenesCompraModule,
     ReportesModule,
     QrModule,
     PrestamosModule,
