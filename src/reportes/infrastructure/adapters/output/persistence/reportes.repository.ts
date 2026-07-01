@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ReportesRepository } from '../../../../domain/ports/output/reportes-repository.interface';
 import { InventarioOrmEntity } from '../../../../../inventario/infrastructure/entities/inventario.orm-entity';
 import { SolicitudOrmEntity } from '../../../../../solicitudes/infrastructure/entities/solicitud.orm-entity';
-import { PrestamoOrmEntity } from '../../../../../prestamos/infrastructure/entities/prestamo.orm-entity';
 import { KardexOrmEntity } from '../../../../../kardex/infrastructure/entities/kardex.orm-entity';
 import { UsuarioOrmEntity } from '../../../../../usuarios/infrastructure/entities/usuario.orm-entity';
 
@@ -15,8 +14,6 @@ export class ReportesRepositoryAdapter implements ReportesRepository {
     private readonly repository: Repository<InventarioOrmEntity>,
     @InjectRepository(SolicitudOrmEntity)
     private readonly solicitudRepository: Repository<SolicitudOrmEntity>,
-    @InjectRepository(PrestamoOrmEntity)
-    private readonly prestamoRepository: Repository<PrestamoOrmEntity>,
     @InjectRepository(KardexOrmEntity)
     private readonly kardexRepository: Repository<KardexOrmEntity>,
     @InjectRepository(UsuarioOrmEntity)
@@ -43,9 +40,7 @@ export class ReportesRepositoryAdapter implements ReportesRepository {
   }
 
   async obtenerPrestamos(): Promise<any[]> {
-    return this.prestamoRepository.find({
-      relations: ['item', 'item.producto', 'usuario_solicitante', 'usuario_responsable'],
-    });
+    return [];
   }
 
   async obtenerKardex(): Promise<any[]> {
