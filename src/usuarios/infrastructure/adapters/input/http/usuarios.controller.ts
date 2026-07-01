@@ -97,9 +97,10 @@ export class UsuariosController {
         data: this.excludePassword(usuario),
       };
     } catch (error) {
+      console.error('Error in createUsuario:', error);
       throw new HttpException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Error al crear el usuario',
+        message: (error as any)?.message || 'Error al crear el usuario',
         data: null,
       }, HttpStatus.BAD_REQUEST);
     }
