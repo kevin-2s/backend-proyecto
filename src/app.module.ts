@@ -16,7 +16,6 @@ import { ItemsModule } from './items/infrastructure/items.module';
 import { SitiosModule } from './sitios/infrastructure/sitios.module';
 import { InventarioModule } from './inventario/infrastructure/inventario.module';
 import { FichasModule } from './fichas/infrastructure/fichas.module';
-import { TiposMovimientoModule } from './tipos-movimiento/infrastructure/tipos-movimiento.module';
 import { KardexModule } from './kardex/infrastructure/kardex.module';
 import { SolicitudesModule } from './solicitudes/infrastructure/solicitudes.module';
 import { DetalleSolicitudModule } from './detalle-solicitud/infrastructure/detalle-solicitud.module';
@@ -34,7 +33,6 @@ import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
 import { QrModule } from './qr/infrastructure/qr.module';
-import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TrasladosModule } from './traslados/infrastructure/traslados.module';
@@ -82,7 +80,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     SitiosModule,
     InventarioModule,
     FichasModule,
-    TiposMovimientoModule,
     KardexModule,
     SolicitudesModule,
     DetalleSolicitudModule,
@@ -100,7 +97,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 
     ReportesModule,
     QrModule,
-    PrestamosModule,
     AsignacionesModule,
     NovedadesModule,
     TrasladosModule,
