@@ -3,7 +3,7 @@ import { Solicitud, EstadoSolicitud, TipoSolicitud } from '../../entities/solici
 export const SOLICITUDES_USE_CASES = Symbol('SOLICITUDES_USE_CASES');
 
 export interface ISolicitudesUseCases {
-  obtenerSolicitudes(): Promise<Solicitud[]>;
+  obtenerSolicitudes(userId: number, role: string): Promise<Solicitud[]>;
   obtenerSolicitudPorId(id: number): Promise<Solicitud>;
   crearSolicitud(data: {
     tipo: TipoSolicitud;
@@ -13,6 +13,6 @@ export interface ISolicitudesUseCases {
     id_usuario: number;
     id_ficha?: number | null;
   }): Promise<Solicitud>;
-  cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba?: number): Promise<Solicitud>;
+  cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba: number, isAdmin: boolean): Promise<Solicitud>;
   entregarSolicitud(id: number): Promise<Solicitud>;
 }

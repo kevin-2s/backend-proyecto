@@ -4,6 +4,9 @@ export const SOLICITUDES_REPOSITORY = Symbol('SOLICITUDES_REPOSITORY');
 
 export interface ISolicitudesRepository {
   findAll(): Promise<Solicitud[]>;
+  findByUsuario(userId: number): Promise<Solicitud[]>;
+  findForResponsable(userId: number): Promise<Solicitud[]>;
+  isResponsableOfAnySitio(userId: number): Promise<boolean>;
   findById(id: number): Promise<Solicitud | null>;
   create(solicitud: Omit<Solicitud, 'id_solicitud' | 'usuario' | 'usuario_aprueba' | 'ficha' | 'producto'>): Promise<Solicitud>;
   update(id: number, solicitud: Partial<Solicitud>): Promise<Solicitud>;

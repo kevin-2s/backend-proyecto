@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ISolicitudesRepository } from '../../../../domain/ports/output/solicitudes-repository.interface';
 import { SolicitudOrmEntity } from '../../../entities/solicitud.orm-entity';
 import { SolicitudMapper } from '../../../mappers/solicitud.mapper';
@@ -32,6 +32,50 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     return rows.map(SolicitudMapper.toDomain);
   }
 
+  async findByUsuario(userId: number): Promise<Solicitud[]> {
+    const rows = await this.repository.find({
+      where: { id_usuario: userId },
+      relations: RELATIONS,
+      order: { fecha: 'DESC' },
+    });
+    return rows.map(SolicitudMapper.toDomain);
+  }
+
+  async isResponsableOfAnySitio(userId: number): Promise<boolean> {
+    const count = await this.sitioRepository.count({ where: { id_responsable: userId } });
+    return count > 0;
+  }
+
+  async findForResponsable(userId: number): Promise<Solicitud[]> {
+    // Bodegas donde el usuario es responsable
+    const sitios = await this.sitioRepository.find({ where: { id_responsable: userId } });
+    const sitioIds = sitios.map(s => s.id_sitio);
+
+    if (sitioIds.length === 0) {
+      return this.findByUsuario(userId);
+    }
+
+    const productos = await this.productoRepository.find({ where: { id_sitio: In(sitioIds) } });
+    const productoIds = productos.map(p => p.id_producto);
+
+    if (productoIds.length === 0) {
+      return this.findByUsuario(userId);
+    }
+
+    // Solicitudes de sus bodegas + sus propias solicitudes
+    const rows = await this.repository
+      .createQueryBuilder('s')
+      .leftJoinAndSelect('s.usuario', 'usuario')
+      .leftJoinAndSelect('s.usuario_aprueba', 'usuario_aprueba')
+      .leftJoinAndSelect('s.ficha', 'ficha')
+      .leftJoinAndSelect('s.producto', 'producto')
+      .where('(s.id_producto IN (:...productoIds) OR s.id_usuario = :userId)', { productoIds, userId })
+      .orderBy('s.fecha', 'DESC')
+      .getMany();
+
+    return rows.map(SolicitudMapper.toDomain);
+  }
+
   async findById(id: number): Promise<Solicitud | null> {
     const row = await this.repository.findOne({ where: { id_solicitud: id }, relations: RELATIONS });
     if (!row) return null;
@@ -54,10 +98,9 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     const solicitud = await this.findById(id);
     if (!solicitud) throw new Error(`Solicitud ${id} no encontrada`);
 
-    // 1. Actualizar estado
     await this.repository.update(id, { estado: 'ENTREGADA' as any });
 
-    // 2. Marcar N ítems DISPONIBLES del producto como PRESTADO
+    // Marcar N ítems DISPONIBLES del producto como PRESTADO
     const itemsDisponibles = await this.itemRepository.find({
       where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
     });
@@ -66,7 +109,7 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
       await this.itemRepository.update(item.id_item, { estado: 'PRESTADO' });
     }
 
-    // 3. Verificar si el stock restante cae por debajo del mínimo
+    // Notificar si el stock restante cae por debajo del mínimo
     const restantes = await this.itemRepository.count({
       where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
     });

@@ -3,6 +3,8 @@ import { ISolicitudesUseCases } from '../../domain/ports/input/solicitudes-use-c
 import { ISolicitudesRepository, SOLICITUDES_REPOSITORY } from '../../domain/ports/output/solicitudes-repository.interface';
 import { Solicitud, EstadoSolicitud, TipoSolicitud } from '../../domain/entities/solicitud.domain.entity';
 import { SolicitudNotFoundException } from '../../domain/exceptions/solicitud-not-found.exception';
+import { AutoAprobacionSolicitudForbiddenException } from '../../domain/exceptions/auto-aprobacion-solicitud.exception';
+import { SoloResponsablePuedeAprobarSolicitudForbiddenException } from '../../domain/exceptions/solo-responsable-puede-aprobar.exception';
 import { INotificacionesRepository, NOTIFICACIONES_REPOSITORY } from '../../../notificaciones/domain/ports/output/notificaciones-repository.interface';
 
 @Injectable()
@@ -14,8 +16,18 @@ export class SolicitudesService implements ISolicitudesUseCases {
     private readonly notificacionesRepository: INotificacionesRepository,
   ) {}
 
-  async obtenerSolicitudes(): Promise<Solicitud[]> {
-    return this.solicitudesRepository.findAll();
+  async obtenerSolicitudes(userId: number, role: string): Promise<Solicitud[]> {
+    if (role === 'Administrador') {
+      return this.solicitudesRepository.findAll();
+    }
+    // Cualquier usuario asignado como responsable de al menos un sitio ve las solicitudes de sus bodegas
+    // (no importa si su rol es Instructor, Responsable de Bodega, u otro)
+    const esResponsable = await this.solicitudesRepository.isResponsableOfAnySitio(userId);
+    if (esResponsable) {
+      return this.solicitudesRepository.findForResponsable(userId);
+    }
+    // Aprendiz, Instructor sin bodega asignada, etc.: solo sus propias solicitudes
+    return this.solicitudesRepository.findByUsuario(userId);
   }
 
   async obtenerSolicitudPorId(id: number): Promise<Solicitud> {
@@ -60,11 +72,34 @@ export class SolicitudesService implements ISolicitudesUseCases {
     return solicitud;
   }
 
-  async cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba?: number): Promise<Solicitud> {
+  async cambiarEstadoSolicitud(
+    id: number,
+    estado: EstadoSolicitud,
+    id_usuario_aprueba: number,
+    isAdmin: boolean,
+  ): Promise<Solicitud> {
     const solicitud = await this.obtenerSolicitudPorId(id);
-    const updateData: any = { estado };
-    if (id_usuario_aprueba) updateData.id_usuario_aprueba = id_usuario_aprueba;
-    return this.solicitudesRepository.update(id, updateData);
+
+    // Nunca puede aprobar su propia solicitud
+    if (id_usuario_aprueba === solicitud.id_usuario) {
+      throw new AutoAprobacionSolicitudForbiddenException();
+    }
+
+    if (solicitud.id_producto) {
+      const info = await this.solicitudesRepository.getResponsableForProducto(solicitud.id_producto);
+
+      if (info?.id_responsable) {
+        // La bodega tiene responsable asignado: solo ese responsable puede aprobar/rechazar
+        if (info.id_responsable !== id_usuario_aprueba) {
+          throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
+        }
+      } else if (!isAdmin) {
+        // Sin responsable asignado: solo el Administrador puede aprobar
+        throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
+      }
+    }
+
+    return this.solicitudesRepository.update(id, { estado, id_usuario_aprueba });
   }
 
   async entregarSolicitud(id: number): Promise<Solicitud> {
