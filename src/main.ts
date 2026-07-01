@@ -44,13 +44,13 @@ async function bootstrap() {
   SwaggerModule.setup("docs", app, document);
 
   const rawPort = process.env.PORT;
-  let port = 3000;
+  let port = 3001;
   if (rawPort) {
     const parsed = Number(rawPort);
     if (!isNaN(parsed) && parsed >= 0 && parsed < 65536) {
       port = parsed;
     } else {
-      console.warn(`⚠️ Puerto inválido especificado en PORT ("${rawPort}"). Usando puerto por defecto: 3000`);
+      console.warn(`⚠️ Puerto inválido especificado en PORT ("${rawPort}"). Usando puerto por defecto: 3001`);
     }
   }
   await app.listen(port, '0.0.0.0');

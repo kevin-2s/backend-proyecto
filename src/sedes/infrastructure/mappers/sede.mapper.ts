@@ -9,7 +9,13 @@ export class SedeMapper {
       ormEntity.nombre,
       ormEntity.direccion,
       ormEntity.id_centro,
+      ormEntity.id_administrador,
       ormEntity.centro ? CentroMapper.toDomain(ormEntity.centro) : undefined,
+      ormEntity.administrador ? {
+        id_usuario: ormEntity.administrador.id_usuario,
+        nombre: ormEntity.administrador.nombre,
+        correo: ormEntity.administrador.correo
+      } : undefined,
       ormEntity.estado,
     );
   }
@@ -20,6 +26,7 @@ export class SedeMapper {
     if (domainEntity.nombre !== undefined) ormEntity.nombre = domainEntity.nombre;
     if (domainEntity.direccion !== undefined) ormEntity.direccion = domainEntity.direccion;
     if (domainEntity.id_centro !== undefined) ormEntity.id_centro = domainEntity.id_centro;
+    if (domainEntity.id_administrador !== undefined) ormEntity.id_administrador = domainEntity.id_administrador;
     if (domainEntity.estado !== undefined) ormEntity.estado = domainEntity.estado;
     return ormEntity;
   }

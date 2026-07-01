@@ -28,8 +28,8 @@ export class PermisosGuard implements CanActivate {
     const userId = user.userId;
     const roles: string[] = user.roles || [];
     
-    // El Administrador tiene todos los permisos por defecto
-    if (roles.includes('Administrador')) {
+    // El Administrador y Super Administrador tienen todos los permisos por defecto
+    if (roles.includes('Administrador') || roles.includes('Super Administrador')) {
       // Still, check if there's an explicit DENY in usuario_permisos
       for (const reqPermiso of requiredPermisos) {
         const hasDeny = await this.checkExplicitDeny(userId, reqPermiso);

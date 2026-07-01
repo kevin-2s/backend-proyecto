@@ -17,13 +17,13 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
 
   async findAll(): Promise<Categoria[]> {
     const tenantId = this.tenancyService.getTenantId();
-    const categoriasOrm = await this.repository.find({ where: { tenant_id: tenantId } });
+    const categoriasOrm = await this.repository.find({ where: tenantId === 'GLOBAL' ? {} : { tenant_id: tenantId } });
     return categoriasOrm.map(CategoriaMapper.toDomain);
   }
 
   async findById(id: number): Promise<Categoria | null> {
     const tenantId = this.tenancyService.getTenantId();
-    const categoriaOrm = await this.repository.findOne({ where: { id_categoria: id, tenant_id: tenantId } });
+    const categoriaOrm = await this.repository.findOne({ where: tenantId === 'GLOBAL' ? { id_categoria: id } : { id_categoria: id, tenant_id: tenantId } });
     if (!categoriaOrm) return null;
     return CategoriaMapper.toDomain(categoriaOrm);
   }
@@ -31,7 +31,7 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
   async create(categoriaData: Omit<Categoria, 'id_categoria'>): Promise<Categoria> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = CategoriaMapper.toEntity(categoriaData);
-    ormEntity.tenant_id = tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (arguments[0] as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return CategoriaMapper.toDomain(saved);
   }
@@ -39,7 +39,7 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
   async update(id: number, categoriaData: Partial<Categoria>): Promise<Categoria> {
     const tenantId = this.tenancyService.getTenantId();
     await this.repository.update(
-      { id_categoria: id, tenant_id: tenantId },
+      tenantId === 'GLOBAL' ? { id_categoria: id } : { id_categoria: id, tenant_id: tenantId },
       { ...CategoriaMapper.toEntity(categoriaData as any), tenant_id: tenantId } as any
     );
     const updated = await this.findById(id);
@@ -48,6 +48,6 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
 
   async delete(id: number): Promise<void> {
     const tenantId = this.tenancyService.getTenantId();
-    await this.repository.delete({ id_categoria: id, tenant_id: tenantId });
+    await this.repository.delete(tenantId === 'GLOBAL' ? { id_categoria: id } : { id_categoria: id, tenant_id: tenantId });
   }
 }

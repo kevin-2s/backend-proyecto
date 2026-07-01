@@ -18,7 +18,7 @@ export class ProductosRepositoryAdapter implements IProductosRepository {
   async findAll(): Promise<Producto[]> {
     const tenantId = this.tenancyService.getTenantId();
     const productosOrm = await this.repository.find({
-      where: { tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? {} : { tenant_id: tenantId },
       relations: ['categoria'],
     });
     return productosOrm.map(ProductoMapper.toDomain);
@@ -27,7 +27,7 @@ export class ProductosRepositoryAdapter implements IProductosRepository {
   async findById(id: number): Promise<Producto | null> {
     const tenantId = this.tenancyService.getTenantId();
     const productoEntity = await this.repository.findOne({
-      where: { id_producto: id, tenant_id: tenantId },
+      where: tenantId === 'GLOBAL' ? { id_producto: id } : { id_producto: id, tenant_id: tenantId },
       relations: ['categoria'],
     });
     if (!productoEntity) return null;
@@ -37,7 +37,7 @@ export class ProductosRepositoryAdapter implements IProductosRepository {
   async create(productoData: Omit<Producto, 'id_producto' | 'categoria'>): Promise<Producto> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = ProductoMapper.toEntity(productoData);
-    ormEntity.tenant_id = tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (arguments[0] as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return ProductoMapper.toDomain(saved);
   }
@@ -45,14 +45,14 @@ export class ProductosRepositoryAdapter implements IProductosRepository {
   async update(id: number, productoData: Partial<Omit<Producto, 'id_producto' | 'categoria'>>): Promise<Producto> {
     const tenantId = this.tenancyService.getTenantId();
     await this.repository.update(
-      { id_producto: id, tenant_id: tenantId },
-      { ...productoData, tenant_id: tenantId } as any
+      tenantId === 'GLOBAL' ? { id_producto: id } : { id_producto: id, tenant_id: tenantId },
+      tenantId === 'GLOBAL' ? { ...productoData } as any : { ...productoData, tenant_id: tenantId } as any
     );
     return this.findById(id) as Promise<Producto>;
   }
 
   async delete(id: number): Promise<void> {
     const tenantId = this.tenancyService.getTenantId();
-    await this.repository.delete({ id_producto: id, tenant_id: tenantId });
+    await this.repository.delete(tenantId === 'GLOBAL' ? { id_producto: id } : { id_producto: id, tenant_id: tenantId });
   }
 }

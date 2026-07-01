@@ -8,7 +8,7 @@ import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decor
 
 @Controller('usuarios')
 @UseGuards(RolesGuard)
-@Roles('Administrador')
+@Roles('Administrador', 'Super Administrador')
 export class UsuariosController {
   constructor(
     @Inject(USUARIOS_USE_CASES)
