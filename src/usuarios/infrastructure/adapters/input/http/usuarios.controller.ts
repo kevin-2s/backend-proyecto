@@ -36,11 +36,14 @@ export class UsuariosController {
           data: null,
         }, HttpStatus.NOT_FOUND);
       }
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Error al eliminar el usuario',
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: error.message || 'Error al eliminar el usuario',
         data: null,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      }, HttpStatus.BAD_REQUEST);
     }
   }
 
