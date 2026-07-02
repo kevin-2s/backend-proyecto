@@ -6,7 +6,6 @@ import { ReportesRepositoryAdapter } from './adapters/output/persistence/reporte
 import { REPORTES_REPOSITORY } from '../domain/ports/output/reportes-repository.interface';
 import { InventarioOrmEntity } from '../../inventario/infrastructure/entities/inventario.orm-entity';
 import { SolicitudOrmEntity } from '../../solicitudes/infrastructure/entities/solicitud.orm-entity';
-import { PrestamoOrmEntity } from '../../prestamos/infrastructure/entities/prestamo.orm-entity';
 import { KardexOrmEntity } from '../../kardex/infrastructure/entities/kardex.orm-entity';
 import { UsuarioOrmEntity } from '../../usuarios/infrastructure/entities/usuario.orm-entity';
 
@@ -15,7 +14,6 @@ import { UsuarioOrmEntity } from '../../usuarios/infrastructure/entities/usuario
     TypeOrmModule.forFeature([
       InventarioOrmEntity,
       SolicitudOrmEntity,
-      PrestamoOrmEntity,
       KardexOrmEntity,
       UsuarioOrmEntity,
     ]),

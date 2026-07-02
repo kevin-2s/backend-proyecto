@@ -33,17 +33,6 @@ export class ReportesController {
     res.send(buffer);
   }
 
-  @Get('prestamos/excel')
-  async getPrestamosExcel(@Res() res: Response) {
-    const buffer = await this.reportesService.generarReportePrestamosExcel();
-    res.set({
-      'Content-Type':
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Disposition': 'attachment; filename="prestamos.xlsx"',
-    });
-    res.send(buffer);
-  }
-
   @Get('kardex')
   @Header('Content-Type', 'application/pdf')
   async getKardexPdf(@Res() res: Response) {

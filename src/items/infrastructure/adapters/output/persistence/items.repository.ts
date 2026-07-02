@@ -5,8 +5,6 @@ import { IItemsRepository } from '../../../../domain/ports/output/items-reposito
 import { ItemOrmEntity } from '../../../entities/item.orm-entity';
 import { ItemMapper } from '../../../mappers/item.mapper';
 import { Item } from '../../../../domain/entities/item.domain.entity';
-import { PrestamoOrmEntity } from '../../../../../prestamos/infrastructure/entities/prestamo.orm-entity';
-import { EstadoPrestamo } from '../../../../../prestamos/domain/entities/prestamo.domain.entity';
 import { AsignacionItemOrmEntity } from '../../../../../asignaciones/infrastructure/entities/asignacion-item.orm-entity';
 import { NovedadOrmEntity } from '../../../../../novedades/infrastructure/entities/novedad.orm-entity';
 
@@ -15,8 +13,6 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
   constructor(
     @InjectRepository(ItemOrmEntity)
     private readonly repository: Repository<ItemOrmEntity>,
-    @InjectRepository(PrestamoOrmEntity)
-    private readonly prestamoRepository: Repository<PrestamoOrmEntity>,
     @InjectRepository(AsignacionItemOrmEntity)
     private readonly asignacionItemRepository: Repository<AsignacionItemOrmEntity>,
     @InjectRepository(NovedadOrmEntity)
@@ -61,14 +57,10 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     });
     if (!itemOrm) return null;
 
-    const prestamoOrm = await this.prestamoRepository.findOne({
-      where: { id_item: itemOrm.id_item, estado: EstadoPrestamo.ACTIVO },
-      relations: ['usuario_solicitante', 'usuario_responsable'],
-      order: { fecha_prestamo: 'DESC' },
-    });
+    const prestamoActivo = itemOrm.estado === 'PRESTADO' ? { estado: itemOrm.estado } : null;
 
     let asignacionActiva: any = null;
-    if (!prestamoOrm) {
+    if (!prestamoActivo) {
       const asignacionItemOrm = await this.asignacionItemRepository.findOne({
         where: { id_item: itemOrm.id_item, asignacion: { estado: 'ACTIVA' } },
         relations: ['asignacion', 'asignacion.ficha', 'asignacion.ficha.programa', 'asignacion.usuario_asigna'],
@@ -84,7 +76,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
 
     return {
       item: ItemMapper.toDomain(itemOrm),
-      prestamo_activo: prestamoOrm ?? null,
+      prestamo_activo: prestamoActivo,
       asignacion_activa: asignacionActiva,
       novedad_activa: novedadActiva ?? null,
     };
