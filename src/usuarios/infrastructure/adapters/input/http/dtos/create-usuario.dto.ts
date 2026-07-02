@@ -37,4 +37,9 @@ export class CreateUsuarioDto {
   @IsString()
   @IsOptional()
   tenant_id?: string;
+
+  @ApiProperty({ example: 1, description: 'ID de la ficha asignada (solo para aprendices)', required: false })
+  @IsInt()
+  @IsOptional()
+  id_ficha?: number;
 }

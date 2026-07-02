@@ -8,7 +8,6 @@ import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decor
 
 @Controller('usuarios')
 @UseGuards(RolesGuard)
-@Roles('Administrador', 'Super Administrador')
 export class UsuariosController {
   constructor(
     @Inject(USUARIOS_USE_CASES)
@@ -21,6 +20,7 @@ export class UsuariosController {
   }
 
   @Delete(':id')
+  @Roles('Administrador', 'Super Administrador')
   async deleteUsuario(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.usuariosUseCases.eliminarUsuario(id);
@@ -48,6 +48,7 @@ export class UsuariosController {
   }
 
   @Get()
+  @Roles('Administrador', 'Super Administrador', 'Instructor')
   async getUsuarios() {
     try {
       const usuarios = await this.usuariosUseCases.obtenerUsuarios();
@@ -66,6 +67,7 @@ export class UsuariosController {
   }
 
   @Get(':id')
+  @Roles('Administrador', 'Super Administrador', 'Instructor', 'Responsable de Bodega', 'Aprendiz')
   async getUsuario(@Param('id', ParseIntPipe) id: number) {
     try {
       const usuario = await this.usuariosUseCases.obtenerUsuarioPorId(id);
@@ -91,6 +93,7 @@ export class UsuariosController {
   }
 
   @Post()
+  @Roles('Administrador', 'Super Administrador')
   async createUsuario(@Body() createUsuarioDto: CreateUsuarioDto) {
     try {
       const usuario = await this.usuariosUseCases.crearUsuario(createUsuarioDto);
@@ -110,6 +113,7 @@ export class UsuariosController {
   }
 
   @Patch(':id')
+  @Roles('Administrador', 'Super Administrador')
   async updateUsuario(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUsuarioDto: UpdateUsuarioDto,

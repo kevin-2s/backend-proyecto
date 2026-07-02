@@ -28,6 +28,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         documento: true,
         estado: true,
         id_rol: true,
+        id_ficha: true,
         rol: {
           id_rol: true,
           nombre: true,
@@ -51,6 +52,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         estado: true,
         tenant_id: true,
         id_rol: true,
+        id_ficha: true,
         rol: {
           id_rol: true,
           nombre: true,
