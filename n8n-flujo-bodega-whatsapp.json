@@ -1,0 +1,209 @@
+{
+  "name": "Bot de Bodega - WhatsApp + OpenAI",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["messages"]
+      },
+      "id": "1a1b1c1d-0001-4000-8000-000000000001",
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [-200, 300],
+      "webhookId": "whatsapp-bodega-webhook",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "REEMPLAZAR_ID_CREDENCIAL",
+          "name": "WhatsApp Business Cloud - LogiMat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $input.first().json;\nconst entry = msg.messages ? msg : (msg.entry?.[0]?.changes?.[0]?.value ?? msg);\nconst mensaje = entry.messages?.[0];\nconst telefono = mensaje?.from ?? entry.contacts?.[0]?.wa_id ?? '';\nconst texto = mensaje?.text?.body ?? mensaje?.button?.text ?? '';\n\nreturn [{\n  json: {\n    telefono,\n    texto,\n    raw: entry,\n  },\n}];"
+      },
+      "id": "1a1b1c1d-0002-4000-8000-000000000002",
+      "name": "Extraer Mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [20, 300]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Eres el asistente de bodega de LogiMat (SENA) por WhatsApp. Solo atiendes a usuarios con rol Administrador o Responsable de Bodega.\n\nREGLA OBLIGATORIA: antes de ejecutar cualquier acción de bodega (consultar stock, buscar por placa, registrar producto, editar producto), DEBES llamar primero a la herramienta \"identificar_usuario\" con el nombre completo y número de cédula que te dé el usuario. Si aún no te ha dado esos datos, pídeselos primero en un mensaje corto y amable, y no llames a ninguna otra herramienta todavía.\n\nSi \"identificar_usuario\" responde con un error (403), dile al usuario exactamente el mensaje de error que recibiste y pídele que verifique sus datos. No inventes ni asumas que quedó identificado si la herramienta falló.\n\nUna vez identificado en la conversación, no vuelvas a pedir nombre y cédula de nuevo en los siguientes mensajes de esta misma conversación — reutiliza esos mismos datos en las llamadas a las demás herramientas.\n\nCuando el usuario quiera:\n- Consultar cuánto hay de un producto → usa \"consultar_stock_producto\".\n- Buscar un ítem físico por su placa SENA → usa \"buscar_item_por_placa\".\n- Registrar un producto nuevo → usa \"registrar_producto\" (pide primero todos los datos obligatorios: nombre, tipo de material, unidad de medida, cantidad, categoría, bodega, stock mínimo).\n- Editar un producto existente → usa \"editar_producto\" (pide el id o nombre del producto y qué campos quiere cambiar).\n\nResponde siempre en español, de forma breve y clara, como si fuera un mensaje de WhatsApp (sin markdown, sin tablas). Si una herramienta devuelve un error, muestra el mensaje de error tal cual lo recibiste, no lo inventes."
+        }
+      },
+      "id": "1a1b1c1d-0003-4000-8000-000000000003",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0004-4000-8000-000000000004",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [140, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REEMPLAZAR_ID_CREDENCIAL",
+          "name": "OpenAI - LogiMat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extraer Mensaje').item.json.telefono }}",
+        "contextWindowLength": 20
+      },
+      "id": "1a1b1c1d-0005-4000-8000-000000000005",
+      "name": "Memoria de Conversación",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [280, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Verifica la identidad del usuario en el sistema LogiMat. Debes llamarla SIEMPRE antes de cualquier otra acción de bodega, pasando el nombre completo y la cédula que el usuario escribió. Devuelve el rol del usuario si es válido, o un error 403 si no coincide con ningún usuario Administrador o Responsable de Bodega registrado.",
+        "method": "POST",
+        "url": "http://backend:3000/whatsapp-bot/identificar",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nombre\": \"{{ $fromAI('nombre', 'Nombre completo que escribió el usuario', 'string') }}\",\n  \"documento\": \"{{ $fromAI('documento', 'Número de cédula que escribió el usuario', 'string') }}\",\n  \"telefono\": \"{{ $('Extraer Mensaje').item.json.telefono }}\"\n}",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0006-4000-8000-000000000006",
+      "name": "identificar_usuario",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [420, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Consulta cuántas unidades hay disponibles de un producto. Usa id_producto si ya lo conoces (por ejemplo, de una consulta anterior), o nombre_producto si el usuario solo dio el nombre.",
+        "method": "POST",
+        "url": "http://backend:3000/whatsapp-bot/producto/stock",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nombre\": \"{{ $fromAI('nombre', 'Nombre completo del usuario ya identificado en esta conversación', 'string') }}\",\n  \"documento\": \"{{ $fromAI('documento', 'Cédula del usuario ya identificado en esta conversación', 'string') }}\",\n  \"telefono\": \"{{ $('Extraer Mensaje').item.json.telefono }}\",\n  \"id_producto\": {{ $fromAI('id_producto', 'ID numérico del producto si se conoce, o null', 'number') }},\n  \"nombre_producto\": \"{{ $fromAI('nombre_producto', 'Nombre o parte del nombre del producto si no se conoce el ID', 'string') }}\"\n}",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0007-4000-8000-000000000007",
+      "name": "consultar_stock_producto",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [560, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca un ítem físico por su placa SENA y devuelve su estado, ubicación (sitio/bodega), responsable, y si tiene préstamo, asignación o novedad activa.",
+        "method": "POST",
+        "url": "http://backend:3000/whatsapp-bot/items/buscar-placa",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nombre\": \"{{ $fromAI('nombre', 'Nombre completo del usuario ya identificado en esta conversación', 'string') }}\",\n  \"documento\": \"{{ $fromAI('documento', 'Cédula del usuario ya identificado en esta conversación', 'string') }}\",\n  \"telefono\": \"{{ $('Extraer Mensaje').item.json.telefono }}\",\n  \"placa\": \"{{ $fromAI('placa', 'Placa SENA del ítem a buscar', 'string') }}\"\n}",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0008-4000-8000-000000000008",
+      "name": "buscar_item_por_placa",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [700, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registra un producto nuevo en el catálogo de LogiMat. Antes de llamarla, asegúrate de tener del usuario: nombre del producto, tipo_material (CONSUMO, DEVOLUTIVO o PERECEDERO), unidad_medida, es_psd (true/false, si es perecedero), id_categoria, cantidad de unidades a crear, stock_minimo, e id_sitio (bodega). descripcion y SKU son opcionales.",
+        "method": "POST",
+        "url": "http://backend:3000/whatsapp-bot/productos",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nombre\": \"{{ $fromAI('nombre', 'Nombre completo del usuario ya identificado en esta conversación', 'string') }}\",\n  \"documento\": \"{{ $fromAI('documento', 'Cédula del usuario ya identificado en esta conversación', 'string') }}\",\n  \"telefono\": \"{{ $('Extraer Mensaje').item.json.telefono }}\",\n  \"producto\": {{ $fromAI('producto', 'Objeto JSON con los datos del nuevo producto: nombre, tipo_material, unidad_medida, es_psd, id_categoria, cantidad, stock_minimo, id_sitio, y opcionalmente descripcion, SKU, fecha_vencimiento, placas_sena (array de strings)', 'json') }}\n}",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0009-4000-8000-000000000009",
+      "name": "registrar_producto",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [840, 520]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Edita uno o varios campos de un producto ya existente. Necesitas el id_producto (resuélvelo primero con consultar_stock_producto si el usuario solo dio el nombre) y un objeto con los campos a cambiar.",
+        "method": "PATCH",
+        "url": "=http://backend:3000/whatsapp-bot/productos/{{ $fromAI('id_producto', 'ID numérico del producto a editar', 'number') }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nombre\": \"{{ $fromAI('nombre', 'Nombre completo del usuario ya identificado en esta conversación', 'string') }}\",\n  \"documento\": \"{{ $fromAI('documento', 'Cédula del usuario ya identificado en esta conversación', 'string') }}\",\n  \"telefono\": \"{{ $('Extraer Mensaje').item.json.telefono }}\",\n  \"producto\": {{ $fromAI('producto', 'Objeto JSON solo con los campos del producto que se van a cambiar (nombre, descripcion, SKU, tipo_material, unidad_medida, es_psd, id_categoria, stock_minimo, id_sitio, etc.)', 'json') }}\n}",
+        "options": {}
+      },
+      "id": "1a1b1c1d-0010-4000-8000-000000000010",
+      "name": "editar_producto",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [980, 520]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "REEMPLAZAR_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ $('Extraer Mensaje').item.json.telefono }}",
+        "textBody": "={{ $json.output }}"
+      },
+      "id": "1a1b1c1d-0011-4000-8000-000000000011",
+      "name": "Responder WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "REEMPLAZAR_ID_CREDENCIAL",
+          "name": "WhatsApp Business Cloud - LogiMat"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [[{ "node": "Extraer Mensaje", "type": "main", "index": 0 }]]
+    },
+    "Extraer Mensaje": {
+      "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]]
+    },
+    "AI Agent": {
+      "main": [[{ "node": "Responder WhatsApp", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Memoria de Conversación": {
+      "ai_memory": [[{ "node": "AI Agent", "type": "ai_memory", "index": 0 }]]
+    },
+    "identificar_usuario": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "consultar_stock_producto": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "buscar_item_por_placa": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "registrar_producto": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "editar_producto": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

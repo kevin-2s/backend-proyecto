@@ -133,9 +133,9 @@ async function bootstrap() {
     {
       rol: 'Responsable de Bodega',
       permisos: [
-        'ver_inventario',
-        'ver_productos',
-        'ver_items',
+        'ver_inventario', 'crear_inventario',
+        'ver_productos', 'crear_productos', 'editar_productos',
+        'ver_items', 'crear_items', 'editar_items',
         'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
         'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
         'ver_devoluciones', 'crear_devoluciones',
@@ -252,9 +252,9 @@ async function bootstrap() {
 
   if (responsableBodegaRole) {
     const responsablePermNames = [
-      'ver_inventario',
-      'ver_productos',
-      'ver_items',
+      'ver_inventario', 'crear_inventario',
+      'ver_productos', 'crear_productos', 'editar_productos',
+      'ver_items', 'crear_items', 'editar_items',
       'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
       'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
       'ver_devoluciones', 'crear_devoluciones',

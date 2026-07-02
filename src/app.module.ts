@@ -36,6 +36,7 @@ import { QrModule } from './qr/infrastructure/qr.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TrasladosModule } from './traslados/infrastructure/traslados.module';
+import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     AsignacionesModule,
     NovedadesModule,
     TrasladosModule,
+    WhatsappBotModule,
   ],
   providers: [
     {
