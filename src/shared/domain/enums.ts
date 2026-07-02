@@ -6,24 +6,9 @@ export enum TipoMovimiento {
   TRANSFERENCIA = 'TRANSFERENCIA',
 }
 
-export enum EstadoSolicitud {
-  PENDIENTE = 'PENDIENTE',
-  APROBADA = 'APROBADA',
-  RECHAZADA = 'RECHAZADA',
-  ENTREGADA = 'ENTREGADA',
-  DEVUELTA = 'DEVUELTA',
-}
-
 export enum EstadoFisico {
   BUENO = 'BUENO',
   REGULAR = 'REGULAR',
   DANADO = 'DAÑADO',
   PERDIDO = 'PERDIDO',
-}
-
-export enum TipoSitio {
-  BODEGA = 'BODEGA',
-  AMBIENTE = 'AMBIENTE',
-  LABORATORIO = 'LABORATORIO',
-  OTRO = 'OTRO',
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
@@ -32,9 +32,11 @@ import { AreasModule } from './areas/infrastructure/areas.module';
 import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
-import { QrModule } from './qr/infrastructure/qr.module';
+import { CodigoBarrasModule } from './codigo-barras/infrastructure/codigo-barras.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
+import { TenancyModule } from './shared/tenancy/tenancy.module';
+import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
 import { TrasladosModule } from './traslados/infrastructure/traslados.module';
 import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.module';
 
@@ -97,9 +99,10 @@ import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.mo
     ProgramasModule,
 
     ReportesModule,
-    QrModule,
+    CodigoBarrasModule,
     AsignacionesModule,
     NovedadesModule,
+    TenancyModule,
     TrasladosModule,
     WhatsappBotModule,
   ],
@@ -114,4 +117,8 @@ import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.mo
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenancyMiddleware).forRoutes('*');
+  }
+}

@@ -8,7 +8,6 @@ import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decor
 
 @Controller('usuarios')
 @UseGuards(RolesGuard)
-@Roles('Administrador')
 export class UsuariosController {
   constructor(
     @Inject(USUARIOS_USE_CASES)
@@ -21,6 +20,7 @@ export class UsuariosController {
   }
 
   @Delete(':id')
+  @Roles('Administrador', 'Super Administrador')
   async deleteUsuario(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.usuariosUseCases.eliminarUsuario(id);
@@ -36,15 +36,19 @@ export class UsuariosController {
           data: null,
         }, HttpStatus.NOT_FOUND);
       }
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Error al eliminar el usuario',
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: error.message || 'Error al eliminar el usuario',
         data: null,
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
+      }, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Get()
+  @Roles('Administrador', 'Super Administrador', 'Instructor')
   async getUsuarios() {
     try {
       const usuarios = await this.usuariosUseCases.obtenerUsuarios();
@@ -63,6 +67,7 @@ export class UsuariosController {
   }
 
   @Get(':id')
+  @Roles('Administrador', 'Super Administrador', 'Instructor', 'Responsable de Bodega', 'Aprendiz')
   async getUsuario(@Param('id', ParseIntPipe) id: number) {
     try {
       const usuario = await this.usuariosUseCases.obtenerUsuarioPorId(id);
@@ -88,6 +93,7 @@ export class UsuariosController {
   }
 
   @Post()
+  @Roles('Administrador', 'Super Administrador')
   async createUsuario(@Body() createUsuarioDto: CreateUsuarioDto) {
     try {
       const usuario = await this.usuariosUseCases.crearUsuario(createUsuarioDto);
@@ -97,15 +103,17 @@ export class UsuariosController {
         data: this.excludePassword(usuario),
       };
     } catch (error) {
+      console.error('Error in createUsuario:', error);
       throw new HttpException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Error al crear el usuario',
+        message: (error as any)?.message || 'Error al crear el usuario',
         data: null,
       }, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Patch(':id')
+  @Roles('Administrador', 'Super Administrador')
   async updateUsuario(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUsuarioDto: UpdateUsuarioDto,

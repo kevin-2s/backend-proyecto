@@ -50,7 +50,7 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
       
       const up = usuarioPermisos.find(up => up.id_permiso === permiso.id_permiso);
       
-      let tienePermiso = false;
+      let tienePermiso: boolean;
       let heredado = true;
       
       if (up) {
@@ -109,5 +109,12 @@ export class UsuarioPermisosService implements IUsuarioPermisosUseCases {
     const up = await this.usuarioPermisosRepo.findByUserIdAndPermisoId(id_usuario, id_permiso);
     if (!up) throw new NotFoundException(`Permiso de usuario no encontrado`);
     await this.usuarioPermisosRepo.delete(up.id);
+  }
+
+  async restablecerPermisos(id_usuario: number): Promise<void> {
+    const usuario = await this.usuariosRepo.findById(id_usuario);
+    if (!usuario) throw new NotFoundException(`Usuario con ID ${id_usuario} no encontrado`);
+
+    await this.usuarioPermisosRepo.deleteAllByUserId(id_usuario);
   }
 }

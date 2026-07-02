@@ -39,6 +39,7 @@ export class ReportesRepositoryAdapter implements ReportesRepository {
     });
   }
 
+
   async obtenerKardex(): Promise<any[]> {
     return this.kardexRepository.find({
       relations: ['item', 'item.producto', 'usuario'],

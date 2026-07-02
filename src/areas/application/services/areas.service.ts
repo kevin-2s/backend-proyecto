@@ -23,9 +23,10 @@ export class AreasService implements IAreasUseCases {
     return area;
   }
 
-  async crearArea(data: { nombre: string; estado?: boolean }): Promise<Area> {
+  async crearArea(data: { nombre: string; id_sede: number; estado?: boolean }): Promise<Area> {
     return this.areasRepository.create({
       nombre: data.nombre,
+      id_sede: data.id_sede,
       estado: data.estado !== false,
     });
   }

@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { CategoriaOrmEntity } from '../../../categorias/infrastructure/entities/categoria.orm-entity';
+import { TenantOrmEntity } from '../../../shared/tenancy/tenant.orm-entity';
 
 @Entity('producto')
-export class ProductoOrmEntity {
+@Unique(['tenant_id', 'SKU'])
+export class ProductoOrmEntity extends TenantOrmEntity {
   @PrimaryGeneratedColumn()
   id_producto: number;
 
@@ -15,7 +17,7 @@ export class ProductoOrmEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   codigo_unspsc: string | null;
 
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   SKU: string | null;
 
   @Column({ type: 'varchar', length: 50 })

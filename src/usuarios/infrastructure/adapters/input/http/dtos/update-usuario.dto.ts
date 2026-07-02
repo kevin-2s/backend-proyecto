@@ -29,4 +29,12 @@ export class UpdateUsuarioDto {
   @IsInt()
   @IsOptional()
   id_rol?: number;
+
+  @IsString()
+  @IsOptional()
+  tenant_id?: string;
+
+  @IsInt()
+  @IsOptional()
+  id_ficha?: number;
 }

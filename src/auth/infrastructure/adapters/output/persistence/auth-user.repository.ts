@@ -25,7 +25,13 @@ export class AuthUserRepositoryAdapter implements AuthRepositoryPort {
       usuario.correo,
       usuario.password,
       [usuario.rol.nombre],
-      usuario.estado
+      usuario.estado,
+      usuario.tenant_id,
+      // Datos personales para incluir en el JWT
+      usuario.nombre || '',
+      usuario.correo || '',
+      usuario.telefono || '',
+      usuario.documento || '',
     );
   }
 }

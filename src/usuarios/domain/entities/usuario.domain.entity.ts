@@ -13,6 +13,8 @@ export class Usuario {
     public telefono?: string,
     public documento?: string,
     password_input?: string, // Se recibe internamente, no se expone en JSON
+    public tenant_id?: string,
+    public id_ficha?: number | null,
   ) {
     this._password = password_input;
   }

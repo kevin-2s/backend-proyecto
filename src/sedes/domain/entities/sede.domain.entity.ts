@@ -6,7 +6,9 @@ export class Sede {
     public nombre: string,
     public direccion: string,
     public id_centro: number,
+    public id_administrador?: number,
     public centro?: Centro,
+    public administrador?: any,
     public estado: boolean = true,
   ) {}
 }

@@ -4,9 +4,7 @@ import { CreateFichaDto } from './dtos/create-ficha.dto';
 import { UpdateFichaDto } from './dtos/update-ficha.dto';
 import { FichaNotFoundException } from '../../../../domain/exceptions/ficha-not-found.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
-import { RolesGuard } from '../../../../../auth/infrastructure/guards/roles.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
-import { Roles } from '../../../../../auth/infrastructure/decorators/roles.decorator';
 
 @Controller('fichas')
 @UseGuards(PermisosGuard)
@@ -62,8 +60,7 @@ export class FichasController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('crear_fichas')
   async createFicha(@Body() createFichaDto: CreateFichaDto) {
     try {
       const ficha = await this.fichasUseCases.crearFicha(createFichaDto);
@@ -82,8 +79,7 @@ export class FichasController {
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('editar_fichas')
   async updateFicha(@Param('id', ParseIntPipe) id: number, @Body() updateFichaDto: UpdateFichaDto) {
     try {
       const ficha = await this.fichasUseCases.actualizarFicha(id, updateFichaDto);
@@ -109,8 +105,7 @@ export class FichasController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles('Administrador')
+  @RequierePermiso('eliminar_fichas')
   async deleteFicha(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.fichasUseCases.eliminarFicha(id);

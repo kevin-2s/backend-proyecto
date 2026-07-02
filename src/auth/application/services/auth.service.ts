@@ -20,12 +20,25 @@ export class AuthService implements LoginUseCase {
             throw new InvalidCredentialsException('Su cuenta ha sido desactivada. Comuníquese con el administrador.');
         }
 
+        if (user.roles.includes('Administrador') && (!user.tenantId || user.tenantId === 'default')) {
+            throw new InvalidCredentialsException('Su cuenta no tiene una sede asignada. Comuníquese con el Super Administrador.');
+        }
+
         const isPasswordValid = await this.passwordHash.compare(contrasena, user.passwordHash);
         if (!isPasswordValid) {
             throw new InvalidCredentialsException();
         }
 
-        const payload = { sub: user.id, roles: user.roles };
+        const payload = {
+            sub: user.id,
+            roles: user.roles,
+            tenantId: user.tenantId,
+            // Datos personales incluidos en el token para todos los roles
+            nombre: user.nombre,
+            correo: user.correo,
+            telefono: user.telefono,
+            documento: user.documento,
+        };
         const accessToken = this.tokenProvider.generateAccessToken(payload);
         const refreshToken = this.tokenProvider.generateRefreshToken(payload);
 

@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, Patch, Delete, UseGuards } from '@nestjs/common';
 import { AREAS_USE_CASES, IAreasUseCases } from '../../../../domain/ports/input/areas-use-cases.interface';
 import { CreateAreaDto } from './dtos/create-area.dto';
 import { UpdateAreaDto } from './dtos/update-area.dto';
 import { AreaNotFoundException } from '../../../../domain/exceptions/area-not-found.exception';
+import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
+import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
 @Controller('areas')
+@UseGuards(PermisosGuard)
 export class AreasController {
   constructor(
     @Inject(AREAS_USE_CASES)
@@ -12,6 +15,7 @@ export class AreasController {
   ) {}
 
   @Get()
+  @RequierePermiso('ver_areas')
   async getAreas() {
     try {
       const areas = await this.areasUseCases.obtenerAreas();
@@ -30,6 +34,7 @@ export class AreasController {
   }
 
   @Get(':id')
+  @RequierePermiso('ver_areas')
   async getArea(@Param('id', ParseIntPipe) id: number) {
     try {
       const area = await this.areasUseCases.obtenerAreaPorId(id);
@@ -55,6 +60,7 @@ export class AreasController {
   }
 
   @Post()
+  @RequierePermiso('crear_areas')
   async createArea(@Body() createAreaDto: CreateAreaDto) {
     try {
       const area = await this.areasUseCases.crearArea(createAreaDto);
@@ -73,6 +79,7 @@ export class AreasController {
   }
 
   @Patch(':id')
+  @RequierePermiso('editar_areas')
   async updateArea(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAreaDto: UpdateAreaDto,
@@ -101,6 +108,7 @@ export class AreasController {
   }
 
   @Delete(':id')
+  @RequierePermiso('eliminar_areas')
   async deleteArea(@Param('id', ParseIntPipe) id: number) {
     try {
       await this.areasUseCases.eliminarArea(id);

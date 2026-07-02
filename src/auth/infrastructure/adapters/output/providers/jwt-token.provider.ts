@@ -21,7 +21,7 @@ export class JwtTokenProvider implements TokenProviderPort {
         });
     }
 
-    verifyRefreshToken(token: string): { sub: string; roles: string[] } {
+    verifyRefreshToken(token: string): { sub: string; roles: string[]; tenantId?: string } {
         try {
             return this.jwtService.verify(token, {
                 secret: this.configService.get<string>('JWT_REFRESH_SECRET'),

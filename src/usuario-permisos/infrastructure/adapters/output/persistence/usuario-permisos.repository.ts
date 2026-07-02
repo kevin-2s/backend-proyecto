@@ -55,4 +55,8 @@ export class UsuarioPermisosRepository implements IUsuarioPermisosRepository {
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async deleteAllByUserId(id_usuario: number): Promise<void> {
+    await this.repository.delete({ id_usuario });
+  }
 }

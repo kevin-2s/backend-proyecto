@@ -32,4 +32,14 @@ export class CreateUsuarioDto {
   @IsInt()
   @IsNotEmpty()
   id_rol: number;
+
+  @ApiProperty({ example: 'UUID-Sede', description: 'Sede asignada (solo para administradores)', required: false })
+  @IsString()
+  @IsOptional()
+  tenant_id?: string;
+
+  @ApiProperty({ example: 1, description: 'ID de la ficha asignada (solo para aprendices)', required: false })
+  @IsInt()
+  @IsOptional()
+  id_ficha?: number;
 }

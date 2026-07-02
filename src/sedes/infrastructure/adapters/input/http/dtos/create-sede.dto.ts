@@ -17,8 +17,12 @@ export class CreateSedeDto {
   @IsNotEmpty()
   id_centro: number;
 
+  @ApiProperty({ example: 1, description: 'ID del Administrador de la Sede' })
+  @IsInt()
+  @IsNotEmpty()
+  id_administrador: number;
+
   @ApiProperty({ example: true, description: 'Estado activo/inactivo', required: false, default: true })
-  @IsBoolean()
   @IsOptional()
   estado?: boolean;
 }

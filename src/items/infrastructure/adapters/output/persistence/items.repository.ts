@@ -57,17 +57,12 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     });
     if (!itemOrm) return null;
 
-    const prestamoActivo = itemOrm.estado === 'PRESTADO' ? { estado: itemOrm.estado } : null;
-
-    let asignacionActiva: any = null;
-    if (!prestamoActivo) {
-      const asignacionItemOrm = await this.asignacionItemRepository.findOne({
-        where: { id_item: itemOrm.id_item, asignacion: { estado: 'ACTIVA' } },
-        relations: ['asignacion', 'asignacion.ficha', 'asignacion.ficha.programa', 'asignacion.usuario_asigna'],
-        order: { id_asignacion_item: 'DESC' },
-      });
-      asignacionActiva = asignacionItemOrm?.asignacion ?? null;
-    }
+    const asignacionItemOrm = await this.asignacionItemRepository.findOne({
+      where: { id_item: itemOrm.id_item, asignacion: { estado: 'ACTIVA' } },
+      relations: ['asignacion', 'asignacion.ficha', 'asignacion.ficha.programa', 'asignacion.usuario_asigna'],
+      order: { id_asignacion_item: 'DESC' },
+    });
+    const asignacionActiva = asignacionItemOrm?.asignacion ?? null;
 
     const novedadActiva = await this.novedadRepository.findOne({
       where: { id_item: itemOrm.id_item, estado: In(['PENDIENTE', 'EN_PROCESO']) },
@@ -76,7 +71,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
 
     return {
       item: ItemMapper.toDomain(itemOrm),
-      prestamo_activo: prestamoActivo,
+      prestamo_activo: null,
       asignacion_activa: asignacionActiva,
       novedad_activa: novedadActiva ?? null,
     };

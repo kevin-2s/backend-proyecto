@@ -18,7 +18,12 @@ export class AuthController {
     @Public()
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    @Throttle({ default: { limit: 5, ttl: 900000 } })
+    @Throttle({
+        default: {
+            limit: process.env.NODE_ENV === 'production' ? 5 : 1000,
+            ttl: 60000,
+        },
+    })
     @ApiOperation({ summary: 'Iniciar sesión en el sistema' })
     @ApiResponse({ status: 200, description: 'Inicio de sesión exitoso' })
     @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
