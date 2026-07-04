@@ -109,9 +109,10 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
       await this.itemRepository.update(item.id_item, { estado: 'PRESTADO' });
     }
 
-    // Notificar al solicitante que su pedido está listo para recoger / ha sido entregado
+    // Notificar al solicitante que su pedido está listo para recoger
+    const nombreProducto = solicitud.producto?.nombre ?? 'material solicitado';
     await this.notificacionRepository.save({
-      mensaje: `Tu solicitud #${id} ha sido marcada como entregada por el responsable. Confirma que la recibiste.`,
+      mensaje: `Tu préstamo de "${nombreProducto}" está listo para recoger. Ve a Solicitudes y confirma que lo recibiste.`,
       id_usuario: solicitud.id_usuario,
       leida: false,
       fecha: new Date(),
@@ -147,8 +148,9 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     try {
       const responsable = await this.getResponsableForProducto(solicitud.id_producto);
       if (responsable?.id_responsable) {
+        const nombreProductoConf = solicitud.producto?.nombre ?? 'material';
         await this.notificacionRepository.save({
-          mensaje: `El solicitante confirmó la recepción del préstamo #${id} (${solicitud.cantidad} unidad(es)).`,
+          mensaje: `El solicitante confirmó la recepción de "${nombreProductoConf}" (${solicitud.cantidad} unidad(es)). Solicitud cerrada.`,
           id_usuario: responsable.id_responsable,
           leida: false,
           fecha: new Date(),

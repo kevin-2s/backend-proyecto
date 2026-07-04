@@ -83,7 +83,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
     const solicitud = await this.obtenerSolicitudPorId(id);
 
     // Nunca puede aprobar su propia solicitud
-    if (id_usuario_aprueba === solicitud.id_usuario) {
+    if (Number(id_usuario_aprueba) === Number(solicitud.id_usuario)) {
       throw new AutoAprobacionSolicitudForbiddenException();
     }
 
@@ -92,11 +92,11 @@ export class SolicitudesService implements ISolicitudesUseCases {
 
       if (info?.id_responsable) {
         // La bodega tiene responsable asignado: solo ese responsable puede aprobar/rechazar
-        if (info.id_responsable !== id_usuario_aprueba) {
+        if (Number(info.id_responsable) !== Number(id_usuario_aprueba)) {
           throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
         }
       } else if (!isAdmin) {
-        // Sin responsable asignado: solo el Administrador puede aprobar
+        // Sin responsable asignado en la bodega: el administrador tampoco puede aprobar
         throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
       }
     }
@@ -117,7 +117,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
     if (solicitud.estado !== EstadoSolicitud.EN_ENTREGA) {
       throw new Error('Solo se puede confirmar la recepción de solicitudes en estado EN_ENTREGA');
     }
-    if (solicitud.id_usuario !== userId) {
+    if (Number(solicitud.id_usuario) !== Number(userId)) {
       throw new Error('Solo el solicitante original puede confirmar la recepción');
     }
     return this.solicitudesRepository.marcarEntregada(id, userId);
