@@ -29,6 +29,9 @@ export class AsignacionOrmEntity {
   @Column({ type: 'varchar', length: 20, default: 'ACTIVA' })
   estado: string;
 
+  @Column({ type: 'date', nullable: true })
+  fecha_devolucion: Date | null;
+
   @ManyToOne(() => FichaOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_ficha' })
   ficha: FichaOrmEntity;

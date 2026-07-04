@@ -36,6 +36,9 @@ export class SolicitudOrmEntity {
   @Column({ type: 'int', default: 1 })
   cantidad: number;
 
+  @Column({ type: 'date', nullable: true })
+  fecha_devolucion: Date | null;
+
   @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
   usuario: UsuarioOrmEntity;

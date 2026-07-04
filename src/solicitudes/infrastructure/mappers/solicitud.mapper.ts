@@ -16,6 +16,7 @@ export class SolicitudMapper {
       ormEntity.cantidad ?? 1,
       ormEntity.id_usuario_aprueba,
       ormEntity.id_ficha,
+      ormEntity.fecha_devolucion ?? null,
       ormEntity.usuario ? UsuarioMapper.toDomain(ormEntity.usuario) : undefined,
       ormEntity.usuario_aprueba ? UsuarioMapper.toDomain(ormEntity.usuario_aprueba) : undefined,
       ormEntity.ficha ? FichaMapper.toDomain(ormEntity.ficha) : undefined,
@@ -24,6 +25,7 @@ export class SolicitudMapper {
         nombre: ormEntity.producto.nombre,
         SKU: ormEntity.producto.SKU,
         id_sitio: ormEntity.producto.id_sitio,
+        tipo_material: ormEntity.producto.tipo_material,
       } : undefined,
     );
   }
@@ -40,6 +42,7 @@ export class SolicitudMapper {
     if (domainEntity.id_ficha !== undefined) ormEntity.id_ficha = domainEntity.id_ficha ?? null as any;
     if (domainEntity.id_producto !== undefined) ormEntity.id_producto = domainEntity.id_producto;
     if (domainEntity.cantidad !== undefined) ormEntity.cantidad = domainEntity.cantidad;
+    if (domainEntity.fecha_devolucion !== undefined) ormEntity.fecha_devolucion = domainEntity.fecha_devolucion ?? null;
     return ormEntity;
   }
 }

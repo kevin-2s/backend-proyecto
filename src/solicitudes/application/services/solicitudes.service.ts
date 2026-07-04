@@ -43,6 +43,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
     observacion?: string | null;
     id_usuario: number;
     id_ficha?: number | null;
+    fecha_devolucion?: string | Date | null;
   }): Promise<Solicitud> {
     const solicitud = await this.solicitudesRepository.create({
       fecha: new Date(),
@@ -53,6 +54,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
       observacion: data.observacion ?? null,
       id_usuario: data.id_usuario,
       id_ficha: data.id_ficha ?? null,
+      fecha_devolucion: data.fecha_devolucion ? new Date(data.fecha_devolucion) : null,
       id_usuario_aprueba: null,
     });
 
@@ -103,7 +105,21 @@ export class SolicitudesService implements ISolicitudesUseCases {
   }
 
   async entregarSolicitud(id: number): Promise<Solicitud> {
-    await this.obtenerSolicitudPorId(id);
-    return this.solicitudesRepository.marcarEntregada(id);
+    const solicitud = await this.obtenerSolicitudPorId(id);
+    if (solicitud.estado !== EstadoSolicitud.APROBADA) {
+      throw new Error('Solo se pueden entregar solicitudes en estado APROBADA');
+    }
+    return this.solicitudesRepository.marcarEnEntrega(id);
+  }
+
+  async confirmarRecepcionSolicitud(id: number, userId: number): Promise<Solicitud> {
+    const solicitud = await this.obtenerSolicitudPorId(id);
+    if (solicitud.estado !== EstadoSolicitud.EN_ENTREGA) {
+      throw new Error('Solo se puede confirmar la recepción de solicitudes en estado EN_ENTREGA');
+    }
+    if (solicitud.id_usuario !== userId) {
+      throw new Error('Solo el solicitante original puede confirmar la recepción');
+    }
+    return this.solicitudesRepository.marcarEntregada(id, userId);
   }
 }

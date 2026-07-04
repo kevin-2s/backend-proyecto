@@ -104,7 +104,20 @@ export class SolicitudesController {
   async entregarSolicitud(@Param('id', ParseIntPipe) id: number) {
     try {
       const solicitud = await this.solicitudesUseCases.entregarSolicitud(id);
-      return { statusCode: HttpStatus.OK, message: 'Solicitud entregada', data: solicitud };
+      return { statusCode: HttpStatus.OK, message: 'Solicitud marcada como en entrega', data: solicitud };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  @Patch(':id/confirmar-recepcion')
+  @RequierePermiso('ver_solicitudes')
+  @ApiOperation({ summary: 'El solicitante confirma que recibió el material — cambia estado a ENTREGADA' })
+  async confirmarRecepcion(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    const userId: number = req.user.userId;
+    try {
+      const solicitud = await this.solicitudesUseCases.confirmarRecepcionSolicitud(id, userId);
+      return { statusCode: HttpStatus.OK, message: 'Recepción confirmada', data: solicitud };
     } catch (error) {
       this.handleError(error);
     }

@@ -17,6 +17,7 @@ export class Asignacion {
     public id_usuario_asigna: number,
     public observacion: string | null,
     public estado: string,
+    public fecha_devolucion?: Date | null,
     public ficha?: Ficha,
     public producto?: Producto,
     public usuario_asigna?: Usuario,

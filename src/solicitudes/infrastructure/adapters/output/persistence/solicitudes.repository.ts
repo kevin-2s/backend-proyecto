@@ -94,13 +94,13 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     };
   }
 
-  async marcarEntregada(id: number): Promise<Solicitud> {
+  async marcarEnEntrega(id: number): Promise<Solicitud> {
     const solicitud = await this.findById(id);
     if (!solicitud) throw new Error(`Solicitud ${id} no encontrada`);
 
-    await this.repository.update(id, { estado: 'ENTREGADA' as any });
+    await this.repository.update(id, { estado: 'EN_ENTREGA' as any });
 
-    // Marcar N ítems DISPONIBLES del producto como PRESTADO
+    // Marcar N ítems DISPONIBLES del producto como PRESTADO al confirmar la entrega física
     const itemsDisponibles = await this.itemRepository.find({
       where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
     });
@@ -108,6 +108,14 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     for (const item of itemsAMarcar) {
       await this.itemRepository.update(item.id_item, { estado: 'PRESTADO' });
     }
+
+    // Notificar al solicitante que su pedido está listo para recoger / ha sido entregado
+    await this.notificacionRepository.save({
+      mensaje: `Tu solicitud #${id} ha sido marcada como entregada por el responsable. Confirma que la recibiste.`,
+      id_usuario: solicitud.id_usuario,
+      leida: false,
+      fecha: new Date(),
+    });
 
     // Notificar si el stock restante cae por debajo del mínimo
     const restantes = await this.itemRepository.count({
@@ -125,6 +133,28 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
         });
       }
     }
+
+    return this.findById(id) as Promise<Solicitud>;
+  }
+
+  async marcarEntregada(id: number, idUsuario: number): Promise<Solicitud> {
+    const solicitud = await this.findById(id);
+    if (!solicitud) throw new Error(`Solicitud ${id} no encontrada`);
+
+    await this.repository.update(id, { estado: 'ENTREGADA' as any });
+
+    // Notificar al responsable de la bodega que el solicitante confirmó la recepción
+    try {
+      const responsable = await this.getResponsableForProducto(solicitud.id_producto);
+      if (responsable?.id_responsable) {
+        await this.notificacionRepository.save({
+          mensaje: `El solicitante confirmó la recepción del préstamo #${id} (${solicitud.cantidad} unidad(es)).`,
+          id_usuario: responsable.id_responsable,
+          leida: false,
+          fecha: new Date(),
+        });
+      }
+    } catch { /* no interrumpir */ }
 
     return this.findById(id) as Promise<Solicitud>;
   }

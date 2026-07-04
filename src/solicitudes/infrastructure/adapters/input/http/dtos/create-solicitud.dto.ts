@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsInt, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsInt, Min, IsDateString } from 'class-validator';
 import { TipoSolicitud } from '../../../../../domain/entities/solicitud.domain.entity';
 
 export class CreateSolicitudDto {
@@ -27,4 +27,9 @@ export class CreateSolicitudDto {
   @IsInt()
   @IsOptional()
   id_ficha?: number;
+
+  @ApiProperty({ example: '2025-12-31', description: 'Fecha de devolución (solo para material devolutivo)', required: false })
+  @IsDateString()
+  @IsOptional()
+  fecha_devolucion?: string;
 }
