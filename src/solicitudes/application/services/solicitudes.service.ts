@@ -5,6 +5,7 @@ import { Solicitud, EstadoSolicitud, TipoSolicitud } from '../../domain/entities
 import { SolicitudNotFoundException } from '../../domain/exceptions/solicitud-not-found.exception';
 import { AutoAprobacionSolicitudForbiddenException } from '../../domain/exceptions/auto-aprobacion-solicitud.exception';
 import { SoloResponsablePuedeAprobarSolicitudForbiddenException } from '../../domain/exceptions/solo-responsable-puede-aprobar.exception';
+import { SoloSolicitantePuedeConfirmarForbiddenException } from '../../domain/exceptions/solo-solicitante-puede-confirmar.exception';
 import { INotificacionesRepository, NOTIFICACIONES_REPOSITORY } from '../../../notificaciones/domain/ports/output/notificaciones-repository.interface';
 
 @Injectable()
@@ -63,7 +64,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
       const info = await this.solicitudesRepository.getResponsableForProducto(data.id_producto);
       if (info?.id_responsable) {
         await this.notificacionesRepository.create({
-          mensaje: `Nueva solicitud de préstamo: ${data.cantidad} unidad(es) de "${info.nombre_producto}" desde la bodega "${info.nombre_bodega}". Requiere su aprobación.`,
+          mensaje: `Nueva solicitud: se pidieron ${data.cantidad} unidad(es) de "${info.nombre_producto}" (en ${info.nombre_bodega}). Requiere tu aprobación.`,
           id_usuario: info.id_responsable,
         });
       }
@@ -118,7 +119,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
       throw new Error('Solo se puede confirmar la recepción de solicitudes en estado EN_ENTREGA');
     }
     if (Number(solicitud.id_usuario) !== Number(userId)) {
-      throw new Error('Solo el solicitante original puede confirmar la recepción');
+      throw new SoloSolicitantePuedeConfirmarForbiddenException();
     }
     return this.solicitudesRepository.marcarEntregada(id, userId);
   }

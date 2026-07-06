@@ -10,6 +10,7 @@ import { EstadoSolicitud } from '../../../../domain/entities/solicitud.domain.en
 import { SolicitudNotFoundException } from '../../../../domain/exceptions/solicitud-not-found.exception';
 import { AutoAprobacionSolicitudForbiddenException } from '../../../../domain/exceptions/auto-aprobacion-solicitud.exception';
 import { SoloResponsablePuedeAprobarSolicitudForbiddenException } from '../../../../domain/exceptions/solo-responsable-puede-aprobar.exception';
+import { SoloSolicitantePuedeConfirmarForbiddenException } from '../../../../domain/exceptions/solo-solicitante-puede-confirmar.exception';
 import { PermisosGuard } from '../../../../../auth/infrastructure/guards/permisos.guard';
 import { RequierePermiso } from '../../../../../auth/infrastructure/decorators/requiere-permiso.decorator';
 
@@ -126,7 +127,8 @@ export class SolicitudesController {
   private handleError(error: any): never {
     if (
       error instanceof AutoAprobacionSolicitudForbiddenException ||
-      error instanceof SoloResponsablePuedeAprobarSolicitudForbiddenException
+      error instanceof SoloResponsablePuedeAprobarSolicitudForbiddenException ||
+      error instanceof SoloSolicitantePuedeConfirmarForbiddenException
     ) {
       throw new HttpException(
         { statusCode: HttpStatus.FORBIDDEN, message: error.message, data: null },

@@ -119,21 +119,23 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     });
 
     // Notificar si el stock restante cae por debajo del mínimo
-    const restantes = await this.itemRepository.count({
-      where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
-    });
-    const producto = await this.productoRepository.findOne({ where: { id_producto: solicitud.id_producto } });
-    if (producto && restantes < (producto.stock_minimo ?? 0)) {
-      const responsable = await this.getResponsableForProducto(solicitud.id_producto);
-      if (responsable?.id_responsable) {
-        await this.notificacionRepository.save({
-          mensaje: `⚠️ Stock bajo: "${producto.nombre}" tiene ${restantes} unidad(es) disponible(s), por debajo del mínimo de ${producto.stock_minimo}.`,
-          id_usuario: responsable.id_responsable,
-          leida: false,
-          fecha: new Date(),
-        });
+    try {
+      const restantes = await this.itemRepository.count({
+        where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
+      });
+      const producto = await this.productoRepository.findOne({ where: { id_producto: solicitud.id_producto } });
+      if (producto && producto.stock_minimo > 0 && restantes < producto.stock_minimo) {
+        const responsable = await this.getResponsableForProducto(solicitud.id_producto);
+        if (responsable?.id_responsable) {
+          await this.notificacionRepository.save({
+            mensaje: `⚠️ Stock bajo en "${responsable.nombre_bodega}": "${producto.nombre}" tiene ${restantes} unidad(es) disponible(s), por debajo del mínimo de ${producto.stock_minimo}.`,
+            id_usuario: responsable.id_responsable,
+            leida: false,
+            fecha: new Date(),
+          });
+        }
       }
-    }
+    } catch { /* no interrumpir el flujo principal */ }
 
     return this.findById(id) as Promise<Solicitud>;
   }

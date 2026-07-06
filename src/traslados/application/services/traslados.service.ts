@@ -63,7 +63,7 @@ export class TrasladosService implements ITrasladosUseCases {
       const destino = await this.repository.obtenerResponsableDeSitio(data.id_sitio_destino);
       if (origen?.id_responsable) {
         await this.notificacionesRepository.create({
-          mensaje: `Solicitud de traslado: "${ubicacion.descripcion}" quiere trasladarse de "${origen.nombre_sitio}" a "${destino?.nombre_sitio ?? 'otro lugar'}". Requiere su aprobación.`,
+          mensaje: `Nueva solicitud de traslado: "${ubicacion.descripcion}" (en ${origen.nombre_sitio}) → "${destino?.nombre_sitio ?? 'destino sin asignar'}". Requiere tu aprobación.`,
           id_usuario: origen.id_responsable,
         });
       }
@@ -98,8 +98,10 @@ export class TrasladosService implements ITrasladosUseCases {
     });
 
     try {
+      const itemInfo = await this.repository.obtenerUbicacionActualDeItem(traslado.id_item);
+      const destinoInfo = await this.repository.obtenerResponsableDeSitio(traslado.id_sitio_destino);
       await this.notificacionesRepository.create({
-        mensaje: 'Tu solicitud de traslado fue aprobada. El ítem ahora pertenece a su nueva ubicación.',
+        mensaje: `Tu solicitud de traslado de "${itemInfo?.descripcion ?? 'ítem'}" fue aprobada. Ahora se encuentra en "${destinoInfo?.nombre_sitio ?? 'su nueva ubicación'}".`,
         id_usuario: traslado.id_usuario_solicita,
       });
     } catch {
@@ -133,8 +135,9 @@ export class TrasladosService implements ITrasladosUseCases {
     });
 
     try {
+      const itemInfo = await this.repository.obtenerUbicacionActualDeItem(traslado.id_item);
       await this.notificacionesRepository.create({
-        mensaje: `Tu solicitud de traslado fue rechazada.${observacion_resolucion ? ' Motivo: ' + observacion_resolucion : ''}`,
+        mensaje: `Tu solicitud de traslado de "${itemInfo?.descripcion ?? 'ítem'}" fue rechazada.${observacion_resolucion ? ' Motivo: ' + observacion_resolucion : ''}`,
         id_usuario: traslado.id_usuario_solicita,
       });
     } catch {
