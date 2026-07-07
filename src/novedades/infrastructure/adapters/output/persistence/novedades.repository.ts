@@ -5,6 +5,7 @@ import { INovedadesRepository } from '../../../../domain/ports/output/novedades-
 import { NovedadOrmEntity } from '../../../entities/novedad.orm-entity';
 import { NovedadMapper } from '../../../mappers/novedad.mapper';
 import { Novedad } from '../../../../domain/entities/novedad.domain.entity';
+import { ItemOrmEntity } from '../../../../../items/infrastructure/entities/item.orm-entity';
 
 const RELATIONS = ['item', 'item.producto', 'usuario'];
 
@@ -13,6 +14,8 @@ export class NovedadesRepositoryAdapter implements INovedadesRepository {
   constructor(
     @InjectRepository(NovedadOrmEntity)
     private readonly repository: Repository<NovedadOrmEntity>,
+    @InjectRepository(ItemOrmEntity)
+    private readonly itemRepository: Repository<ItemOrmEntity>,
   ) {}
 
   async findAll(): Promise<Novedad[]> {
@@ -48,5 +51,13 @@ export class NovedadesRepositoryAdapter implements INovedadesRepository {
 
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  async verificarAccesoItem(id_item: number, userId: number): Promise<boolean> {
+    const item = await this.itemRepository.findOne({
+      where: { id_item },
+      relations: ['sitio'],
+    });
+    return item?.sitio?.id_responsable === userId;
   }
 }

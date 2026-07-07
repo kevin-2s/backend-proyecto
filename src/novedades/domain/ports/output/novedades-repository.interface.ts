@@ -9,4 +9,5 @@ export interface INovedadesRepository {
   create(data: Omit<Novedad, 'id_novedad' | 'item' | 'usuario'>): Promise<Novedad>;
   update(id: number, data: Partial<Novedad>): Promise<Novedad>;
   delete(id: number): Promise<void>;
+  verificarAccesoItem(id_item: number, userId: number): Promise<boolean>;
 }

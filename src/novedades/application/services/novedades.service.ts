@@ -31,7 +31,15 @@ export class NovedadesService implements INovedadesUseCases {
     id_usuario: number;
     id_item?: number | null;
     estado?: string;
-  }): Promise<Novedad> {
+  }, requestingUserId?: number, requestingRole?: string): Promise<Novedad> {
+    if (requestingUserId && requestingRole && data.id_item) {
+      const role = requestingRole.toLowerCase();
+      const esAdmin = role === 'administrador' || role === 'super administrador';
+      if (!esAdmin) {
+        const tieneAcceso = await this.repository.verificarAccesoItem(data.id_item, requestingUserId);
+        if (!tieneAcceso) throw new Error('FORBIDDEN');
+      }
+    }
     return this.repository.create({
       tipo: data.tipo,
       descripcion: data.descripcion,
@@ -42,8 +50,18 @@ export class NovedadesService implements INovedadesUseCases {
     });
   }
 
-  async actualizarEstado(id: number, estado: string): Promise<Novedad> {
-    await this.obtenerNovedadPorId(id);
+  async actualizarEstado(id: number, estado: string, requestingUserId?: number, requestingRole?: string): Promise<Novedad> {
+    const novedad = await this.obtenerNovedadPorId(id);
+    if (requestingUserId && requestingRole) {
+      const role = requestingRole.toLowerCase();
+      // Solo el responsable de bodega del sitio del ítem puede cambiar el estado
+      const esResponsableBodega = role.includes('responsable');
+      if (!esResponsableBodega) throw new Error('FORBIDDEN');
+      if (novedad.id_item) {
+        const tieneAcceso = await this.repository.verificarAccesoItem(novedad.id_item, requestingUserId);
+        if (!tieneAcceso) throw new Error('FORBIDDEN');
+      }
+    }
     return this.repository.update(id, { estado });
   }
 

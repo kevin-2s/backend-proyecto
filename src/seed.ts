@@ -96,6 +96,8 @@ async function bootstrap() {
     { nombre: 'crear_traslados', descripcion: 'Permite crear traslados', modulo: 'traslados' },
     { nombre: 'aprobar_traslados', descripcion: 'Permite aprobar traslados', modulo: 'traslados' },
     { nombre: 'rechazar_traslados', descripcion: 'Permite rechazar traslados', modulo: 'traslados' },
+    { nombre: 'ver_asignaciones', descripcion: 'Permite ver asignaciones', modulo: 'asignaciones' },
+    { nombre: 'crear_asignaciones', descripcion: 'Permite crear asignaciones', modulo: 'asignaciones' },
   ];
 
   for (const p of permisosSeed) {
@@ -157,7 +159,8 @@ async function bootstrap() {
         'ver_sitios', 'crear_sitios', 'editar_sitios', 'eliminar_sitios',
         'ver_usuario_permisos', 'editar_usuario_permisos',
         'ver_permisos', 'crear_permisos',
-        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados'
+        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados',
+        'ver_asignaciones', 'crear_asignaciones'
       ]
     },
     {
@@ -207,6 +210,7 @@ async function bootstrap() {
         'ver_dashboard',
         'ver_fichas',
         'ver_sitios',
+        'ver_asignaciones', 'crear_asignaciones',
       ]
     }
   ];

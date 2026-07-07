@@ -12,7 +12,7 @@ export interface INovedadesUseCases {
     id_usuario: number;
     id_item?: number | null;
     estado?: string;
-  }): Promise<Novedad>;
-  actualizarEstado(id: number, estado: string): Promise<Novedad>;
+  }, requestingUserId?: number, requestingRole?: string): Promise<Novedad>;
+  actualizarEstado(id: number, estado: string, requestingUserId?: number, requestingRole?: string): Promise<Novedad>;
   eliminarNovedad(id: number): Promise<void>;
 }

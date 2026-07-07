@@ -9,7 +9,7 @@ import { EstadoItem } from '../../../../../items/domain/entities/item.domain.ent
 import { AsignacionMapper } from '../../../mappers/asignacion.mapper';
 import { Asignacion } from '../../../../domain/entities/asignacion.domain.entity';
 
-const RELATIONS = ['ficha', 'ficha.programa', 'producto', 'usuario_asigna'];
+const RELATIONS = ['ficha', 'ficha.programa', 'producto', 'usuario_asigna', 'asignacion_items', 'asignacion_items.item'];
 
 @Injectable()
 export class AsignacionesRepositoryAdapter implements IAsignacionesRepository {

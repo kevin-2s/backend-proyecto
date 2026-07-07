@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Inject, HttpStatus, HttpException, UseGuards, Req } from '@nestjs/common';
 import { NOVEDADES_USE_CASES, INovedadesUseCases } from '../../../../domain/ports/input/novedades-use-cases.interface';
 import { CreateNovedadDto } from './dtos/create-novedad.dto';
 import { UpdateNovedadDto } from './dtos/update-novedad.dto';
@@ -34,21 +34,31 @@ export class NovedadesController {
   }
 
   @Post()
-  async create(@Body() dto: CreateNovedadDto) {
+  async create(@Body() dto: CreateNovedadDto, @Req() req: any) {
     try {
-      const data = await this.useCases.crearNovedad(dto);
+      const userId = Number(req.user?.userId);
+      const role: string = req.user?.roles?.[0] ?? '';
+      const data = await this.useCases.crearNovedad(dto, userId, role);
       return { statusCode: HttpStatus.CREATED, message: 'Novedad registrada exitosamente', data };
-    } catch {
+    } catch (error) {
+      if ((error as Error).message === 'FORBIDDEN') {
+        throw new HttpException({ statusCode: HttpStatus.FORBIDDEN, message: 'Solo puedes registrar novedades de ítems que pertenecen a tu bodega', data: null }, HttpStatus.FORBIDDEN);
+      }
       throw new HttpException({ statusCode: HttpStatus.BAD_REQUEST, message: 'Error al registrar la novedad', data: null }, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Patch(':id')
-  async updateEstado(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateNovedadDto) {
+  async updateEstado(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateNovedadDto, @Req() req: any) {
     try {
-      const data = await this.useCases.actualizarEstado(id, dto.estado);
+      const userId = Number(req.user?.userId);
+      const role: string = req.user?.roles?.[0] ?? '';
+      const data = await this.useCases.actualizarEstado(id, dto.estado, userId, role);
       return { statusCode: HttpStatus.OK, message: 'Estado actualizado', data };
     } catch (error) {
+      if ((error as Error).message === 'FORBIDDEN') {
+        throw new HttpException({ statusCode: HttpStatus.FORBIDDEN, message: 'Solo el responsable de la bodega puede actualizar el estado de esta novedad', data: null }, HttpStatus.FORBIDDEN);
+      }
       if (error instanceof NovedadNotFoundException) {
         throw new HttpException({ statusCode: HttpStatus.NOT_FOUND, message: error.message, data: null }, HttpStatus.NOT_FOUND);
       }
