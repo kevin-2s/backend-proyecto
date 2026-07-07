@@ -353,6 +353,7 @@ async function bootstrap() {
       'ver_dashboard',
       'ver_fichas',
       'ver_sitios',
+      'ver_asignaciones', 'crear_asignaciones',
     ];
     for (const name of responsablePermNames) {
       const perm = await permisoRepo.findOne({ where: { nombre: name } });

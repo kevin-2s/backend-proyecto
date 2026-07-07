@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, ParseIntPipe, Inject, HttpStatus, HttpException, Query, UseGuards, Req } from '@nestjs/common';
 import { ITEMS_USE_CASES, IItemsUseCases } from '../../../../domain/ports/input/items-use-cases.interface';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { UpdateEstadoItemDto } from './dtos/update-estado-item.dto';
@@ -39,9 +39,11 @@ export class ItemsController {
 
   @Get('buscar/:placa')
   @RequierePermiso('ver_items')
-  async buscarPorPlaca(@Param('placa') placa: string) {
+  async buscarPorPlaca(@Param('placa') placa: string, @Req() req: any) {
     try {
-      const detalle = await this.itemsUseCases.buscarPorPlaca(placa);
+      const userId: number = Number(req.user?.userId);
+      const role: string = req.user?.roles?.[0] ?? '';
+      const detalle = await this.itemsUseCases.buscarPorPlaca(placa, userId, role);
       if (!detalle) {
         throw new HttpException({
           statusCode: HttpStatus.NOT_FOUND,
