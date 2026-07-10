@@ -45,7 +45,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     return this.repository.count({ where: { id_producto } });
   }
 
-  async findDetalleByPlaca(placa: string): Promise<{
+  async findDetalleByPlaca(placa: string, requestingUserId?: number, requestingRole?: string): Promise<{
     item: Item;
     prestamo_activo: any | null;
     asignacion_activa: any | null;
@@ -63,6 +63,24 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
       order: { id_asignacion_item: 'DESC' },
     });
     const asignacionActiva = asignacionItemOrm?.asignacion ?? null;
+
+    // Restrict visibility: non-admin users only see items in their own sitio,
+    // or (instructors) items assigned to a ficha where they are id_responsable
+    if (requestingUserId !== undefined && requestingRole !== undefined) {
+      const role = requestingRole.toLowerCase();
+      const esAdmin = role === 'administrador' || role === 'super administrador';
+      if (!esAdmin) {
+        let tieneAcceso = false;
+        if (itemOrm.sitio?.id_responsable === requestingUserId) {
+          tieneAcceso = true;
+        }
+        if (!tieneAcceso && role === 'instructor') {
+          const fichaResponsable = asignacionItemOrm?.asignacion?.ficha?.id_responsable;
+          if (fichaResponsable === requestingUserId) tieneAcceso = true;
+        }
+        if (!tieneAcceso) return null;
+      }
+    }
 
     const novedadActiva = await this.novedadRepository.findOne({
       where: { id_item: itemOrm.id_item, estado: In(['PENDIENTE', 'EN_PROCESO']) },
