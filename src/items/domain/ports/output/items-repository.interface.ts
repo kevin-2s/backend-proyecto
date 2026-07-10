@@ -10,7 +10,7 @@ export interface IItemsRepository {
   countByProducto(id_producto: number): Promise<number>;
   create(item: Omit<Item, 'id_item' | 'producto'>): Promise<Item>;
   update(id: number, item: Partial<Omit<Item, 'id_item' | 'producto'>>): Promise<Item>;
-  findDetalleByPlaca(placa: string): Promise<{
+  findDetalleByPlaca(placa: string, requestingUserId?: number, requestingRole?: string): Promise<{
     item: Item;
     prestamo_activo: any | null;
     asignacion_activa: any | null;

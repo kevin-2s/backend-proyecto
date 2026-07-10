@@ -5,8 +5,6 @@ import { IItemsRepository } from '../../../../domain/ports/output/items-reposito
 import { ItemOrmEntity } from '../../../entities/item.orm-entity';
 import { ItemMapper } from '../../../mappers/item.mapper';
 import { Item } from '../../../../domain/entities/item.domain.entity';
-import { PrestamoOrmEntity } from '../../../../../prestamos/infrastructure/entities/prestamo.orm-entity';
-import { EstadoPrestamo } from '../../../../../prestamos/domain/entities/prestamo.domain.entity';
 import { AsignacionItemOrmEntity } from '../../../../../asignaciones/infrastructure/entities/asignacion-item.orm-entity';
 import { NovedadOrmEntity } from '../../../../../novedades/infrastructure/entities/novedad.orm-entity';
 
@@ -15,8 +13,6 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
   constructor(
     @InjectRepository(ItemOrmEntity)
     private readonly repository: Repository<ItemOrmEntity>,
-    @InjectRepository(PrestamoOrmEntity)
-    private readonly prestamoRepository: Repository<PrestamoOrmEntity>,
     @InjectRepository(AsignacionItemOrmEntity)
     private readonly asignacionItemRepository: Repository<AsignacionItemOrmEntity>,
     @InjectRepository(NovedadOrmEntity)
@@ -49,7 +45,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     return this.repository.count({ where: { id_producto } });
   }
 
-  async findDetalleByPlaca(placa: string): Promise<{
+  async findDetalleByPlaca(placa: string, requestingUserId?: number, requestingRole?: string): Promise<{
     item: Item;
     prestamo_activo: any | null;
     asignacion_activa: any | null;
@@ -61,20 +57,29 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
     });
     if (!itemOrm) return null;
 
-    const prestamoOrm = await this.prestamoRepository.findOne({
-      where: { id_item: itemOrm.id_item, estado: EstadoPrestamo.ACTIVO },
-      relations: ['usuario_solicitante', 'usuario_responsable'],
-      order: { fecha_prestamo: 'DESC' },
+    const asignacionItemOrm = await this.asignacionItemRepository.findOne({
+      where: { id_item: itemOrm.id_item, asignacion: { estado: 'ACTIVA' } },
+      relations: ['asignacion', 'asignacion.ficha', 'asignacion.ficha.programa', 'asignacion.usuario_asigna'],
+      order: { id_asignacion_item: 'DESC' },
     });
+    const asignacionActiva = asignacionItemOrm?.asignacion ?? null;
 
-    let asignacionActiva: any = null;
-    if (!prestamoOrm) {
-      const asignacionItemOrm = await this.asignacionItemRepository.findOne({
-        where: { id_item: itemOrm.id_item, asignacion: { estado: 'ACTIVA' } },
-        relations: ['asignacion', 'asignacion.ficha', 'asignacion.ficha.programa', 'asignacion.usuario_asigna'],
-        order: { id_asignacion_item: 'DESC' },
-      });
-      asignacionActiva = asignacionItemOrm?.asignacion ?? null;
+    // Restrict visibility: non-admin users only see items in their own sitio,
+    // or (instructors) items assigned to a ficha where they are id_responsable
+    if (requestingUserId !== undefined && requestingRole !== undefined) {
+      const role = requestingRole.toLowerCase();
+      const esAdmin = role === 'administrador' || role === 'super administrador';
+      if (!esAdmin) {
+        let tieneAcceso = false;
+        if (itemOrm.sitio?.id_responsable === requestingUserId) {
+          tieneAcceso = true;
+        }
+        if (!tieneAcceso && role === 'instructor') {
+          const fichaResponsable = asignacionItemOrm?.asignacion?.ficha?.id_responsable;
+          if (fichaResponsable === requestingUserId) tieneAcceso = true;
+        }
+        if (!tieneAcceso) return null;
+      }
     }
 
     const novedadActiva = await this.novedadRepository.findOne({
@@ -84,7 +89,7 @@ export class ItemsRepositoryAdapter implements IItemsRepository {
 
     return {
       item: ItemMapper.toDomain(itemOrm),
-      prestamo_activo: prestamoOrm ?? null,
+      prestamo_activo: null,
       asignacion_activa: asignacionActiva,
       novedad_activa: novedadActiva ?? null,
     };
