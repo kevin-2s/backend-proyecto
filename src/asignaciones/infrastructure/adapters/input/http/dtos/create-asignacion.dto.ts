@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, Min, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAsignacionDto {
@@ -32,4 +32,9 @@ export class CreateAsignacionDto {
   @IsArray()
   @IsInt({ each: true })
   id_items?: number[];
+
+  @ApiProperty({ example: '2025-12-31', description: 'Fecha de devolución (solo para material devolutivo)', required: false })
+  @IsDateString()
+  @IsOptional()
+  fecha_devolucion?: string;
 }

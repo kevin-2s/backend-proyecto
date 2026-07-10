@@ -28,6 +28,7 @@ export class AsignacionesService implements IAsignacionesUseCases {
     id_usuario_asigna: number;
     observacion?: string | null;
     id_items?: number[];
+    fecha_devolucion?: string | Date | null;
   }): Promise<Asignacion> {
     let itemIds: number[];
     if (data.id_items && data.id_items.length > 0) {
@@ -49,6 +50,7 @@ export class AsignacionesService implements IAsignacionesUseCases {
       observacion: data.observacion ?? null,
       fecha_asignacion: new Date(),
       estado: EstadoAsignacion.ACTIVA,
+      fecha_devolucion: data.fecha_devolucion ? new Date(data.fecha_devolucion) : null,
     });
     await this.repository.vincularItems(asignacion.id_asignacion, itemIds);
     return asignacion;

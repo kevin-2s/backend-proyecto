@@ -38,6 +38,7 @@ import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TenancyModule } from './shared/tenancy/tenancy.module';
 import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
 import { TrasladosModule } from './traslados/infrastructure/traslados.module';
+import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     NovedadesModule,
     TenancyModule,
     TrasladosModule,
+    WhatsappBotModule,
   ],
   providers: [
     {
