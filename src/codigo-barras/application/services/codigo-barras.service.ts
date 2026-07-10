@@ -2,7 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IItemsRepository, ITEMS_REPOSITORY } from '../../../items/domain/ports/output/items-repository.interface';
 
 @Injectable()
-export class QrService {
+export class CodigoBarrasService {
   constructor(
     @Inject(ITEMS_REPOSITORY)
     private readonly itemsRepository: IItemsRepository,
