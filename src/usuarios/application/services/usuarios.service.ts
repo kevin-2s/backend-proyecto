@@ -63,6 +63,17 @@ export class UsuariosService implements IUsuariosUseCases {
   async eliminarUsuario(id: number): Promise<void> {
     // Verify user exists before deletion
     await this.obtenerUsuarioPorId(id);
+
+    // Check if the user is the primary administrator of any Sede
+    const isSedeAdmin = await this.dataSource.query(
+      `SELECT id_sede FROM sede WHERE id_administrador = $1 LIMIT 1`,
+      [id]
+    );
+
+    if (isSedeAdmin && isSedeAdmin.length > 0) {
+      throw new Error('No se puede eliminar el usuario porque es el administrador principal de una sede');
+    }
+
     await this.usuariosRepository.delete(id);
   }
 

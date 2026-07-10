@@ -3,6 +3,8 @@ import { ITrasladosUseCases } from '../../domain/ports/input/traslados-use-cases
 import { ITrasladosRepository, TRASLADOS_REPOSITORY } from '../../domain/ports/output/traslados-repository.interface';
 import { Traslado, EstadoTraslado } from '../../domain/entities/traslado.domain.entity';
 import { TrasladoNotFoundException } from '../../domain/exceptions/traslado-not-found.exception';
+import { AutoAprobacionTrasladoForbiddenException } from '../../domain/exceptions/auto-aprobacion-traslado.exception';
+import { SoloResponsablePuedeAprobarTrasladoForbiddenException } from '../../domain/exceptions/solo-responsable-puede-aprobar-traslado.exception';
 import { INotificacionesRepository, NOTIFICACIONES_REPOSITORY } from '../../../notificaciones/domain/ports/output/notificaciones-repository.interface';
 
 @Injectable()
@@ -61,7 +63,7 @@ export class TrasladosService implements ITrasladosUseCases {
       const destino = await this.repository.obtenerResponsableDeSitio(data.id_sitio_destino);
       if (origen?.id_responsable) {
         await this.notificacionesRepository.create({
-          mensaje: `Solicitud de traslado: "${ubicacion.descripcion}" quiere trasladarse de "${origen.nombre_sitio}" a "${destino?.nombre_sitio ?? 'otro lugar'}". Requiere su aprobación.`,
+          mensaje: `Nueva solicitud de traslado: "${ubicacion.descripcion}" (en ${origen.nombre_sitio}) → "${destino?.nombre_sitio ?? 'destino sin asignar'}". Requiere tu aprobación.`,
           id_usuario: origen.id_responsable,
         });
       }
@@ -74,6 +76,16 @@ export class TrasladosService implements ITrasladosUseCases {
 
   async aprobarTraslado(id: number, id_usuario_aprueba: number): Promise<Traslado> {
     const traslado = await this.obtenerTrasladoPorId(id);
+
+    if (id_usuario_aprueba === traslado.id_usuario_solicita) {
+      throw new AutoAprobacionTrasladoForbiddenException();
+    }
+
+    const origen = await this.repository.obtenerResponsableDeSitio(traslado.id_sitio_origen);
+    if (origen?.id_responsable && origen.id_responsable !== id_usuario_aprueba) {
+      throw new SoloResponsablePuedeAprobarTrasladoForbiddenException();
+    }
+
     if (traslado.estado !== EstadoTraslado.PENDIENTE) {
       throw new Error('Esta solicitud de traslado ya fue resuelta');
     }
@@ -86,8 +98,10 @@ export class TrasladosService implements ITrasladosUseCases {
     });
 
     try {
+      const itemInfo = await this.repository.obtenerUbicacionActualDeItem(traslado.id_item);
+      const destinoInfo = await this.repository.obtenerResponsableDeSitio(traslado.id_sitio_destino);
       await this.notificacionesRepository.create({
-        mensaje: 'Tu solicitud de traslado fue aprobada. El ítem ahora pertenece a su nueva ubicación.',
+        mensaje: `Tu solicitud de traslado de "${itemInfo?.descripcion ?? 'ítem'}" fue aprobada. Ahora se encuentra en "${destinoInfo?.nombre_sitio ?? 'su nueva ubicación'}".`,
         id_usuario: traslado.id_usuario_solicita,
       });
     } catch {
@@ -99,6 +113,16 @@ export class TrasladosService implements ITrasladosUseCases {
 
   async rechazarTraslado(id: number, id_usuario_aprueba: number, observacion_resolucion?: string | null): Promise<Traslado> {
     const traslado = await this.obtenerTrasladoPorId(id);
+
+    if (id_usuario_aprueba === traslado.id_usuario_solicita) {
+      throw new AutoAprobacionTrasladoForbiddenException();
+    }
+
+    const origen = await this.repository.obtenerResponsableDeSitio(traslado.id_sitio_origen);
+    if (origen?.id_responsable && origen.id_responsable !== id_usuario_aprueba) {
+      throw new SoloResponsablePuedeAprobarTrasladoForbiddenException();
+    }
+
     if (traslado.estado !== EstadoTraslado.PENDIENTE) {
       throw new Error('Esta solicitud de traslado ya fue resuelta');
     }
@@ -111,8 +135,9 @@ export class TrasladosService implements ITrasladosUseCases {
     });
 
     try {
+      const itemInfo = await this.repository.obtenerUbicacionActualDeItem(traslado.id_item);
       await this.notificacionesRepository.create({
-        mensaje: `Tu solicitud de traslado fue rechazada.${observacion_resolucion ? ' Motivo: ' + observacion_resolucion : ''}`,
+        mensaje: `Tu solicitud de traslado de "${itemInfo?.descripcion ?? 'ítem'}" fue rechazada.${observacion_resolucion ? ' Motivo: ' + observacion_resolucion : ''}`,
         id_usuario: traslado.id_usuario_solicita,
       });
     } catch {
