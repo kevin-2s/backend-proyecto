@@ -96,8 +96,9 @@ export class PermisosGuard implements CanActivate {
     }
 
     // 3. Fallback heredado por defecto (compatibilidad si la base de datos no está poblada)
-    if (roles.includes('Instructor')) {
-      // INSTRUCTOR tiene solo permisos de lectura por defecto (ej. ver_inventario)
+    const nonAdminRoles = ['Instructor', 'Responsable de Bodega', 'Aprendiz'];
+    if (roles.some(r => nonAdminRoles.includes(r))) {
+      // Todos los roles no-admin tienen permisos de lectura por defecto (comienzan con ver_)
       if (permisoNombre.startsWith('ver_')) {
         return true;
       }

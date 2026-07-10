@@ -31,7 +31,7 @@ export class CategoriasRepositoryAdapter implements ICategoriasRepository {
   async create(categoriaData: Omit<Categoria, 'id_categoria'>): Promise<Categoria> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = CategoriaMapper.toEntity(categoriaData);
-    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (arguments[0] as any).tenant_id || 'default' : tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (categoriaData as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return CategoriaMapper.toDomain(saved);
   }

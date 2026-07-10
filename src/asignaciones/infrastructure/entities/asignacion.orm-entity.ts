@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn } from 'typeorm';
+import { AsignacionItemOrmEntity } from './asignacion-item.orm-entity';
 import { FichaOrmEntity } from '../../../fichas/infrastructure/entities/ficha.orm-entity';
 import { ProductoOrmEntity } from '../../../productos/infrastructure/entities/producto.orm-entity';
 import { UsuarioOrmEntity } from '../../../usuarios/infrastructure/entities/usuario.orm-entity';
@@ -29,6 +30,9 @@ export class AsignacionOrmEntity {
   @Column({ type: 'varchar', length: 20, default: 'ACTIVA' })
   estado: string;
 
+  @Column({ type: 'date', nullable: true })
+  fecha_devolucion: Date | null;
+
   @ManyToOne(() => FichaOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_ficha' })
   ficha: FichaOrmEntity;
@@ -40,4 +44,7 @@ export class AsignacionOrmEntity {
   @ManyToOne(() => UsuarioOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario_asigna' })
   usuario_asigna: UsuarioOrmEntity;
+
+  @OneToMany(() => AsignacionItemOrmEntity, (ai) => ai.asignacion)
+  asignacion_items: AsignacionItemOrmEntity[];
 }

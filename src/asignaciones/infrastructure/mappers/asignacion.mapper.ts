@@ -15,6 +15,7 @@ export class AsignacionMapper {
       orm.id_usuario_asigna,
       orm.observacion,
       orm.estado,
+      orm.fecha_devolucion ?? null,
       orm.ficha ? FichaMapper.toDomain(orm.ficha) : undefined,
       orm.producto ? ProductoMapper.toDomain(orm.producto) : undefined,
       orm.usuario_asigna ? UsuarioMapper.toDomain(orm.usuario_asigna) : undefined,
@@ -31,6 +32,7 @@ export class AsignacionMapper {
     if (domain.id_usuario_asigna !== undefined) orm.id_usuario_asigna = domain.id_usuario_asigna;
     if (domain.observacion !== undefined) orm.observacion = domain.observacion ?? null;
     if (domain.estado !== undefined) orm.estado = domain.estado;
+    if (domain.fecha_devolucion !== undefined) orm.fecha_devolucion = domain.fecha_devolucion ?? null;
     return orm;
   }
 }
