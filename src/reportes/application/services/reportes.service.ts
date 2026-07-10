@@ -125,29 +125,6 @@ export class ReportesService {
     });
   }
 
-  // ─── Préstamos ──────────────────────────────────────────────────────────────
-
-  async generarReportePrestamosExcel(): Promise<Buffer> {
-    const datos = await this.repo.obtenerPrestamos();
-    const wb = new ExcelJS.Workbook();
-    const ws = wb.addWorksheet('Prestamos');
-    ws.addRow([
-      'ID', 'Item/Producto', 'Solicitante', 'Responsable',
-      'Fecha Préstamo', 'Fecha Dev. Esperada', 'Fecha Dev. Real', 'Estado', 'Observación',
-    ]);
-    datos.forEach(d => {
-      const itemStr = d.item?.producto?.nombre || `Ítem #${d.id_item}`;
-      const solicitante = d.usuario_solicitante?.nombre || `Usuario #${d.id_usuario_solicitante}`;
-      const responsable = d.usuario_responsable?.nombre || `Usuario #${d.id_usuario_responsable}`;
-      const fPrestamo = d.fecha_prestamo ? new Date(d.fecha_prestamo).toLocaleDateString('es-ES') : '';
-      const fEsperada = d.fecha_devolucion_esperada ? new Date(d.fecha_devolucion_esperada).toLocaleDateString('es-ES') : '';
-      const fReal = d.fecha_devolucion_real ? new Date(d.fecha_devolucion_real).toLocaleDateString('es-ES') : '—';
-      ws.addRow([d.id_prestamo, itemStr, solicitante, responsable, fPrestamo, fEsperada, fReal, d.estado, d.observacion || '']);
-    });
-    const buffer = await wb.xlsx.writeBuffer();
-    return Buffer.from(buffer);
-  }
-
   // ─── Kardex ─────────────────────────────────────────────────────────────────
 
   async generarReporteKardexPDF(): Promise<Buffer> {
