@@ -18,7 +18,7 @@ async function bootstrap() {
   const rolPermisoRepo = dataSource.getRepository(RolPermisoOrmEntity);
 
   console.log('Seeding roles...');
-  const roles = ['Super Administrador', 'Administrador', 'Instructor', 'Aprendiz'];
+  const roles = ['Super Administrador', 'Administrador', 'Instructor', 'Aprendiz', 'Responsable de Bodega'];
   for (const roleName of roles) {
     const existing = await roleRepo.findOne({ where: { nombre: roleName } });
     if (!existing) {
@@ -96,6 +96,8 @@ async function bootstrap() {
     { nombre: 'crear_traslados', descripcion: 'Permite crear traslados', modulo: 'traslados' },
     { nombre: 'aprobar_traslados', descripcion: 'Permite aprobar traslados', modulo: 'traslados' },
     { nombre: 'rechazar_traslados', descripcion: 'Permite rechazar traslados', modulo: 'traslados' },
+    { nombre: 'ver_asignaciones', descripcion: 'Permite ver asignaciones', modulo: 'asignaciones' },
+    { nombre: 'crear_asignaciones', descripcion: 'Permite crear asignaciones', modulo: 'asignaciones' },
   ];
 
   for (const p of permisosSeed) {
@@ -157,7 +159,8 @@ async function bootstrap() {
         'ver_sitios', 'crear_sitios', 'editar_sitios', 'eliminar_sitios',
         'ver_usuario_permisos', 'editar_usuario_permisos',
         'ver_permisos', 'crear_permisos',
-        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados'
+        'ver_traslados', 'crear_traslados', 'aprobar_traslados', 'rechazar_traslados',
+        'ver_asignaciones', 'crear_asignaciones'
       ]
     },
     {
@@ -190,6 +193,24 @@ async function bootstrap() {
         'ver_solicitudes', 'crear_solicitudes',
         'ver_notificaciones',
         'ver_dashboard'
+      ]
+    },
+    {
+      rol: 'Responsable de Bodega',
+      permisos: [
+        'ver_inventario', 'crear_inventario',
+        'ver_productos', 'crear_productos', 'editar_productos',
+        'ver_items', 'crear_items', 'editar_items',
+        'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+        'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
+        'ver_devoluciones', 'crear_devoluciones',
+        'ver_chequeos', 'crear_chequeos',
+        'ver_actas', 'crear_actas',
+        'ver_notificaciones',
+        'ver_dashboard',
+        'ver_fichas',
+        'ver_sitios',
+        'ver_asignaciones', 'crear_asignaciones',
       ]
     }
   ];
@@ -270,6 +291,7 @@ async function bootstrap() {
 
   const instructorRole = await roleRepo.findOne({ where: { nombre: 'Instructor' } });
   const aprendizRole = await roleRepo.findOne({ where: { nombre: 'Aprendiz' } });
+  const responsableBodegaRole = await roleRepo.findOne({ where: { nombre: 'Responsable de Bodega' } });
 
   console.log('Seeding role permissions...');
   if (instructorRole) {
@@ -319,6 +341,39 @@ async function bootstrap() {
       }
     }
     console.log('Permissions for Aprendiz seeded.');
+  }
+
+  if (responsableBodegaRole) {
+    const responsablePermNames = [
+      'ver_inventario', 'crear_inventario',
+      'ver_productos', 'crear_productos', 'editar_productos',
+      'ver_items', 'crear_items', 'editar_items',
+      'ver_solicitudes', 'aprobar_solicitudes', 'rechazar_solicitudes', 'entregar_solicitudes',
+      'ver_traslados', 'aprobar_traslados', 'rechazar_traslados',
+      'ver_devoluciones', 'crear_devoluciones',
+      'ver_chequeos', 'crear_chequeos',
+      'ver_actas', 'crear_actas',
+      'ver_notificaciones',
+      'ver_dashboard',
+      'ver_fichas',
+      'ver_sitios',
+      'ver_asignaciones', 'crear_asignaciones',
+    ];
+    for (const name of responsablePermNames) {
+      const perm = await permisoRepo.findOne({ where: { nombre: name } });
+      if (perm) {
+        const existing = await rolPermisoRepo.findOne({
+          where: { id_rol: responsableBodegaRole.id_rol, id_permiso: perm.id_permiso }
+        });
+        if (!existing) {
+          await rolPermisoRepo.save(rolPermisoRepo.create({
+            id_rol: responsableBodegaRole.id_rol,
+            id_permiso: perm.id_permiso
+          }));
+        }
+      }
+    }
+    console.log('Permissions for Responsable de Bodega seeded.');
   }
 
   console.log('Seeding completed successfully.');
