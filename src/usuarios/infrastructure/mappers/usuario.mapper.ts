@@ -15,6 +15,7 @@ export class UsuarioMapper {
       ormEntity.documento,
       undefined, // NUNCA incluir password en la respuesta
       ormEntity.tenant_id,
+      ormEntity.id_ficha,
     );
   }
 
@@ -52,6 +53,12 @@ export class UsuarioMapper {
     }
     if (domainEntity.id_rol !== undefined) {
       ormEntity.id_rol = domainEntity.id_rol;
+    }
+    if (domainEntity.id_ficha !== undefined) {
+      ormEntity.id_ficha = domainEntity.id_ficha;
+    }
+    if (domainEntity.tenant_id !== undefined) {
+      ormEntity.tenant_id = domainEntity.tenant_id;
     }
     return ormEntity;
   }

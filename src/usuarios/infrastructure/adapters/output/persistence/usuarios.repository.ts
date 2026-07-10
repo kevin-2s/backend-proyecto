@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { IUsuariosRepository } from '../../../../domain/ports/output/usuarios-repository.interface';
 import { UsuarioOrmEntity } from '../../../entities/usuario.orm-entity';
 import { UsuarioMapper } from '../../../mappers/usuario.mapper';
@@ -28,6 +28,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         documento: true,
         estado: true,
         id_rol: true,
+        id_ficha: true,
         rol: {
           id_rol: true,
           nombre: true,
@@ -51,6 +52,7 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
         estado: true,
         tenant_id: true,
         id_rol: true,
+        id_ficha: true,
         rol: {
           id_rol: true,
           nombre: true,
@@ -81,5 +83,30 @@ export class UsuariosRepositoryAdapter implements IUsuariosRepository {
     const tenantId = this.tenancyService.getTenantId();
     const whereClause = tenantId === 'GLOBAL' ? { id_usuario: id } : { id_usuario: id, tenant_id: tenantId };
     await this.repository.delete(whereClause);
+  }
+
+  async findByNombreDocumentoTelefono(nombre: string, documento: string, telefono: string): Promise<Usuario | null> {
+    const normalizar = (valor: string) => valor.replace(/[\s\-+]/g, '');
+
+    const candidatos = await this.repository.find({
+      where: { nombre: ILike(nombre), documento },
+      relations: ['rol'],
+      select: {
+        id_usuario: true,
+        nombre: true,
+        correo: true,
+        telefono: true,
+        documento: true,
+        estado: true,
+        id_rol: true,
+      },
+    });
+
+    const telefonoNormalizado = normalizar(telefono);
+    const encontrado = candidatos.find(
+      (u) => u.telefono && normalizar(u.telefono) === telefonoNormalizado,
+    );
+
+    return encontrado ? UsuarioMapper.toDomain(encontrado) : null;
   }
 }
