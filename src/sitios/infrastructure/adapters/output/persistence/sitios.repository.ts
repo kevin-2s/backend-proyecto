@@ -37,7 +37,7 @@ export class SitiosRepositoryAdapter implements ISitiosRepository {
   async create(sitioData: Partial<Omit<Sitio, 'id_sitio' | 'responsable'>>): Promise<Sitio> {
     const tenantId = this.tenancyService.getTenantId();
     const ormEntity = SitioMapper.toEntity(sitioData);
-    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (arguments[0] as any).tenant_id || 'default' : tenantId;
+    ormEntity.tenant_id = tenantId === 'GLOBAL' ? (sitioData as any).tenant_id || 'default' : tenantId;
     const saved = await this.repository.save(ormEntity);
     return SitioMapper.toDomain(saved);
   }
