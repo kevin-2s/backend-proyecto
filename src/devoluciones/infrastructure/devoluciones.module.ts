@@ -6,9 +6,12 @@ import { DevolucionesService } from '../application/services/devoluciones.servic
 import { DevolucionesRepositoryAdapter } from './adapters/output/persistence/devoluciones.repository';
 import { DEVOLUCIONES_USE_CASES } from '../domain/ports/input/devoluciones-use-cases.interface';
 import { DEVOLUCIONES_REPOSITORY } from '../domain/ports/output/devoluciones-repository.interface';
+import { SolicitudOrmEntity } from '../../solicitudes/infrastructure/entities/solicitud.orm-entity';
+import { ProductoOrmEntity } from '../../productos/infrastructure/entities/producto.orm-entity';
+import { NotificacionOrmEntity } from '../../notificaciones/infrastructure/entities/notificacion.orm-entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DevolucionOrmEntity])],
+  imports: [TypeOrmModule.forFeature([DevolucionOrmEntity, SolicitudOrmEntity, ProductoOrmEntity, NotificacionOrmEntity])],
   controllers: [DevolucionesController],
   providers: [
     {
