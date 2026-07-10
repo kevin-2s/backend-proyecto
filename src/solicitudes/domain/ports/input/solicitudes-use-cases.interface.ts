@@ -12,7 +12,9 @@ export interface ISolicitudesUseCases {
     observacion?: string | null;
     id_usuario: number;
     id_ficha?: number | null;
+    fecha_devolucion?: string | Date | null;
   }): Promise<Solicitud>;
   cambiarEstadoSolicitud(id: number, estado: EstadoSolicitud, id_usuario_aprueba: number, isAdmin: boolean): Promise<Solicitud>;
   entregarSolicitud(id: number): Promise<Solicitud>;
+  confirmarRecepcionSolicitud(id: number, userId: number): Promise<Solicitud>;
 }

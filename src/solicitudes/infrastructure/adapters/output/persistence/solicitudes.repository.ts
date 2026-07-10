@@ -94,13 +94,13 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
     };
   }
 
-  async marcarEntregada(id: number): Promise<Solicitud> {
+  async marcarEnEntrega(id: number): Promise<Solicitud> {
     const solicitud = await this.findById(id);
     if (!solicitud) throw new Error(`Solicitud ${id} no encontrada`);
 
-    await this.repository.update(id, { estado: 'ENTREGADA' as any });
+    await this.repository.update(id, { estado: 'EN_ENTREGA' as any });
 
-    // Marcar N ítems DISPONIBLES del producto como PRESTADO
+    // Marcar N ítems DISPONIBLES del producto como PRESTADO al confirmar la entrega física
     const itemsDisponibles = await this.itemRepository.find({
       where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
     });
@@ -109,22 +109,56 @@ export class SolicitudesRepositoryAdapter implements ISolicitudesRepository {
       await this.itemRepository.update(item.id_item, { estado: 'PRESTADO' });
     }
 
-    // Notificar si el stock restante cae por debajo del mínimo
-    const restantes = await this.itemRepository.count({
-      where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
+    // Notificar al solicitante que su pedido está listo para recoger
+    const nombreProducto = solicitud.producto?.nombre ?? 'material solicitado';
+    await this.notificacionRepository.save({
+      mensaje: `Tu préstamo de "${nombreProducto}" está listo para recoger. Ve a Solicitudes y confirma que lo recibiste.`,
+      id_usuario: solicitud.id_usuario,
+      leida: false,
+      fecha: new Date(),
     });
-    const producto = await this.productoRepository.findOne({ where: { id_producto: solicitud.id_producto } });
-    if (producto && restantes < (producto.stock_minimo ?? 0)) {
+
+    // Notificar si el stock restante cae por debajo del mínimo
+    try {
+      const restantes = await this.itemRepository.count({
+        where: { id_producto: solicitud.id_producto, estado: 'DISPONIBLE' },
+      });
+      const producto = await this.productoRepository.findOne({ where: { id_producto: solicitud.id_producto } });
+      if (producto && producto.stock_minimo > 0 && restantes < producto.stock_minimo) {
+        const responsable = await this.getResponsableForProducto(solicitud.id_producto);
+        if (responsable?.id_responsable) {
+          await this.notificacionRepository.save({
+            mensaje: `⚠️ Stock bajo en "${responsable.nombre_bodega}": "${producto.nombre}" tiene ${restantes} unidad(es) disponible(s), por debajo del mínimo de ${producto.stock_minimo}.`,
+            id_usuario: responsable.id_responsable,
+            leida: false,
+            fecha: new Date(),
+          });
+        }
+      }
+    } catch { /* no interrumpir el flujo principal */ }
+
+    return this.findById(id) as Promise<Solicitud>;
+  }
+
+  async marcarEntregada(id: number, idUsuario: number): Promise<Solicitud> {
+    const solicitud = await this.findById(id);
+    if (!solicitud) throw new Error(`Solicitud ${id} no encontrada`);
+
+    await this.repository.update(id, { estado: 'ENTREGADA' as any });
+
+    // Notificar al responsable de la bodega que el solicitante confirmó la recepción
+    try {
       const responsable = await this.getResponsableForProducto(solicitud.id_producto);
       if (responsable?.id_responsable) {
+        const nombreProductoConf = solicitud.producto?.nombre ?? 'material';
         await this.notificacionRepository.save({
-          mensaje: `⚠️ Stock bajo: "${producto.nombre}" tiene ${restantes} unidad(es) disponible(s), por debajo del mínimo de ${producto.stock_minimo}.`,
+          mensaje: `El solicitante confirmó la recepción de "${nombreProductoConf}" (${solicitud.cantidad} unidad(es)). Solicitud cerrada.`,
           id_usuario: responsable.id_responsable,
           leida: false,
           fecha: new Date(),
         });
       }
-    }
+    } catch { /* no interrumpir */ }
 
     return this.findById(id) as Promise<Solicitud>;
   }
