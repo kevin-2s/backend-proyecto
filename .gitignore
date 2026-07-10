@@ -15,6 +15,8 @@ update_git.bat
 
 # OS
 .DS_Store
+*.tmp
+~WRL*.tmp
 
 # Tests
 /coverage
@@ -48,4 +50,14 @@ update_git.bat
 .agents/
 .claude/
 skills-lock.json
+
+# Documentacion (no afecta al funcionamiento del sistema)
+*.md
+!README.md
+
+# Archivos de referencia / documentos que no afectan al codigo
+*.docx
+~$*
+*.png
+swagger.json
 

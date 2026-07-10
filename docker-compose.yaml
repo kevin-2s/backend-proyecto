@@ -13,6 +13,8 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sgm-network
 
   redis:
     image: redis:7.0-alpine
@@ -20,6 +22,8 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - sgm-network
 
   backend:
     build:
@@ -27,21 +31,54 @@ services:
       dockerfile: Dockerfile
     container_name: sgm_backend_container
     restart: always
-    ports:
-      - "${PORT:-3001}:${PORT:-3001}"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USERNAME=${DB_USERNAME:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - JWT_SECRET=${JWT_SECRET}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PORT=${PORT:-3001}
     depends_on:
       - db
       - redis
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - sgm-network
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: sgm_n8n_container
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      N8N_HOST: ${N8N_HOST}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: https://${N8N_HOST}/
+      GENERIC_TIMEZONE: America/Bogota
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - sgm-network
+
+networks:
+  sgm-network:
+    driver: bridge
 
 volumes:
   postgres-data:
+  n8n-data:

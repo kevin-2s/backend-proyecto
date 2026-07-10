@@ -1,8 +1,8 @@
 node_modules
 dist
-npm-debug.log
 .git
 .env
-Dockerfile
-.dockerignore
-docker-compose.yaml
+*.md
+coverage
+*.docx
+*.png
