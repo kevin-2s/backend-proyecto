@@ -5,6 +5,7 @@ export enum EstadoSolicitud {
   PENDIENTE = 'PENDIENTE',
   APROBADA = 'APROBADA',
   RECHAZADA = 'RECHAZADA',
+  EN_ENTREGA = 'EN_ENTREGA',
   ENTREGADA = 'ENTREGADA',
   DEVUELTA = 'DEVUELTA',
 }
@@ -25,6 +26,7 @@ export class Solicitud {
     public cantidad: number,
     public id_usuario_aprueba?: number | null,
     public id_ficha?: number | null,
+    public fecha_devolucion?: Date | null,
     public usuario?: Usuario,
     public usuario_aprueba?: Usuario,
     public ficha?: Ficha,

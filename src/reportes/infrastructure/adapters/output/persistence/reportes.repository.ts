@@ -39,9 +39,6 @@ export class ReportesRepositoryAdapter implements ReportesRepository {
     });
   }
 
-  async obtenerPrestamos(): Promise<any[]> {
-    return [];
-  }
 
   async obtenerKardex(): Promise<any[]> {
     return this.kardexRepository.find({

@@ -5,6 +5,7 @@ import { Solicitud, EstadoSolicitud, TipoSolicitud } from '../../domain/entities
 import { SolicitudNotFoundException } from '../../domain/exceptions/solicitud-not-found.exception';
 import { AutoAprobacionSolicitudForbiddenException } from '../../domain/exceptions/auto-aprobacion-solicitud.exception';
 import { SoloResponsablePuedeAprobarSolicitudForbiddenException } from '../../domain/exceptions/solo-responsable-puede-aprobar.exception';
+import { SoloSolicitantePuedeConfirmarForbiddenException } from '../../domain/exceptions/solo-solicitante-puede-confirmar.exception';
 import { INotificacionesRepository, NOTIFICACIONES_REPOSITORY } from '../../../notificaciones/domain/ports/output/notificaciones-repository.interface';
 
 @Injectable()
@@ -43,6 +44,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
     observacion?: string | null;
     id_usuario: number;
     id_ficha?: number | null;
+    fecha_devolucion?: string | Date | null;
   }): Promise<Solicitud> {
     const solicitud = await this.solicitudesRepository.create({
       fecha: new Date(),
@@ -53,6 +55,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
       observacion: data.observacion ?? null,
       id_usuario: data.id_usuario,
       id_ficha: data.id_ficha ?? null,
+      fecha_devolucion: data.fecha_devolucion ? new Date(data.fecha_devolucion) : null,
       id_usuario_aprueba: null,
     });
 
@@ -61,7 +64,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
       const info = await this.solicitudesRepository.getResponsableForProducto(data.id_producto);
       if (info?.id_responsable) {
         await this.notificacionesRepository.create({
-          mensaje: `Nueva solicitud de préstamo: ${data.cantidad} unidad(es) de "${info.nombre_producto}" desde la bodega "${info.nombre_bodega}". Requiere su aprobación.`,
+          mensaje: `Nueva solicitud: se pidieron ${data.cantidad} unidad(es) de "${info.nombre_producto}" (en ${info.nombre_bodega}). Requiere tu aprobación.`,
           id_usuario: info.id_responsable,
         });
       }
@@ -81,7 +84,7 @@ export class SolicitudesService implements ISolicitudesUseCases {
     const solicitud = await this.obtenerSolicitudPorId(id);
 
     // Nunca puede aprobar su propia solicitud
-    if (id_usuario_aprueba === solicitud.id_usuario) {
+    if (Number(id_usuario_aprueba) === Number(solicitud.id_usuario)) {
       throw new AutoAprobacionSolicitudForbiddenException();
     }
 
@@ -90,11 +93,11 @@ export class SolicitudesService implements ISolicitudesUseCases {
 
       if (info?.id_responsable) {
         // La bodega tiene responsable asignado: solo ese responsable puede aprobar/rechazar
-        if (info.id_responsable !== id_usuario_aprueba) {
+        if (Number(info.id_responsable) !== Number(id_usuario_aprueba)) {
           throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
         }
       } else if (!isAdmin) {
-        // Sin responsable asignado: solo el Administrador puede aprobar
+        // Sin responsable asignado en la bodega: el administrador tampoco puede aprobar
         throw new SoloResponsablePuedeAprobarSolicitudForbiddenException();
       }
     }
@@ -103,7 +106,21 @@ export class SolicitudesService implements ISolicitudesUseCases {
   }
 
   async entregarSolicitud(id: number): Promise<Solicitud> {
-    await this.obtenerSolicitudPorId(id);
-    return this.solicitudesRepository.marcarEntregada(id);
+    const solicitud = await this.obtenerSolicitudPorId(id);
+    if (solicitud.estado !== EstadoSolicitud.APROBADA) {
+      throw new Error('Solo se pueden entregar solicitudes en estado APROBADA');
+    }
+    return this.solicitudesRepository.marcarEnEntrega(id);
+  }
+
+  async confirmarRecepcionSolicitud(id: number, userId: number): Promise<Solicitud> {
+    const solicitud = await this.obtenerSolicitudPorId(id);
+    if (solicitud.estado !== EstadoSolicitud.EN_ENTREGA) {
+      throw new Error('Solo se puede confirmar la recepción de solicitudes en estado EN_ENTREGA');
+    }
+    if (Number(solicitud.id_usuario) !== Number(userId)) {
+      throw new SoloSolicitantePuedeConfirmarForbiddenException();
+    }
+    return this.solicitudesRepository.marcarEntregada(id, userId);
   }
 }
