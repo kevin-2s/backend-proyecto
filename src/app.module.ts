@@ -16,8 +16,6 @@ import { ItemsModule } from './items/infrastructure/items.module';
 import { SitiosModule } from './sitios/infrastructure/sitios.module';
 import { InventarioModule } from './inventario/infrastructure/inventario.module';
 import { FichasModule } from './fichas/infrastructure/fichas.module';
-import { TiposMovimientoModule } from './tipos-movimiento/infrastructure/tipos-movimiento.module';
-import { MovimientosModule } from './movimientos/infrastructure/movimientos.module';
 import { KardexModule } from './kardex/infrastructure/kardex.module';
 import { SolicitudesModule } from './solicitudes/infrastructure/solicitudes.module';
 import { DetalleSolicitudModule } from './detalle-solicitud/infrastructure/detalle-solicitud.module';
@@ -34,14 +32,13 @@ import { AreasModule } from './areas/infrastructure/areas.module';
 import { ProgramasModule } from './programas/infrastructure/programas.module';
 
 import { ReportesModule } from './reportes/infrastructure/reportes.module';
-import { QrModule } from './qr/infrastructure/qr.module';
-import { OrdenesCompraModule } from './ordenes-compra/infrastructure/ordenes-compra.module';
-import { PrestamosModule } from './prestamos/infrastructure/prestamos.module';
+import { CodigoBarrasModule } from './codigo-barras/infrastructure/codigo-barras.module';
 import { AsignacionesModule } from './asignaciones/infrastructure/asignaciones.module';
 import { NovedadesModule } from './novedades/infrastructure/novedades.module';
 import { TenancyModule } from './shared/tenancy/tenancy.module';
 import { TenancyMiddleware } from './shared/tenancy/tenancy.middleware';
 import { TrasladosModule } from './traslados/infrastructure/traslados.module';
+import { WhatsappBotModule } from './whatsapp-bot/infrastructure/whatsapp-bot.module';
 
 @Module({
   imports: [
@@ -86,8 +83,6 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     SitiosModule,
     InventarioModule,
     FichasModule,
-    TiposMovimientoModule,
-    MovimientosModule,
     KardexModule,
     SolicitudesModule,
     DetalleSolicitudModule,
@@ -103,14 +98,13 @@ import { TrasladosModule } from './traslados/infrastructure/traslados.module';
     AreasModule,
     ProgramasModule,
 
-    OrdenesCompraModule,
     ReportesModule,
-    QrModule,
-    PrestamosModule,
+    CodigoBarrasModule,
     AsignacionesModule,
     NovedadesModule,
     TenancyModule,
     TrasladosModule,
+    WhatsappBotModule,
   ],
   providers: [
     {

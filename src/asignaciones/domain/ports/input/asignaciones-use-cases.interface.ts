@@ -11,6 +11,7 @@ export interface IAsignacionesUseCases {
     cantidad: number;
     id_usuario_asigna: number;
     observacion?: string | null;
+    fecha_devolucion?: string | Date | null;
   }): Promise<Asignacion>;
   anularAsignacion(id: number): Promise<Asignacion>;
   agregarItemAAsignacion(id_asignacion: number, id_item: number): Promise<Asignacion>;

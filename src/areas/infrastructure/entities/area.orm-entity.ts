@@ -1,12 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { SedeOrmEntity } from '../../../sedes/infrastructure/entities/sede.orm-entity';
 
 @Entity('area')
+@Unique(['nombre', 'id_sede'])
 export class AreaOrmEntity {
   @PrimaryGeneratedColumn()
   id_area: number;
 
-  @Column({ type: 'varchar', length: 150, unique: true })
+  @Column({ type: 'varchar', length: 150 })
   nombre: string;
 
   @Column({ name: 'id_sede', nullable: true })
